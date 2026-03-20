@@ -1,0 +1,13 @@
+comfyui:
+    base_path: /media/menser/fauna/image_gen/models
+    checkpoints: checkpoints/
+    clip: clip/
+    clip_vision: clip/
+    controlnet: controlnet/
+    embeddings: embeddings/
+    loras: loras/
+    upscale_models: upscale_models/
+    vae: vae/
+    # Flux-specific
+    diffusion_models: diffusion_models/
+    text_encoders: text_encoders/

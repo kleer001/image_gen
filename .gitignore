@@ -1,0 +1,22 @@
+# Tools — anchored to root so they don't match configs/comfyui/ etc.
+/comfyui/
+/automatic1111/
+
+# Outputs (content only, dirs kept)
+/outputs/comfyui/*
+/outputs/a1111/*
+!outputs/comfyui/.gitkeep
+!outputs/a1111/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+/comfyui/.venv/
+/automatic1111/venv/
+
+# Misc
+.DS_Store
+*.log
+*.tmp
+.cache/
