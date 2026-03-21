@@ -1,6 +1,7 @@
 # Tools — anchored to root so they don't match configs/comfyui/ etc.
 /comfyui/
 /automatic1111/
+/comfyui-mcp-server/
 
 # Outputs (content only, dirs kept)
 /outputs/comfyui/*
