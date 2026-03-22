@@ -44,7 +44,26 @@ A1111 is independent: `cd automatic1111 && ./webui.sh` (port 7860).
 - `configs/comfyui/extra_model_paths.yaml` → copied to `comfyui/extra_model_paths.yaml` by install script; tells ComfyUI to use the shared `models/` dir
 - `configs/a1111/webui-user.sh` → copied to `automatic1111/webui-user.sh`; sets `--ckpt-dir`, `--lora-dir`, etc.
 
-**MCP integration** — `.mcp.json` at repo root points Claude Code at the running MCP server (`http://127.0.0.1:9000/mcp`). The MCP server auto-discovers ComfyUI workflow JSON files from `workflows/` and exposes each as a tool. Drop a workflow JSON into `workflows/` and it becomes available immediately (server restart required).
+**MCP integration** — `.mcp.json` at repo root points Claude Code at the running MCP server (`http://127.0.0.1:9000/mcp`). The MCP server auto-discovers ComfyUI workflow JSON files from `workflows/` and exposes each as a tool. Drop a workflow JSON into `workflows/` and it becomes available after restarting the MCP server.
+
+## Using the ComfyUI MCP
+
+**Prerequisite:** the stack must be running (`imggen`). Claude Code connects automatically via `.mcp.json` — no manual config needed.
+
+Key tools exposed:
+- `generate_image` — text-to-image with the default workflow
+- `run_workflow <name>` — run any workflow JSON from `workflows/` by filename (without `.json`)
+- `list_workflows` — see all available workflows
+- `list_models` — see models ComfyUI can see
+- `get_queue_status` — check if jobs are pending/running
+- `view_image` — display a generated image
+
+**Adding a workflow:** export any ComfyUI workflow as JSON (Save → Export), drop it in `workflows/`, restart the MCP server (`imggen stop && imggen`). It becomes a callable tool named after the filename.
+
+**Workflow parameters:** to make a workflow accept dynamic inputs, add placeholder strings inside the JSON node inputs:
+- `PARAM_PROMPT` — text prompt
+- `PARAM_INT_<name>` — integer (e.g. `PARAM_INT_STEPS`)
+- `PARAM_FLOAT_<name>` — float (e.g. `PARAM_FLOAT_CFG`)
 
 ## Installed Models
 
