@@ -11,3 +11,5 @@ comfyui:
     # Flux-specific
     diffusion_models: diffusion_models/
     text_encoders: text_encoders/
+    style_models: style_models/
+    clip_vision: clip_vision/
