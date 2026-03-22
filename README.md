@@ -1,5 +1,7 @@
 # image_gen
 
+![banner](assets/banner.png)
+
 Local image generation setup. Both ComfyUI and A1111 share a single `models/` directory.
 
 **GPU:** RTX 3090 (24GB)
