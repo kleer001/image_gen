@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/menser/fauna/image_gen/scripts/sync_index.py 2>/dev/null || true",
+            "statusMessage": "Syncing INDEX.md..."
+          }
+        ]
+      }
+    ]
+  }
+}

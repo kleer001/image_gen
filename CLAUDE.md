@@ -22,6 +22,23 @@ imggen status   # check what's running
 
 A1111 is independent: `cd automatic1111 && ./webui.sh` (port 7860).
 
+## INDEX.md Auto-Sync
+
+`INDEX.md` is kept current automatically:
+
+- **Claude Code hook** — `scripts/sync_index.py` runs at the end of every Claude session (Stop hook in `.claude/settings.json`)
+- **Filesystem watcher** — `scripts/watch_models.sh` uses `inotifywait` to fire the same script the moment a download finishes or a file is deleted; start it alongside the stack:
+
+```bash
+nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
+```
+
+`sync_index.py` behaviour:
+- Removes table rows for files no longer on disk
+- Appends new files to an `## Unindexed` section (filename + size, `TODO` for metadata)
+- Never touches existing annotated rows
+- Updates the `Last updated` timestamp
+
 ## Installing from Scratch
 
 ```bash
