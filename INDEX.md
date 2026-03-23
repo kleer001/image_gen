@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-03-23 (session 2 complete)
+Last updated: 2026-03-23
 
 ---
 
@@ -145,18 +145,99 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 ### LLM Text Encoder
 | File | Dir | Size | Notes |
 |---|---|---|---|
-| `llava-llama-3-8b/model-00001-of-00004.safetensors` | `text_encoders/` | 4.7G | Shard 1/4 |
-| `llava-llama-3-8b/model-00002-of-00004.safetensors` | `text_encoders/` | 4.7G | Shard 2/4 |
-| `llava-llama-3-8b/model-00003-of-00004.safetensors` | `text_encoders/` | 4.6G | Shard 3/4 |
-| `llava-llama-3-8b/model-00004-of-00004.safetensors` | `text_encoders/` | 1.1G | Shard 4/4 |
 
 ### VAE
 | File | Dir | Size | Notes |
 |---|---|---|---|
-| `hunyuan/pytorch_model.pt` | `vae/` | 941M | HunyuanVideo VAE |
 
 ---
 
 ## Empty
 - `models/embeddings/` — empty
 - `models/clip/` — empty
+
+---
+
+## Unindexed — needs annotation
+
+> Auto-detected by sync_index.py. Move each row to its proper section and fill in metadata.
+
+### ControlNet (`controlnet/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `flux-controlnet-union-instantx.safetensors` | 6.2G | — | — | TODO |
+| `flux-controlnet-union-pro-shakker.safetensors` | 6.2G | — | — | TODO |
+| `flux-openpose-controlnet.safetensors` | 2.8G | — | — | TODO |
+
+### Diffusion Models (`diffusion_models/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `diffusion_pytorch_model-00001-of-00006.safetensors` | 9.3G | — | — | TODO |
+| `diffusion_pytorch_model-00002-of-00006.safetensors` | 9.3G | — | — | TODO |
+| `diffusion_pytorch_model-00003-of-00006.safetensors` | 9.3G | — | — | TODO |
+| `flux1-kontext-dev.safetensors` | 22.2G | — | — | TODO |
+
+### LoRAs (`loras/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `Cinematic1940s-Flux.safetensors` | 164M | — | — | TODO |
+| `CinematicFilmStock-Flux.safetensors` | 292M | — | — | TODO |
+| `CinematicStyle-v4-Flux.safetensors` | 292M | — | — | TODO |
+| `ClassicNeoFilmNoir-Flux.safetensors` | 292M | — | — | TODO |
+| `FilmNoir-V1-Flux.safetensors` | 146M | — | — | TODO |
+| `FilmNoir-v1-Flux.safetensors` | 164M | — | — | TODO |
+| `QwenNextScene-v2.safetensors` | 281M | — | — | TODO |
+| `RetroCinematic-Flux.safetensors` | 36M | — | — | TODO |
+| `Sketchy-Illustrious.safetensors` | 217M | — | — | TODO |
+| `StoryboardSketch-Flux.safetensors` | 292M | — | — | TODO |
+| `Storyboarding-v2-Flux.safetensors` | 37M | — | — | TODO |
+| `WongKarwai-Cinematic-Flux.safetensors` | 584M | — | — | TODO |
+| `film-storyboard.safetensors` | 164M | — | — | TODO |
+| `flux-ip-adapter-v2-xlabs.safetensors` | 1008M | — | — | TODO |
+
+### Text Encoders (`text_encoders/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `model-00001-of-00004.safetensors` | 4.6G | — | — | TODO |
+| `model-00002-of-00004.safetensors` | 4.7G | — | — | TODO |
+| `model-00003-of-00004.safetensors` | 4.6G | — | — | TODO |
+| `model-00004-of-00004.safetensors` | 1.1G | — | — | TODO |
+| `t5xxl_fp16.safetensors` | 4.6G | — | — | TODO |
+| `wan-umt5-xxl-enc-bf16.pth` | 10.6G | — | — | TODO |
+
+### VAE (`vae/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `Wan2.1_VAE.pth` | 484M | — | — | TODO |
+| `ae.safetensors` | 319M | — | — | TODO |
+| `pytorch_model.pt` | 940M | — | — | TODO |
+
+### workflows (`workflows/`)
+
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `controlnet_depth.json` | 8K | — | — | TODO |
+| `controlnet_pose.json` | 16K | — | — | TODO |
+| `flux_continuum_1-7-0.json` | 1M | — | — | TODO |
+| `flux_continuum_1-7-1_beta.json` | 1M | — | — | TODO |
+| `flux_continuum_light.json` | 824K | — | — | TODO |
+| `flux_controlnet_canny.json` | 10K | — | — | TODO |
+| `flux_controlnet_depth.json` | 10K | — | — | TODO |
+| `flux_inpaint.json` | 10K | — | — | TODO |
+| `flux_outpaint.json` | 11K | — | — | TODO |
+| `flux_redux.json` | 23K | — | — | TODO |
+| `flux_txt2img.json` | 18K | — | — | TODO |
+| `flux_txt2img_checkpoint.json` | 7K | — | — | TODO |
+| `img2img.json` | 6K | — | — | TODO |
+| `inpaint.json` | 6K | — | — | TODO |
+| `inpaint_outpaint.json` | 8K | — | — | TODO |
+| `lora_basic.json` | 6K | — | — | TODO |
+| `lora_multiple.json` | 7K | — | — | TODO |
+| `sdxl_basic.json` | 25K | — | — | TODO |
+| `upscale_esrgan.json` | 6K | — | — | TODO |
+
