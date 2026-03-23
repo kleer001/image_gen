@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-03-23
+Last updated: 2026-03-23 (session 2 complete)
 
 ---
 
@@ -17,10 +17,11 @@ Last updated: 2026-03-23
 
 ## Base Models
 
-### Checkpoints (SDXL)
+### Checkpoints (SDXL / Video)
 | File | Size | Base | Notes |
 |---|---|---|---|
 | `Illustrious-XL-v0.1.safetensors` | 6.5G | SDXL | Anime/illustration; use `sdxl.vae.safetensors` |
+| `svd_xt.safetensors` | 9.0G | SVD | Stable Video Diffusion XT — image-to-video, 25 frames |
 
 ### Diffusion Models (Flux)
 | File | Size | Notes |
@@ -96,6 +97,11 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 | `flux-depth-controlnet-v3.safetensors` | 1.4G | Depth/composition control for Flux; requires x-flux-comfyui node |
 | `flux-canny-controlnet-v3.safetensors` | 1.4G | Edge/line control for Flux; requires x-flux-comfyui node |
 
+### SDXL ControlNet
+| File | Size | Notes |
+|---|---|---|
+| `OpenPoseXL2.safetensors` | 4.7G | Pose control for Illustrious XL / SDXL |
+
 ---
 
 ## Upscalers
@@ -103,10 +109,16 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 |---|---|---|
 | `4x-UltraSharp.pth` | 64M | Best general upscaler |
 | `RealESRGAN_x4plus.pth` | 64M | Realistic textures |
+| `4x-AnimeSharp.pth` | 64M | Anime/illustration upscaler |
 
 ---
 
 ## AnimateDiff
+
+### Motion Module
+| File | Size | Notes |
+|---|---|---|
+| `mm_sd_v15_v3.safetensors` | 1.6G | AnimateDiff motion adapter v1.5-3; required for all AD workflows |
 
 ### Camera Motion LoRAs (SD1.5 + AnimateDiff v2)
 | File | Size | Notes |
@@ -121,15 +133,27 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 
 ---
 
-## In Progress / Pending
+## HunyuanVideo 1.5
 
-- `models/upscale_models/4x-AnimeSharp.pth` — downloading (CivitAI 1140894)
-- `models/controlnet/OpenPoseXL2.safetensors` — downloading (thibaud/controlnet-openpose-sdxl-1.0)
-- `models/animatediff_models/mm_sd_v15_v3.safetensors` — downloading (guoyww/animatediff-motion-adapter-v1-5-3)
-- `models/checkpoints/svd_xt.safetensors` — downloading (~9GB, stabilityai/stable-video-diffusion-img2vid-xt)
-- `models/diffusion_models/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors` — downloading (~14GB, Kijai/HunyuanVideo_comfy)
-- `models/text_encoders/llava-llama-3-8b/` — downloading (Kijai/llava-llama-3-8b-text-encoder-tokenizer)
-- `models/vae/hunyuan/pytorch_model.pt` — downloading (tencent/HunyuanVideo)
+> VRAM note: loads ~16–18GB. Cannot run simultaneously with Flux. Requires ComfyUI-HunyuanVideoWrapper.
+
+### Diffusion Model
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors` | `diffusion_models/` | 13G | CFG-distilled FP8 transformer |
+
+### LLM Text Encoder
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `llava-llama-3-8b/model-00001-of-00004.safetensors` | `text_encoders/` | 4.7G | Shard 1/4 |
+| `llava-llama-3-8b/model-00002-of-00004.safetensors` | `text_encoders/` | 4.7G | Shard 2/4 |
+| `llava-llama-3-8b/model-00003-of-00004.safetensors` | `text_encoders/` | 4.6G | Shard 3/4 |
+| `llava-llama-3-8b/model-00004-of-00004.safetensors` | `text_encoders/` | 1.1G | Shard 4/4 |
+
+### VAE
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `hunyuan/pytorch_model.pt` | `vae/` | 941M | HunyuanVideo VAE |
 
 ---
 
