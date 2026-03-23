@@ -1,18 +1,24 @@
 # BREADCRUMBS.md
 
 Directives for Claude Code (MCP-driven) operating in this repo.
-This image generation stack is the **primary production engine for RΞΡLΙCΔ**, a 10-minute AI short film.
+This is a general-purpose image generation stack. It currently serves as one of the production engines for **RΞΡLΙCΔ**, a 10-minute AI short film — but the stack has its own identity and should remain coherent and useful independent of any single project.
 
-**Project root:** `/home/menser/Dropbox/ART/RΞΡLΙCΔ/`
-**GitHub:** `https://github.com/kleer001/REPLIKA` (private)
 **Hardware:** RTX 3090, 24GB VRAM
 **Stack:** `imggen` → ComfyUI (8188) + MCP server (9000)
 
 ---
 
-## What This Repo Serves
+## RΞΡLΙCΔ — Active Client Project
 
-RΞΡLΙCΔ is a psychological drama — brutalist architecture, chiaroscuro low-key lighting, atmospheric haze, anamorphic depth, existentialist pacing. Production output lives in:
+**Project root:** `/home/menser/Dropbox/ART/RΞΡLΙCΔ/`
+**GitHub:** `https://github.com/kleer001/REPLIKA` (private)
+**Aesthetic:** Psychological drama — brutalist architecture, chiaroscuro low-key lighting, atmospheric haze, anamorphic depth, existentialist pacing.
+
+---
+
+### RΞΡLΙCΔ Project Layout
+
+Production output lives in:
 
 ```
 /home/menser/Dropbox/ART/RΞΡLΙCΔ/
@@ -27,18 +33,18 @@ When generating for RΞΡLΙCΔ, write outputs to the project's `prod/scenes/scN
 
 ---
 
-## Current State vs. Film Production Needs
+## Stack Capabilities & Upgrade Queue
 
-**Already installed (sufficient for stills/concept art):**
-- Flux.1-dev + VAE + text encoders → cinematic concept art ✓
-- Illustrious XL → character exploration ✓
+**Already installed:**
+- Flux.1-dev + VAE + text encoders → high-quality stills and concept art ✓
+- Illustrious XL → SDXL-based character/illustration work ✓
 - 13 Flux LoRAs (anime/illustration/graphic design) ✓
 
-**Missing for film production (video, upscaling, control):**
-- No video generation models → cannot produce motion sequences
-- No upscalers → cannot finalize frames at delivery resolution
+**Gaps in the current stack:**
+- No video generation models → no motion sequences
+- No upscalers → no high-res output finalization
 - No ControlNet models → no pose/depth/structure control
-- No film-aesthetic LoRAs for RΞΡLΙCΔ visual language
+- LoRA library skews anime/graphic design — thin on cinematic/photographic aesthetics
 - No AnimateDiff motion modules
 - No custom nodes for video pipeline
 
@@ -139,9 +145,9 @@ hf download hunyuanvideo-community/HunyuanVideo \
 
 VRAM note: HunyuanVideo loads ~16–18GB. Unload Flux between sessions.
 
-### Priority 6: Film-Aesthetic LoRAs for RΞΡLΙCΔ
+### Priority 6: Cinematic & Film-Aesthetic LoRAs
 
-Current LoRA library skews anime/graphic design — not the RΞΡLΙCΔ visual language.
+Expands the LoRA library beyond anime/graphic design into photographic and cinematic aesthetics.
 Download these for Flux.1-dev (search exact names on CivitAI):
 
 | Target Aesthetic | Search Term | Dir |
@@ -184,7 +190,7 @@ done
 
 ---
 
-## MCP Workflow for RΞΡLΙCΔ Production
+## MCP Workflow — RΞΡLΙCΔ Production Example
 
 The MCP server auto-discovers workflows from `workflows/`. Film production workflows belong in the project:
 

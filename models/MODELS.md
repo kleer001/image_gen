@@ -72,23 +72,69 @@ Both ComfyUI and A1111 read from here via config.
 
 ---
 
-## ControlNet (SDXL)
+## ControlNet
 
-| Model | Dir | Source | Use |
+### Flux ControlNet (XLabs v3) — installed
+| Model | File | Source | Use |
 |---|---|---|---|
-| **controlnet-canny-sdxl** | `controlnet/` | HuggingFace: `diffusers/controlnet-canny-sdxl-1.0` | Edge/line control |
-| **controlnet-depth-sdxl** | `controlnet/` | HuggingFace: `diffusers/controlnet-depth-sdxl-1.0` | Depth/composition |
-| **controlnet-openpose-sdxl** | `controlnet/` | HuggingFace: `thibaud/controlnet-openpose-sdxl-1.0` | Pose control |
+| **Flux Depth v3** | `flux-depth-controlnet-v3.safetensors` | HF: `XLabs-AI/flux-controlnet-depth-v3` | Depth/composition; requires x-flux-comfyui node |
+| **Flux Canny v3** | `flux-canny-controlnet-v3.safetensors` | HF: `XLabs-AI/flux-controlnet-canny-v3` | Edge/line; requires x-flux-comfyui node |
+
+### SDXL ControlNet — installed/catalog
+| Model | File | Source | Use |
+|---|---|---|---|
+| **OpenPose XL** | `OpenPoseXL2.safetensors` | HF: `thibaud/controlnet-openpose-sdxl-1.0` | Pose control for Illustrious XL |
+| **Canny SDXL** | — | HF: `diffusers/controlnet-canny-sdxl-1.0` | Edge/line control |
+| **Depth SDXL** | — | HF: `diffusers/controlnet-depth-sdxl-1.0` | Depth/composition |
 
 ---
 
 ## Upscalers
 
-| Model | Dir | Source | Notes |
+| Model | File | Source | Notes |
 |---|---|---|---|
-| **4x-UltraSharp** | `upscale_models/` | CivitAI: search "4x UltraSharp" | Best general upscaler |
-| **4x-AnimeSharp** | `upscale_models/` | CivitAI: search "4x AnimeSharp" | Anime-tuned |
-| **ESRGAN 4x** | `upscale_models/` | HuggingFace: `ai-forever/Real-ESRGAN` | Baseline |
+| **4x-UltraSharp** | `4x-UltraSharp.pth` | CivitAI: model 125843 | Best general upscaler |
+| **RealESRGAN x4plus** | `RealESRGAN_x4plus.pth` | GitHub: xinntao/Real-ESRGAN v0.1.0 | Realistic textures |
+| **4x-AnimeSharp** | `4x-AnimeSharp.pth` | CivitAI: model 1140894 (versionId) | Anime/illustration frames |
+
+---
+
+## Video Generation
+
+### Stable Video Diffusion XT (~9GB)
+| Model | File | Source | Notes |
+|---|---|---|---|
+| **SVD-XT** | `checkpoints/svd_xt.safetensors` | HF: `stabilityai/stable-video-diffusion-img2vid-xt` | Image-to-video, 25 frames; natively supported in ComfyUI |
+
+### AnimateDiff (SD1.5 loop-based motion)
+| Model | File | Source | Notes |
+|---|---|---|---|
+| **Motion Adapter v1.5-3** | `animatediff_models/mm_sd_v15_v3.safetensors` | HF: `guoyww/animatediff-motion-adapter-v1-5-3` | Core motion module; requires ComfyUI-AnimateDiff-Evolved |
+| **Camera LoRAs (7 files)** | `animatediff_motion_lora/1600_cseti_*.safetensors` | HF: `Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1` | ZoomIn/Out, PanL/R, TiltU/D, ZoomIn-32f |
+
+### HunyuanVideo 1.5 (~14GB FP8, best quality on 3090)
+| Model | File | Source | Notes |
+|---|---|---|---|
+| **Transformer FP8** | `diffusion_models/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors` | HF: `Kijai/HunyuanVideo_comfy` | CFG-distilled FP8; requires ComfyUI-HunyuanVideoWrapper |
+| **LLM Text Encoder** | `text_encoders/llava-llama-3-8b/` | HF: `Kijai/llava-llama-3-8b-text-encoder-tokenizer` | Separate from Flux encoders |
+| **VAE** | `vae/hunyuan/pytorch_model.pt` | HF: `tencent/HunyuanVideo` (path: `hunyuan-video-t2v-720p/vae/`) | Separate from flux-ae |
+
+> VRAM note: HunyuanVideo loads ~16–18GB. Cannot run simultaneously with Flux.
+
+---
+
+## Film-Aesthetic LoRAs (Flux.1-dev) — catalog / not yet downloaded
+
+Search CivitAI for these; add actual filenames and versionIds once downloaded.
+
+| Target Aesthetic | Search Term | Dir |
+|---|---|---|
+| Film noir / chiaroscuro | `"film noir flux lora"` | `loras/` |
+| Cinematic lighting / anamorphic | `"cinematic lighting flux"` | `loras/` |
+| Brutalist architecture | `"brutalist architecture flux"` | `loras/` |
+| Industrial environments | `"industrial gritty flux"` | `loras/` |
+| Atmospheric haze / fog | `"atmospheric fog flux"` | `loras/` |
+| Film grain / analog texture | `"film grain flux"` | `loras/` |
 
 ---
 

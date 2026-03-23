@@ -2,14 +2,15 @@ comfyui:
     base_path: /media/menser/fauna/image_gen/models
     checkpoints: checkpoints/
     clip: clip/
-    clip_vision: clip/
+    clip_vision: clip_vision/
     controlnet: controlnet/
+    diffusion_models: diffusion_models/
     embeddings: embeddings/
     loras: loras/
+    style_models: style_models/
+    text_encoders: text_encoders/
     upscale_models: upscale_models/
     vae: vae/
-    # Flux-specific
-    diffusion_models: diffusion_models/
-    text_encoders: text_encoders/
-    style_models: style_models/
-    clip_vision: clip_vision/
+    # Video generation
+    animatediff_models: animatediff_models/
+    animatediff_motion_lora: animatediff_motion_lora/
