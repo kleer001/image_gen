@@ -29,18 +29,23 @@ Last updated: 2026-03-23
 | `flux1-dev.safetensors` | 23G | Flux.1-dev transformer; load at fp8 in ComfyUI |
 | `flux1-canny-dev.safetensors` | 11G | Flux Canny ControlNet (native diffusion model variant) |
 | `flux1-depth-dev.safetensors` | 11G | Flux Depth ControlNet (native diffusion model variant) |
+| `flux1-kontext-dev.safetensors` | 22.2G | Flux.1-Kontext-dev — in-context image editing; reuses Flux VAE + text encoders |
 
 ### VAE
 | File | Size | Use with |
 |---|---|---|
 | `sdxl.vae.safetensors` | 320M | Illustrious XL, SDXL |
-| `flux-ae.safetensors` | 320M | Flux.1-dev |
+| `flux-ae.safetensors` | 320M | Flux.1-dev, Flux.1-Kontext-dev |
+
+> `ae.safetensors` is a symlink → `flux-ae.safetensors` (ComfyUI compatibility alias)
 
 ### Text Encoders (Flux only)
 | File | Size | Notes |
 |---|---|---|
 | `clip_l.safetensors` | 235M | Required for Flux |
 | `t5xxl_fp8_e4m3fn.safetensors` | 4.6G | Required for Flux; fp8 quantized |
+
+> `t5xxl_fp16.safetensors` is a symlink → `t5xxl_fp8_e4m3fn.safetensors` (fp16 alias for nodes that require that filename)
 
 ### Style Models
 | File | Size | Notes |
@@ -56,7 +61,7 @@ Last updated: 2026-03-23
 
 ## LoRAs
 
-All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
+> Most LoRAs target **Flux.1-dev**. Exceptions noted per entry.
 
 ### Anime
 | File | Size | Trigger | Weight | Source |
@@ -87,6 +92,32 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 | `GraffitiLogo-Flux.safetensors` | 19M | `graffiti logo` + `black background` | 1.0–1.5 | [civitai/836596](https://civitai.com/models/836596) |
 | `LogoMaker1024-Flux.safetensors` | 38M | `Company logo by LogoMaker1024,` | 0.4–1.0 | [civitai/757432](https://civitai.com/models/757432) |
 
+### Film & Storyboard (Flux)
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `film-storyboard.safetensors` | 164M | none | 0.8–1.0 | [ali-vilab/In-Context-LoRA](https://huggingface.co/ali-vilab/In-Context-LoRA) |
+| `StoryboardSketch-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `Storyboarding-v2-Flux.safetensors` | 37M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `QwenNextScene-v2.safetensors` | 281M | image+text conditioning | — | [lovis93/next-scene-qwen-image-lora](https://huggingface.co/lovis93/next-scene-qwen-image-lora-2509) |
+
+### Film Noir & Cinematic (Flux)
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `FilmNoir-v1-Flux.safetensors` | 164M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `FilmNoir-V1-Flux.safetensors` | 146M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `ClassicNeoFilmNoir-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `Cinematic1940s-Flux.safetensors` | 164M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `CinematicStyle-v4-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `WongKarwai-Cinematic-Flux.safetensors` | 584M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `CinematicFilmStock-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `RetroCinematic-Flux.safetensors` | 36M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+
+### Special Tools
+| File | Size | Base | Notes |
+|---|---|---|---|
+| `flux-ip-adapter-v2-xlabs.safetensors` | 1.0G | Flux | XLabs IP-Adapter v2; image prompt conditioning; requires [x-flux-comfyui](https://github.com/XLabs-AI/x-flux-comfyui) |
+| `Sketchy-Illustrious.safetensors` | 217M | **Illustrious XL** | Sketchy line-art style; SDXL base (not Flux!) |
+
 ---
 
 ## ControlNet
@@ -96,6 +127,17 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 |---|---|---|
 | `flux-depth-controlnet-v3.safetensors` | 1.4G | Depth/composition control for Flux; requires x-flux-comfyui node |
 | `flux-canny-controlnet-v3.safetensors` | 1.4G | Edge/line control for Flux; requires x-flux-comfyui node |
+
+### Flux ControlNet Union
+| File | Size | Notes |
+|---|---|---|
+| `flux-controlnet-union-pro-shakker.safetensors` | 6.2G | Shakker-Labs Union Pro — single model for Canny/Depth/Pose/Tile/MLSD/Normal/Segment |
+| `flux-controlnet-union-instantx.safetensors` | 6.2G | InstantX Union — alternate single-model union variant |
+
+### Flux ControlNet (Pose)
+| File | Size | Notes |
+|---|---|---|
+| `flux-openpose-controlnet.safetensors` | 2.8G | OpenPose body+hand pose control for Flux |
 
 ### SDXL ControlNet
 | File | Size | Notes |
@@ -145,99 +187,76 @@ All trained for **Flux.1-dev**. Not compatible with Illustrious XL / SDXL.
 ### LLM Text Encoder
 | File | Dir | Size | Notes |
 |---|---|---|---|
+| `model-00001-of-00004.safetensors` | `text_encoders/llava-llama-3-8b/` | 4.6G | LLaVA-LLaMA-3-8B shard 1/4 |
+| `model-00002-of-00004.safetensors` | `text_encoders/llava-llama-3-8b/` | 4.7G | LLaVA-LLaMA-3-8B shard 2/4 |
+| `model-00003-of-00004.safetensors` | `text_encoders/llava-llama-3-8b/` | 4.6G | LLaVA-LLaMA-3-8B shard 3/4 |
+| `model-00004-of-00004.safetensors` | `text_encoders/llava-llama-3-8b/` | 1.1G | LLaVA-LLaMA-3-8B shard 4/4 |
 
 ### VAE
 | File | Dir | Size | Notes |
 |---|---|---|---|
+| `pytorch_model.pt` | `vae/hunyuan/` | 940M | HunyuanVideo VAE |
+
+---
+
+## WAN 2.2 I2V
+
+> VRAM note: loads ~18–20GB. Cannot run simultaneously with Flux or HunyuanVideo. Requires ComfyUI-WAN-Wrapper.
+> Both `high_noise` and `low_noise` model variants use identical shard filenames.
+
+### Diffusion Model — High Noise
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `diffusion_pytorch_model-00001-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 1/6 |
+| `diffusion_pytorch_model-00002-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 2/6 |
+| `diffusion_pytorch_model-00003-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 3/6 |
+| `diffusion_pytorch_model-00004-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 4/6 |
+| `diffusion_pytorch_model-00005-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 5/6 |
+| `diffusion_pytorch_model-00006-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 7.5G | Shard 6/6 |
+
+### Diffusion Model — Low Noise
+> Same filenames as high_noise — tracked above; not re-listed to avoid sync_index.py basename collision.
+
+Path: `diffusion_models/wan2.2-i2v/low_noise/` — 6 shards identical names, ~55G total
+
+### Text Encoder
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `wan-umt5-xxl-enc-bf16.pth` | `text_encoders/` | 10.6G | UMT5-XXL bf16 — required for WAN 2.2 |
+
+### VAE
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `Wan2.1_VAE.pth` | `vae/wan/` | 484M | WAN 2.1/2.2 VAE |
+
+---
+
+## Workflows
+
+| File | Size | Notes |
+|---|---|---|
+| `controlnet_depth.json` | 8K | Flux depth ControlNet workflow |
+| `controlnet_pose.json` | 16K | Flux pose ControlNet workflow |
+| `flux_continuum_1-7-0.json` | 1M | Flux Continuum v1.7.0 — full-featured Flux pipeline |
+| `flux_continuum_1-7-1_beta.json` | 1M | Flux Continuum v1.7.1 beta |
+| `flux_continuum_light.json` | 824K | Flux Continuum light version |
+| `flux_controlnet_canny.json` | 10K | Flux + Canny ControlNet |
+| `flux_controlnet_depth.json` | 10K | Flux + Depth ControlNet |
+| `flux_inpaint.json` | 10K | Flux inpainting |
+| `flux_outpaint.json` | 11K | Flux outpainting |
+| `flux_redux.json` | 23K | Flux Redux style conditioning |
+| `flux_txt2img.json` | 18K | Flux text-to-image baseline |
+| `flux_txt2img_checkpoint.json` | 7K | Flux txt2img using checkpoint loader |
+| `img2img.json` | 6K | Image-to-image (SDXL/Illustrious) |
+| `inpaint.json` | 6K | Inpainting (SDXL) |
+| `inpaint_outpaint.json` | 8K | Combined inpaint+outpaint |
+| `lora_basic.json` | 6K | Single LoRA workflow |
+| `lora_multiple.json` | 7K | Multi-LoRA workflow |
+| `sdxl_basic.json` | 25K | SDXL/Illustrious baseline |
+| `upscale_esrgan.json` | 6K | ESRGAN 4x upscaling |
 
 ---
 
 ## Empty
 - `models/embeddings/` — empty
 - `models/clip/` — empty
-
----
-
-## Unindexed — needs annotation
-
-> Auto-detected by sync_index.py. Move each row to its proper section and fill in metadata.
-
-### ControlNet (`controlnet/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `flux-controlnet-union-instantx.safetensors` | 6.2G | — | — | TODO |
-| `flux-controlnet-union-pro-shakker.safetensors` | 6.2G | — | — | TODO |
-| `flux-openpose-controlnet.safetensors` | 2.8G | — | — | TODO |
-
-### Diffusion Models (`diffusion_models/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `diffusion_pytorch_model-00001-of-00006.safetensors` | 9.3G | — | — | TODO |
-| `diffusion_pytorch_model-00002-of-00006.safetensors` | 9.3G | — | — | TODO |
-| `diffusion_pytorch_model-00003-of-00006.safetensors` | 9.3G | — | — | TODO |
-| `flux1-kontext-dev.safetensors` | 22.2G | — | — | TODO |
-
-### LoRAs (`loras/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `Cinematic1940s-Flux.safetensors` | 164M | — | — | TODO |
-| `CinematicFilmStock-Flux.safetensors` | 292M | — | — | TODO |
-| `CinematicStyle-v4-Flux.safetensors` | 292M | — | — | TODO |
-| `ClassicNeoFilmNoir-Flux.safetensors` | 292M | — | — | TODO |
-| `FilmNoir-V1-Flux.safetensors` | 146M | — | — | TODO |
-| `FilmNoir-v1-Flux.safetensors` | 164M | — | — | TODO |
-| `QwenNextScene-v2.safetensors` | 281M | — | — | TODO |
-| `RetroCinematic-Flux.safetensors` | 36M | — | — | TODO |
-| `Sketchy-Illustrious.safetensors` | 217M | — | — | TODO |
-| `StoryboardSketch-Flux.safetensors` | 292M | — | — | TODO |
-| `Storyboarding-v2-Flux.safetensors` | 37M | — | — | TODO |
-| `WongKarwai-Cinematic-Flux.safetensors` | 584M | — | — | TODO |
-| `film-storyboard.safetensors` | 164M | — | — | TODO |
-| `flux-ip-adapter-v2-xlabs.safetensors` | 1008M | — | — | TODO |
-
-### Text Encoders (`text_encoders/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `model-00001-of-00004.safetensors` | 4.6G | — | — | TODO |
-| `model-00002-of-00004.safetensors` | 4.7G | — | — | TODO |
-| `model-00003-of-00004.safetensors` | 4.6G | — | — | TODO |
-| `model-00004-of-00004.safetensors` | 1.1G | — | — | TODO |
-| `t5xxl_fp16.safetensors` | 4.6G | — | — | TODO |
-| `wan-umt5-xxl-enc-bf16.pth` | 10.6G | — | — | TODO |
-
-### VAE (`vae/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `Wan2.1_VAE.pth` | 484M | — | — | TODO |
-| `ae.safetensors` | 319M | — | — | TODO |
-| `pytorch_model.pt` | 940M | — | — | TODO |
-
-### workflows (`workflows/`)
-
-| File | Size | Base | Trigger | Notes |
-|---|---|---|---|---|
-| `controlnet_depth.json` | 8K | — | — | TODO |
-| `controlnet_pose.json` | 16K | — | — | TODO |
-| `flux_continuum_1-7-0.json` | 1M | — | — | TODO |
-| `flux_continuum_1-7-1_beta.json` | 1M | — | — | TODO |
-| `flux_continuum_light.json` | 824K | — | — | TODO |
-| `flux_controlnet_canny.json` | 10K | — | — | TODO |
-| `flux_controlnet_depth.json` | 10K | — | — | TODO |
-| `flux_inpaint.json` | 10K | — | — | TODO |
-| `flux_outpaint.json` | 11K | — | — | TODO |
-| `flux_redux.json` | 23K | — | — | TODO |
-| `flux_txt2img.json` | 18K | — | — | TODO |
-| `flux_txt2img_checkpoint.json` | 7K | — | — | TODO |
-| `img2img.json` | 6K | — | — | TODO |
-| `inpaint.json` | 6K | — | — | TODO |
-| `inpaint_outpaint.json` | 8K | — | — | TODO |
-| `lora_basic.json` | 6K | — | — | TODO |
-| `lora_multiple.json` | 7K | — | — | TODO |
-| `sdxl_basic.json` | 25K | — | — | TODO |
-| `upscale_esrgan.json` | 6K | — | — | TODO |
-
