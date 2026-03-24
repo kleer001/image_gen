@@ -285,8 +285,8 @@ def catalog(hf_token, cv_token):
         {"section": "animatediff", "name": "AnimateDiff motion adapter v1.5-3",
          "dest": "animatediff_models/mm_sd_v15_v3.safetensors",
          "size": 1_600_000_000,
-         "url":  hf("guoyww/animatediff-motion-adapter-v1-5-3",
-                    "mm_sd_v15_v3.safetensors"),
+         "url":  hf("conrevo/AnimateDiff-A1111",
+                    "motion_module/mm_sd15_v3.safetensors"),
          "auth": hf_token},
 
         *[{"section": "animatediff",
@@ -309,15 +309,15 @@ def catalog(hf_token, cv_token):
         *[{"section": "loras", "name": name, "dest": f"loras/{fname}",
            "size": 0, "url": cv(vid)}
           for name, fname, vid in [
-              ("Anime CRABDM",        "Anime-CRABDM-Flux.safetensors",          2534815),
-              ("Neurocore ShadowCircuit", "Neurocore-ShadowCircuit-Flux.safetensors", 2459399),
+              ("Anime CRABDM",        "Anime-CRABDM-Flux.safetensors",          1376386),   # Flux-specific ver
+              ("Neurocore ShadowCircuit", "Neurocore-ShadowCircuit-Flux.safetensors", 1050932),  # Flux-only ver
               ("RetroAnime",          "RetroAnime-Flux.safetensors",            806265),
-              ("FluxMyth SharpL1nes", "FluxMythSharpL1nes.safetensors",         2620790),
-              ("Illustration Concept","IllustrationConcept-Flux.safetensors",   2793131),
+              ("FluxMyth SharpL1nes", "FluxMythSharpL1nes.safetensors",         675777),    # civitai/599757; verify identity
+              ("Illustration Concept","IllustrationConcept-Flux.safetensors",   1619213),   # Flux ver 6
               ("Painterly Fantasy",   "PainterlyFantasy-Flux.safetensors",      1189379),
-              ("Character Design V2", "CharacterDesign-FluxV2.safetensors",     2500612),
-              ("Disney Studios",      "Disney-Studios-Flux.safetensors",        2494747),
-              ("Comic Book Page",     "ComicBookPage-Flux.safetensors",         2544182),
+              ("Character Design V2", "CharacterDesign-FluxV2.safetensors",     765872),    # FluxV2 ver
+              ("Disney Studios",      "Disney-Studios-Flux.safetensors",        738866),
+              ("Comic Book Page",     "ComicBookPage-Flux.safetensors",         841525),    # Comic Strip F1D v1.5
               ("Swiss Design",        "SwissDesign-Flux.safetensors",           913310),
               ("Milton Glaser",       "MiltonGlaser-Flux.safetensors",          1003311),
               ("Graffiti Logo",       "GraffitiLogo-Flux.safetensors",          935989),
