@@ -1,0 +1,707 @@
+- section: checkpoints
+  name: Illustrious XL v0.1
+  dest: checkpoints/Illustrious-XL-v0.1.safetensors
+  url: https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0/resolve/main/Illustrious-XL-v0.1.safetensors
+  size: 6979321856
+  auth: hf
+  base: sdxl
+  purpose: Primary SDXL checkpoint for anime/illustration workflows
+  source: https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0
+  date: '2026-03-24'
+  notes: Use sdxl.vae.safetensors; incompatible with Flux LoRAs
+- section: checkpoints
+  name: SVD-XT
+  dest: checkpoints/svd_xt.safetensors
+  url: https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt/resolve/main/svd_xt.safetensors
+  size: 9559625980
+  auth: hf
+  base: svd
+  purpose: Image-to-video generation, 25 frames
+  source: https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt
+  date: '2026-03-24'
+- section: flux
+  name: Flux.1-dev
+  dest: diffusion_models/flux1-dev.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors
+  size: 23804823040
+  auth: hf
+  base: flux
+  purpose: Primary Flux transformer; backbone for all Flux workflows and LoRAs
+  source: https://huggingface.co/black-forest-labs/FLUX.1-dev
+  date: '2026-03-24'
+  notes: Gated model — accept license at HF before downloading; load at fp8 in ComfyUI
+- section: flux
+  name: Flux.1-Canny-dev
+  dest: diffusion_models/flux1-canny-dev.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-Canny-dev/resolve/main/flux1-canny-dev.safetensors
+  size: 11903238144
+  auth: hf
+  base: flux
+  purpose: Native Flux Canny ControlNet (diffusion model variant, not adapter)
+  source: https://huggingface.co/black-forest-labs/FLUX.1-Canny-dev
+  date: '2026-03-24'
+- section: flux
+  name: Flux.1-Depth-dev
+  dest: diffusion_models/flux1-depth-dev.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev/resolve/main/flux1-depth-dev.safetensors
+  size: 11903238144
+  auth: hf
+  base: flux
+  purpose: Native Flux Depth ControlNet (diffusion model variant, not adapter)
+  source: https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev
+  date: '2026-03-24'
+- section: flux
+  name: Flux.1-Kontext-dev
+  dest: diffusion_models/flux1-kontext-dev.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev/resolve/main/flux1-kontext-dev.safetensors
+  size: 23802947360
+  auth: hf
+  base: flux
+  purpose: In-context image editing; reuses Flux VAE + text encoders
+  source: https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev
+  date: '2026-03-24'
+- section: flux
+  name: Flux Redux
+  dest: style_models/flux1-redux-dev.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-Redux-dev/resolve/main/flux1-redux-dev.safetensors
+  size: 130000000
+  auth: hf
+  base: flux
+  purpose: Style/image conditioning via Redux workflow
+  source: https://huggingface.co/black-forest-labs/FLUX.1-Redux-dev
+  date: '2026-03-24'
+  notes: Requires sigclip_vision_patch14_384.safetensors
+- section: flux
+  name: SigCLIP Vision (Redux)
+  dest: clip_vision/sigclip_vision_patch14_384.safetensors
+  url: https://huggingface.co/Comfy-Org/sigclip_vision_384/resolve/main/sigclip_vision_patch14_384.safetensors
+  size: 856000000
+  auth: hf
+  base: flux
+  purpose: Vision encoder required for Flux Redux style conditioning
+  source: https://huggingface.co/Comfy-Org/sigclip_vision_384
+  date: '2026-03-24'
+- section: vae
+  name: SDXL VAE fp16-fix
+  dest: vae/sdxl.vae.safetensors
+  url: https://huggingface.co/madebyollin/sdxl-vae-fp16-fix/resolve/main/sdxl.vae.safetensors
+  size: 334641162
+  auth: hf
+  base: sdxl
+  purpose: fp16-fixed VAE for Illustrious XL and all SDXL workflows
+  source: https://huggingface.co/madebyollin/sdxl-vae-fp16-fix
+  date: '2026-03-24'
+- section: vae
+  name: Flux AE
+  dest: vae/flux-ae.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors
+  size: 334643202
+  auth: hf
+  base: flux
+  purpose: VAE for all Flux models including Flux.1-Kontext-dev
+  source: https://huggingface.co/black-forest-labs/FLUX.1-dev
+  date: '2026-03-24'
+  notes: Gated repo; ae.safetensors symlinks to this file for ComfyUI compatibility
+- section: encoders
+  name: CLIP-L (Flux)
+  dest: text_encoders/clip_l.safetensors
+  url: https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors
+  size: 246144152
+  auth: hf
+  base: flux
+  purpose: CLIP-L text encoder required for all Flux workflows
+  source: https://huggingface.co/comfyanonymous/flux_text_encoders
+  date: '2026-03-24'
+- section: encoders
+  name: T5-XXL FP8 (Flux)
+  dest: text_encoders/t5xxl_fp8_e4m3fn.safetensors
+  url: https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors
+  size: 4891624992
+  auth: hf
+  base: flux
+  purpose: T5-XXL text encoder required for all Flux workflows; fp8 quantized
+  source: https://huggingface.co/comfyanonymous/flux_text_encoders
+  date: '2026-03-24'
+  notes: t5xxl_fp16.safetensors symlinks to this file for nodes requiring that filename
+- section: hunyuan
+  name: HunyuanVideo transformer FP8
+  dest: diffusion_models/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors
+  url: https://huggingface.co/Kijai/HunyuanVideo_comfy/resolve/main/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors
+  size: 13000000000
+  auth: hf
+  base: hunyuan
+  purpose: CFG-distilled FP8 transformer for HunyuanVideo text-to-video
+  source: https://huggingface.co/Kijai/HunyuanVideo_comfy
+  date: '2026-03-24'
+  notes: VRAM ~16-18GB; cannot run simultaneously with Flux; requires ComfyUI-HunyuanVideoWrapper
+- section: hunyuan
+  name: HunyuanVideo VAE
+  dest: vae/hunyuan/pytorch_model.pt
+  url: https://huggingface.co/tencent/HunyuanVideo/resolve/main/hunyuan-video-t2v-720p/vae/pytorch_model.pt
+  size: 941000000
+  auth: hf
+  base: hunyuan
+  purpose: VAE for HunyuanVideo
+  source: https://huggingface.co/tencent/HunyuanVideo
+  date: '2026-03-24'
+- type: shards
+  section: hunyuan
+  name: llava-llama-3-8b
+  dest_dir: text_encoders/llava-llama-3-8b
+  hf_repo: Kijai/llava-llama-3-8b-text-encoder-tokenizer
+  hf_subdir: ''
+  tmpl: model-{i:05d}-of-{n:05d}.safetensors
+  sizes:
+  - 4977222880
+  - 4999802616
+  - 4915916080
+  - 1100000000
+  auth: hf
+  base: hunyuan
+  purpose: LLaVA-LLaMA-3-8B text encoder required for HunyuanVideo
+  source: https://huggingface.co/Kijai/llava-llama-3-8b-text-encoder-tokenizer
+  date: '2026-03-24'
+- type: shards
+  section: wan
+  name: WAN 2.2 I2V high_noise
+  dest_dir: diffusion_models/wan2.2-i2v/high_noise
+  hf_repo: Wan-AI/Wan2.2-I2V-A14B
+  hf_subdir: high_noise_model
+  tmpl: diffusion_pytorch_model-{i:05d}-of-{n:05d}.safetensors
+  sizes:
+  - 9994119944
+  - 9943979184
+  - 9943979184
+  - 9839059744
+  - 9839059744
+  - 7595559224
+  auth: hf
+  base: wan
+  purpose: WAN 2.2 I2V high-noise diffusion model (14B); image-to-video
+  source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
+  date: '2026-03-24'
+  notes: VRAM ~18-20GB; cannot run with Flux or HunyuanVideo; requires ComfyUI-WAN-Wrapper
+- type: shards
+  section: wan
+  name: WAN 2.2 I2V low_noise
+  dest_dir: diffusion_models/wan2.2-i2v/low_noise
+  hf_repo: Wan-AI/Wan2.2-I2V-A14B
+  hf_subdir: low_noise_model
+  tmpl: diffusion_pytorch_model-{i:05d}-of-{n:05d}.safetensors
+  sizes:
+  - 9994119944
+  - 9943979184
+  - 9943979184
+  - 9839059744
+  - 9839059744
+  - 7595559224
+  auth: hf
+  base: wan
+  purpose: WAN 2.2 I2V low-noise variant; same filenames as high_noise — different
+    subdir
+  source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
+  date: '2026-03-24'
+  notes: Identical shard filenames to high_noise; tracked separately by directory
+- section: wan
+  name: WAN 2.2 T5 encoder
+  dest: text_encoders/wan-umt5-xxl-enc-bf16.pth
+  url: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B/resolve/main/models_t5_umt5-xxl-enc-bf16.pth
+  size: 11361920418
+  auth: hf
+  base: wan
+  purpose: UMT5-XXL bf16 text encoder required for WAN 2.2
+  source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
+  date: '2026-03-24'
+- section: wan
+  name: WAN 2.2 VAE
+  dest: vae/wan/Wan2.1_VAE.pth
+  url: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B/resolve/main/Wan2.1_VAE.pth
+  size: 507609880
+  auth: hf
+  base: wan
+  purpose: VAE for WAN 2.1/2.2
+  source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
+  date: '2026-03-24'
+- section: controlnet
+  name: Flux Depth ControlNet v3 (XLabs)
+  dest: controlnet/flux-depth-controlnet-v3.safetensors
+  url: https://huggingface.co/XLabs-AI/flux-controlnet-depth-v3/resolve/main/flux-depth-controlnet-v3.safetensors
+  size: 1400000000
+  auth: hf
+  base: flux
+  purpose: Depth/composition control for Flux; XLabs adapter variant
+  source: https://huggingface.co/XLabs-AI/flux-controlnet-depth-v3
+  date: '2026-03-24'
+  notes: Requires x-flux-comfyui custom node
+- section: controlnet
+  name: Flux Canny ControlNet v3 (XLabs)
+  dest: controlnet/flux-canny-controlnet-v3.safetensors
+  url: https://huggingface.co/XLabs-AI/flux-controlnet-canny-v3/resolve/main/flux-canny-controlnet-v3.safetensors
+  size: 1400000000
+  auth: hf
+  base: flux
+  purpose: Edge/line control for Flux; XLabs adapter variant
+  source: https://huggingface.co/XLabs-AI/flux-controlnet-canny-v3
+  date: '2026-03-24'
+  notes: Requires x-flux-comfyui custom node
+- section: controlnet
+  name: ControlNet Union Pro (Shakker-Labs)
+  dest: controlnet/flux-controlnet-union-pro-shakker.safetensors
+  url: https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors
+  size: 6603953920
+  auth: hf
+  base: flux
+  purpose: Single-model union ControlNet — Canny/Depth/Pose/Tile/MLSD/Normal/Segment
+  source: https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro
+  date: '2026-03-24'
+- section: controlnet
+  name: OpenPose ControlNet (Flux)
+  dest: controlnet/flux-openpose-controlnet.safetensors
+  url: https://huggingface.co/raulc0399/flux_dev_openpose_controlnet/resolve/main/model.safetensors
+  size: 2975238096
+  auth: hf
+  base: flux
+  purpose: Body+hand pose control for Flux
+  source: https://huggingface.co/raulc0399/flux_dev_openpose_controlnet
+  date: '2026-03-24'
+- section: controlnet
+  name: ControlNet Union (InstantX)
+  dest: controlnet/flux-controlnet-union-instantx.safetensors
+  url: https://huggingface.co/InstantX/FLUX.1-dev-Controlnet-Union/resolve/main/diffusion_pytorch_model.safetensors
+  size: 6603953920
+  auth: hf
+  base: flux
+  purpose: Alternate single-model union ControlNet variant from InstantX
+  source: https://huggingface.co/InstantX/FLUX.1-dev-Controlnet-Union
+  date: '2026-03-24'
+- section: controlnet
+  name: OpenPose XL2 (SDXL)
+  dest: controlnet/OpenPoseXL2.safetensors
+  url: https://huggingface.co/thibaud/controlnet-openpose-sdxl-1.0/resolve/main/OpenPoseXL2.safetensors
+  size: 4700000000
+  auth: hf
+  base: sdxl
+  purpose: Pose control for Illustrious XL / SDXL workflows
+  source: https://huggingface.co/thibaud/controlnet-openpose-sdxl-1.0
+  date: '2026-03-24'
+- section: upscalers
+  name: 4x-UltraSharp
+  dest: upscale_models/4x-UltraSharp.pth
+  civitai_version: 125843
+  size: 67040256
+  auth: civitai
+  base: none
+  purpose: Best general-purpose 4x upscaler
+  date: '2026-03-24'
+- section: upscalers
+  name: RealESRGAN x4plus
+  dest: upscale_models/RealESRGAN_x4plus.pth
+  url: https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
+  size: 67040256
+  auth: none
+  base: none
+  purpose: 4x upscaler for realistic textures
+  source: https://github.com/xinntao/Real-ESRGAN
+  date: '2026-03-24'
+- section: upscalers
+  name: 4x-AnimeSharp
+  dest: upscale_models/4x-AnimeSharp.pth
+  url: https://huggingface.co/f5aiteam/Upscaler_Models/resolve/main/4x-AnimeSharp.pth
+  size: 67040256
+  auth: hf
+  base: none
+  purpose: 4x upscaler optimized for anime/illustration
+  source: https://huggingface.co/f5aiteam/Upscaler_Models
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff motion module v1.5-3
+  dest: animatediff_models/mm_sd_v15_v3.safetensors
+  url: https://huggingface.co/conrevo/AnimateDiff-A1111/resolve/main/motion_module/mm_sd15_v3.safetensors
+  size: 1600000000
+  auth: hf
+  base: sd15
+  purpose: AnimateDiff motion adapter; required for all AnimateDiff workflows
+  source: https://huggingface.co/conrevo/AnimateDiff-A1111
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — ZoomIn
+  dest: animatediff_motion_lora/1600_cseti_1077723_camera-zoomin-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_1077723_camera-zoomin-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera zoom-in motion LoRA for AnimateDiff v2 (16-frame)
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — ZoomOut
+  dest: animatediff_motion_lora/1600_cseti_9192119_camera-zoomout-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_9192119_camera-zoomout-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera zoom-out motion LoRA for AnimateDiff v2
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — PanLeft
+  dest: animatediff_motion_lora/1600_cseti_9213319_camera-lateral_left-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_9213319_camera-lateral_left-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera pan-left motion LoRA for AnimateDiff v2
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — PanRight
+  dest: animatediff_motion_lora/1600_cseti_6664682_camera-lateral_right-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_6664682_camera-lateral_right-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera pan-right motion LoRA for AnimateDiff v2
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — TiltUp
+  dest: animatediff_motion_lora/1600_cseti_1720230_camera-crane_up-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_1720230_camera-crane_up-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera tilt-up motion LoRA for AnimateDiff v2
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — TiltDown
+  dest: animatediff_motion_lora/1600_cseti_9406077_camera-crane_down-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/1600_cseti_9406077_camera-crane_down-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera tilt-down motion LoRA for AnimateDiff v2
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: animatediff
+  name: AnimateDiff camera LoRA — ZoomIn 32f
+  dest: animatediff_motion_lora/2800_cseti_1093371_camera-zoomin-32f-10vid_mv2.safetensors
+  url: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1/resolve/main/loras/2800_cseti_1093371_camera-zoomin-32f-10vid_mv2.safetensors
+  size: 118000000
+  auth: hf
+  base: sd15
+  purpose: Camera zoom-in motion LoRA for AnimateDiff v2 (32-frame experimental)
+  source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
+  date: '2026-03-24'
+- section: loras
+  name: Film Storyboard In-Context
+  dest: loras/film-storyboard.safetensors
+  url: https://huggingface.co/ali-vilab/In-Context-LoRA/resolve/main/film-storyboard.safetensors
+  size: 180000000
+  auth: hf
+  base: flux
+  purpose: Film storyboard style via In-Context LoRA conditioning
+  source: https://huggingface.co/ali-vilab/In-Context-LoRA
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: QWEN Next Scene v2
+  dest: loras/QwenNextScene-v2.safetensors
+  url: https://huggingface.co/lovis93/next-scene-qwen-image-lora-2509/resolve/main/next-scene_lora-v2-3000.safetensors
+  size: 309000000
+  auth: hf
+  base: flux
+  purpose: Image+text conditioning for next-scene generation
+  source: https://huggingface.co/lovis93/next-scene-qwen-image-lora-2509
+  date: '2026-03-24'
+  trigger: image+text conditioning
+  weight: —
+- section: loras
+  name: XLabs IP-Adapter v2
+  dest: loras/flux-ip-adapter-v2-xlabs.safetensors
+  url: https://huggingface.co/XLabs-AI/flux-ip-adapter-v2/resolve/main/ip_adapter.safetensors
+  size: 1057356424
+  auth: hf
+  base: flux
+  purpose: Image prompt conditioning for Flux
+  source: https://huggingface.co/XLabs-AI/flux-ip-adapter-v2
+  date: '2026-03-24'
+  notes: Requires x-flux-comfyui custom node
+- section: loras
+  name: Anime CRABDM
+  dest: loras/Anime-CRABDM-Flux.safetensors
+  civitai_version: 2534815
+  civitai_model: 832858
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Anime style LoRA for Flux.1-dev
+  source: https://civitai.com/models/832858
+  date: '2026-03-24'
+  trigger: Anime CRABDM style
+  weight: '0.6'
+- section: loras
+  name: Neurocore ShadowCircuit
+  dest: loras/Neurocore-ShadowCircuit-Flux.safetensors
+  civitai_version: 2459399
+  civitai_model: 938811
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Cyberpunk/circuit-board anime aesthetic for Flux.1-dev
+  source: https://civitai.com/models/938811
+  date: '2026-03-24'
+  trigger: in the style of cksc,
+  weight: 0.8-1.0
+- section: loras
+  name: RetroAnime
+  dest: loras/RetroAnime-Flux.safetensors
+  civitai_version: 806265
+  civitai_model: 721039
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Retro/vintage anime style for Flux.1-dev
+  source: https://civitai.com/models/721039
+  date: '2026-03-24'
+  weight: 0.8-1.2
+- section: loras
+  name: FluxMyth SharpL1nes
+  dest: loras/FluxMythSharpL1nes.safetensors
+  civitai_version: 2620790
+  civitai_model: 599757
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Sharp line art and illustration style for Flux.1-dev
+  source: https://civitai.com/models/599757
+  date: '2026-03-24'
+  trigger: SharpL1nes
+  weight: 0.8-1.0
+- section: loras
+  name: Illustration Concept
+  dest: loras/IllustrationConcept-Flux.safetensors
+  civitai_version: 2793131
+  civitai_model: 858800
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Concept illustration style for Flux.1-dev
+  source: https://civitai.com/models/858800
+  date: '2026-03-24'
+  weight: 0.4-0.8
+- section: loras
+  name: Painterly Fantasy
+  dest: loras/PainterlyFantasy-Flux.safetensors
+  civitai_version: 1189379
+  civitai_model: 1059859
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Painterly fantasy illustration style for Flux.1-dev
+  source: https://civitai.com/models/1059859
+  date: '2026-03-24'
+  trigger: in the style of ckpf,
+  weight: 0.8-1.0
+- section: loras
+  name: Character Design V2
+  dest: loras/CharacterDesign-FluxV2.safetensors
+  civitai_version: 2500612
+  civitai_model: 100435
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Character design sheet style for Flux.1-dev
+  source: https://civitai.com/models/100435
+  date: '2026-03-24'
+  trigger: CharacterDesignFLUX
+  weight: '0.8'
+- section: loras
+  name: Disney Studios
+  dest: loras/Disney-Studios-Flux.safetensors
+  civitai_version: 2494747
+  civitai_model: 404277
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Disney-style cartoon aesthetic for Flux.1-dev
+  source: https://civitai.com/models/404277
+  date: '2026-03-24'
+  trigger: DisneyStudio, cartoon
+  weight: 0.6-0.8
+- section: loras
+  name: Comic Book Page
+  dest: loras/ComicBookPage-Flux.safetensors
+  civitai_version: 2544182
+  civitai_model: 462611
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Comic strip page layout style for Flux.1-dev
+  source: https://civitai.com/models/462611
+  date: '2026-03-24'
+  trigger: comic strip style
+  weight: 0.8-1.0
+- section: loras
+  name: Swiss Design
+  dest: loras/SwissDesign-Flux.safetensors
+  civitai_version: 913310
+  civitai_model: 816745
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Swiss International Typographic Style for Flux.1-dev
+  source: https://civitai.com/models/816745
+  date: '2026-03-24'
+  trigger: sw1ssdes1gn
+  weight: '0.8'
+- section: loras
+  name: Milton Glaser
+  dest: loras/MiltonGlaser-Flux.safetensors
+  civitai_version: 1003311
+  civitai_model: 529473
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Milton Glaser graphic design style for Flux.1-dev
+  source: https://civitai.com/models/529473
+  date: '2026-03-24'
+  trigger: in the style of milton-glaser
+  weight: '0.8'
+- section: loras
+  name: Graffiti Logo
+  dest: loras/GraffitiLogo-Flux.safetensors
+  civitai_version: 935989
+  civitai_model: 836596
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Graffiti-style logo generation for Flux.1-dev
+  source: https://civitai.com/models/836596
+  date: '2026-03-24'
+  trigger: graffiti logo, black background
+  weight: 1.0-1.5
+- section: loras
+  name: Logo Maker 1024
+  dest: loras/LogoMaker1024-Flux.safetensors
+  civitai_version: 846937
+  civitai_model: 757432
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Company logo generation for Flux.1-dev
+  source: https://civitai.com/models/757432
+  date: '2026-03-24'
+  trigger: Company logo by LogoMaker1024,
+  weight: 0.4-1.0
+- section: loras
+  name: Storyboard Sketch
+  dest: loras/StoryboardSketch-Flux.safetensors
+  civitai_version: 869189
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Storyboard sketch style for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Storyboarding v2.0
+  dest: loras/Storyboarding-v2-Flux.safetensors
+  civitai_version: 1849823
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Storyboard panel layout style for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Sketchy (Illustrious)
+  dest: loras/Sketchy-Illustrious.safetensors
+  civitai_version: 1452793
+  size: 0
+  auth: civitai
+  base: sdxl
+  purpose: Sketchy line-art style for Illustrious XL (SDXL — not Flux)
+  date: '2026-03-24'
+  weight: 0.8-1.0
+  notes: SDXL base — incompatible with Flux workflows
+- section: loras
+  name: Film Noir v1.0
+  dest: loras/FilmNoir-v1-Flux.safetensors
+  civitai_version: 863747
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Classic film noir aesthetic for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Film Noir V1
+  dest: loras/FilmNoir-V1-Flux.safetensors
+  civitai_version: 1816859
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Film noir aesthetic variant for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Classic + Neo Film Noir
+  dest: loras/ClassicNeoFilmNoir-Flux.safetensors
+  civitai_version: 1307068
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Combined classic and neo-noir aesthetic for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Cinematic 1940s
+  dest: loras/Cinematic1940s-Flux.safetensors
+  civitai_version: 1527024
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: 1940s cinematic look and feel for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Cinematic Style v4
+  dest: loras/CinematicStyle-v4-Flux.safetensors
+  civitai_version: 1850943
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Cinematic photography style for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Wong Kar-wai
+  dest: loras/WongKarwai-Cinematic-Flux.safetensors
+  civitai_version: 747253
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Wong Kar-wai cinematic visual style for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Cinematic Film Stock
+  dest: loras/CinematicFilmStock-Flux.safetensors
+  civitai_version: 1408148
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Analog film stock grain and color grading for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0
+- section: loras
+  name: Retro Cinematic
+  dest: loras/RetroCinematic-Flux.safetensors
+  civitai_version: 1246680
+  size: 0
+  auth: civitai
+  base: flux
+  purpose: Retro cinematic color palette for Flux.1-dev
+  date: '2026-03-24'
+  weight: 0.8-1.0

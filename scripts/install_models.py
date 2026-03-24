@@ -10,21 +10,28 @@ Usage:
     python3 scripts/install_models.py --check      # show missing + disk needed, exit
     python3 scripts/install_models.py --only loras # only download a section
     python3 scripts/install_models.py --skip wan   # skip a section (e.g. 120GB WAN)
+    python3 scripts/install_models.py --update-cv  # refresh CivitAI versionIds in models.yaml
 
 Requires:
+    PyYAML                    pip install pyyaml
     $CIVITAI_API_KEY  or  ~/.civitai_token
     ~/.cache/huggingface/token  (or $HF_TOKEN)
+
+Note: --update-cv rewrites models.yaml without preserving comments.
 """
 
-import os, sys, time, subprocess, argparse, shutil
+import os, sys, time, subprocess, argparse, shutil, json, urllib.request
+from datetime import date
 from pathlib import Path
 
 REPO   = Path(__file__).parent.parent
 MODELS = REPO / "models"
 LOG    = REPO / "install_models.log"
+YAML   = REPO / "models.yaml"
 
 HF_BASE = "https://huggingface.co"
 CV_BASE = "https://civitai.com/api/download/models"
+CV_API  = "https://civitai.com/api/v1/models"
 
 # ─── FORMAT HELPERS ──────────────────────────────────────────────────────────
 
@@ -46,228 +53,123 @@ def fmt_rate(bps):
 
 # ─── CATALOG ─────────────────────────────────────────────────────────────────
 
-def catalog(hf_token, cv_token):
-    """Return the full ordered list of model entries to install."""
+def _load_yaml():
+    try:
+        import yaml
+    except ImportError:
+        print("PyYAML required: pip install pyyaml", file=sys.stderr)
+        sys.exit(1)
+    if not YAML.exists():
+        print(f"models.yaml not found at {YAML}", file=sys.stderr)
+        sys.exit(1)
+    return yaml.safe_load(YAML.read_text())
 
-    def hf(section, name, dest, repo, file, size=0):
-        return {"section": section, "name": name, "dest": dest, "size": size,
-                "url": f"{HF_BASE}/{repo}/resolve/main/{file}", "auth": hf_token}
 
-    def cv(section, name, dest, vid, size=0):
-        return {"section": section, "name": name, "dest": dest, "size": size,
-                "url": f"{CV_BASE}/{vid}?token={cv_token}"}
+def _expand_shards(raw, hf_token):
+    """Expand a type:shards entry into N individual download entries."""
+    sizes = raw["sizes"]
+    n = len(sizes)
+    hf_subdir = raw.get("hf_subdir", "")
+    entries = []
+    for i, sz in enumerate(sizes, 1):
+        fname = raw["tmpl"].format(i=i, n=n)
+        repo_path = f"{hf_subdir}/{fname}" if hf_subdir else fname
+        entries.append({
+            "section": raw["section"],
+            "name":    f"{raw['name']} {i}/{n}",
+            "dest":    f"{raw['dest_dir']}/{fname}",
+            "url":     f"{HF_BASE}/{raw['hf_repo']}/resolve/main/{repo_path}",
+            "size":    sz,
+            "auth":    hf_token if raw.get("auth") == "hf" else "",
+        })
+    return entries
 
-    def hf_shards(section, name_pfx, dest_dir, repo, repo_dir, tmpl, sizes):
-        """Generate N sharded HuggingFace entries. tmpl uses {i} and {n} keys."""
-        n = len(sizes)
-        entries = []
-        for i, sz in enumerate(sizes, 1):
-            fname = tmpl.format(i=i, n=n)
-            repo_path = f"{repo_dir}/{fname}" if repo_dir else fname
-            entries.append(hf(section, f"{name_pfx} {i}/{n}",
-                              f"{dest_dir}/{fname}", repo, repo_path, sz))
-        return entries
 
-    LLAVA_SIZES = [4_977_222_880, 4_999_802_616, 4_915_916_080, 1_100_000_000]
-    WAN_SIZES   = [9_994_119_944, 9_943_979_184, 9_943_979_184,
-                   9_839_059_744, 9_839_059_744, 7_595_559_224]
-    SHARD_TMPL  = "diffusion_pytorch_model-{i:05d}-of-{n:05d}.safetensors"
+def _resolve_entry(raw, hf_token, cv_token):
+    """Convert a single YAML entry to a download dict."""
+    auth = raw.get("auth", "none")
+    if "civitai_version" in raw:
+        token_suffix = f"?token={cv_token}" if cv_token else ""
+        url = f"{CV_BASE}/{raw['civitai_version']}{token_suffix}"
+    else:
+        url = raw["url"]
+    return {
+        "section": raw["section"],
+        "name":    raw["name"],
+        "dest":    raw["dest"],
+        "url":     url,
+        "size":    raw.get("size", 0),
+        "auth":    hf_token if auth == "hf" else "",
+    }
 
-    return [
 
-        # ── Checkpoints ──────────────────────────────────────────────────────
-        hf("checkpoints", "Illustrious XL v0.1",
-           "checkpoints/Illustrious-XL-v0.1.safetensors",
-           "OnomaAIResearch/Illustrious-xl-early-release-v0",
-           "Illustrious-XL-v0.1.safetensors", 6_979_321_856),
+def load_catalog(hf_token, cv_token):
+    """Load models.yaml and return the full ordered list of download entries."""
+    raw_entries = _load_yaml()
+    items = []
+    for raw in raw_entries:
+        if raw.get("type") == "shards":
+            items.extend(_expand_shards(raw, hf_token))
+        else:
+            items.append(_resolve_entry(raw, hf_token, cv_token))
+    return items
 
-        hf("checkpoints", "SVD-XT",
-           "checkpoints/svd_xt.safetensors",
-           "stabilityai/stable-video-diffusion-img2vid-xt",
-           "svd_xt.safetensors", 9_559_625_980),
+# ─── CIVITAI UPDATE ───────────────────────────────────────────────────────────
 
-        # ── Flux ─────────────────────────────────────────────────────────────
-        hf("flux", "Flux.1-dev",
-           "diffusion_models/flux1-dev.safetensors",
-           "black-forest-labs/FLUX.1-dev", "flux1-dev.safetensors", 23_804_823_040),
+def update_civitai(cv_token):
+    """
+    Hit the CivitAI API for each entry with civitai_model and patch civitai_version
+    in models.yaml to the latest available version.
 
-        hf("flux", "Flux.1-Canny-dev",
-           "diffusion_models/flux1-canny-dev.safetensors",
-           "black-forest-labs/FLUX.1-Canny-dev", "flux1-canny-dev.safetensors", 11_903_238_144),
+    Rewrites models.yaml without preserving YAML comments.
+    """
+    import yaml
 
-        hf("flux", "Flux.1-Depth-dev",
-           "diffusion_models/flux1-depth-dev.safetensors",
-           "black-forest-labs/FLUX.1-Depth-dev", "flux1-depth-dev.safetensors", 11_903_238_144),
+    entries = _load_yaml()
+    today = date.today().isoformat()
+    updated = 0
 
-        hf("flux", "Flux.1-Kontext-dev",
-           "diffusion_models/flux1-kontext-dev.safetensors",
-           "black-forest-labs/FLUX.1-Kontext-dev", "flux1-kontext-dev.safetensors", 23_802_947_360),
+    print(f"\n  Checking CivitAI versions...\n")
+    for entry in entries:
+        model_id = entry.get("civitai_model")
+        if not model_id:
+            continue
 
-        hf("flux", "Flux Redux",
-           "style_models/flux1-redux-dev.safetensors",
-           "black-forest-labs/FLUX.1-Redux-dev", "flux1-redux-dev.safetensors", 130_000_000),
+        url = f"{CV_API}/{model_id}"
+        req = urllib.request.Request(
+            url, headers={"Authorization": f"Bearer {cv_token}"}
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read())
+        except Exception as e:
+            print(f"  ✗  {entry['name']}: {e}")
+            continue
 
-        hf("flux", "SigCLIP Vision (Redux)",
-           "clip_vision/sigclip_vision_patch14_384.safetensors",
-           "Comfy-Org/sigclip_vision_384", "sigclip_vision_patch14_384.safetensors", 856_000_000),
+        versions = data.get("modelVersions", [])
+        if not versions:
+            print(f"  ✗  {entry['name']}: no versions in API response")
+            continue
 
-        # ── VAE ──────────────────────────────────────────────────────────────
-        hf("vae", "SDXL VAE fp16-fix",
-           "vae/sdxl.vae.safetensors",
-           "madebyollin/sdxl-vae-fp16-fix", "sdxl.vae.safetensors", 334_641_162),
+        latest_vid = versions[0]["id"]
+        old_vid = entry.get("civitai_version")
 
-        hf("vae", "Flux AE",
-           "vae/flux-ae.safetensors",
-           "black-forest-labs/FLUX.1-dev", "ae.safetensors", 334_643_202),
+        if old_vid != latest_vid:
+            entry["civitai_version"] = latest_vid
+            entry["date"] = today
+            updated += 1
+            print(f"  ↑  {entry['name']}: {old_vid} → {latest_vid}")
+        else:
+            print(f"  ✓  {entry['name']}: up to date (vid={latest_vid})")
 
-        # ── Text Encoders ─────────────────────────────────────────────────────
-        hf("encoders", "CLIP-L (Flux)",
-           "text_encoders/clip_l.safetensors",
-           "comfyanonymous/flux_text_encoders", "clip_l.safetensors", 246_144_152),
-
-        hf("encoders", "T5-XXL FP8 (Flux)",
-           "text_encoders/t5xxl_fp8_e4m3fn.safetensors",
-           "comfyanonymous/flux_text_encoders", "t5xxl_fp8_e4m3fn.safetensors", 4_891_624_992),
-
-        # ── HunyuanVideo ─────────────────────────────────────────────────────
-        hf("hunyuan", "HunyuanVideo transformer FP8",
-           "diffusion_models/hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors",
-           "Kijai/HunyuanVideo_comfy",
-           "hunyuan_video_720_cfgdistill_fp8_e4m3fn.safetensors", 13_000_000_000),
-
-        hf("hunyuan", "HunyuanVideo VAE",
-           "vae/hunyuan/pytorch_model.pt",
-           "tencent/HunyuanVideo", "hunyuan-video-t2v-720p/vae/pytorch_model.pt", 941_000_000),
-
-        *hf_shards("hunyuan", "llava-llama-3-8b",
-                   "text_encoders/llava-llama-3-8b",
-                   "Kijai/llava-llama-3-8b-text-encoder-tokenizer", "",
-                   "model-{i:05d}-of-{n:05d}.safetensors", LLAVA_SIZES),
-
-        # ── WAN 2.2 I2V ──────────────────────────────────────────────────────
-        *[shard
-          for variant in ("high_noise", "low_noise")
-          for shard in hf_shards(
-              "wan", f"WAN 2.2 {variant}",
-              f"diffusion_models/wan2.2-i2v/{variant}",
-              "Wan-AI/Wan2.2-I2V-A14B", f"{variant}_model",
-              SHARD_TMPL, WAN_SIZES)],
-
-        hf("wan", "WAN 2.2 T5 encoder",
-           "text_encoders/wan-umt5-xxl-enc-bf16.pth",
-           "Wan-AI/Wan2.2-I2V-A14B", "models_t5_umt5-xxl-enc-bf16.pth", 11_361_920_418),
-
-        hf("wan", "WAN 2.2 VAE",
-           "vae/wan/Wan2.1_VAE.pth",
-           "Wan-AI/Wan2.2-I2V-A14B", "Wan2.1_VAE.pth", 507_609_880),
-
-        # ── ControlNet ────────────────────────────────────────────────────────
-        hf("controlnet", "Flux Depth ControlNet v3 (XLabs)",
-           "controlnet/flux-depth-controlnet-v3.safetensors",
-           "XLabs-AI/flux-controlnet-depth-v3",
-           "flux-depth-controlnet-v3.safetensors", 1_400_000_000),
-
-        hf("controlnet", "Flux Canny ControlNet v3 (XLabs)",
-           "controlnet/flux-canny-controlnet-v3.safetensors",
-           "XLabs-AI/flux-controlnet-canny-v3",
-           "flux-canny-controlnet-v3.safetensors", 1_400_000_000),
-
-        hf("controlnet", "OpenPose XL2 (SDXL)",
-           "controlnet/OpenPoseXL2.safetensors",
-           "thibaud/controlnet-openpose-sdxl-1.0",
-           "OpenPoseXL2.safetensors", 4_700_000_000),
-
-        hf("controlnet", "ControlNet Union Pro (Shakker-Labs)",
-           "controlnet/flux-controlnet-union-pro-shakker.safetensors",
-           "Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro",
-           "diffusion_pytorch_model.safetensors", 6_603_953_920),
-
-        hf("controlnet", "OpenPose ControlNet (Flux)",
-           "controlnet/flux-openpose-controlnet.safetensors",
-           "raulc0399/flux_dev_openpose_controlnet",
-           "model.safetensors", 2_975_238_096),
-
-        hf("controlnet", "ControlNet Union (InstantX)",
-           "controlnet/flux-controlnet-union-instantx.safetensors",
-           "InstantX/FLUX.1-dev-Controlnet-Union",
-           "diffusion_pytorch_model.safetensors", 6_603_953_920),
-
-        # ── Upscalers ─────────────────────────────────────────────────────────
-        cv("upscalers", "4x-UltraSharp",
-           "upscale_models/4x-UltraSharp.pth", 125843, 67_040_256),
-
-        {"section": "upscalers", "name": "RealESRGAN x4plus",
-         "dest": "upscale_models/RealESRGAN_x4plus.pth", "size": 67_040_256,
-         "url": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"},
-
-        hf("upscalers", "4x-AnimeSharp",
-           "upscale_models/4x-AnimeSharp.pth",
-           "f5aiteam/Upscaler_Models", "4x-AnimeSharp.pth", 67_040_256),
-
-        # ── AnimateDiff ───────────────────────────────────────────────────────
-        hf("animatediff", "AnimateDiff motion adapter v1.5-3",
-           "animatediff_models/mm_sd_v15_v3.safetensors",
-           "conrevo/AnimateDiff-A1111",
-           "motion_module/mm_sd15_v3.safetensors", 1_600_000_000),
-
-        *[hf("animatediff", f"AnimateDiff camera LoRA: {lname}",
-             f"animatediff_motion_lora/{fname}",
-             "Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1", fname, 118_000_000)
-          for fname, lname in [
-              ("1600_cseti_1077723_camera-zoomin-10vid_mv2.safetensors",  "ZoomIn"),
-              ("1600_cseti_9192119_camera-zoomout-10vid_mv2.safetensors", "ZoomOut"),
-              ("1600_cseti_9213319_camera-lateral_left-10vid_mv2.safetensors",  "PanLeft"),
-              ("1600_cseti_6664682_camera-lateral_right-10vid_mv2.safetensors", "PanRight"),
-              ("1600_cseti_1720230_camera-crane_up-10vid_mv2.safetensors",   "TiltUp"),
-              ("1600_cseti_9406077_camera-crane_down-10vid_mv2.safetensors", "TiltDown"),
-              ("2800_cseti_1093371_camera-zoomin-32f-10vid_mv2.safetensors", "ZoomIn-32f"),
-          ]],
-
-        # ── LoRAs (HuggingFace) ───────────────────────────────────────────────
-        hf("loras", "Film Storyboard In-Context",
-           "loras/film-storyboard.safetensors",
-           "ali-vilab/In-Context-LoRA", "film-storyboard.safetensors", 180_000_000),
-
-        hf("loras", "QWEN Next Scene v2",
-           "loras/QwenNextScene-v2.safetensors",
-           "lovis93/next-scene-qwen-image-lora-2509",
-           "next-scene_lora-v2-3000.safetensors", 309_000_000),
-
-        hf("loras", "XLabs IP-Adapter v2",
-           "loras/flux-ip-adapter-v2-xlabs.safetensors",
-           "XLabs-AI/flux-ip-adapter-v2", "ip_adapter.safetensors", 1_057_356_424),
-
-        # ── LoRAs (CivitAI) ───────────────────────────────────────────────────
-        *[cv("loras", name, f"loras/{fname}", vid)
-          for name, fname, vid in [
-              # Anime / Illustration / Cartoon / Graphic
-              ("Anime CRABDM",        "Anime-CRABDM-Flux.safetensors",          1376386),   # Flux-specific ver
-              ("Neurocore ShadowCircuit", "Neurocore-ShadowCircuit-Flux.safetensors", 1050932),  # Flux-only ver
-              ("RetroAnime",          "RetroAnime-Flux.safetensors",            806265),
-              ("FluxMyth SharpL1nes", "FluxMythSharpL1nes.safetensors",         675777),    # civitai/599757; verify identity
-              ("Illustration Concept","IllustrationConcept-Flux.safetensors",   1619213),   # Flux ver 6
-              ("Painterly Fantasy",   "PainterlyFantasy-Flux.safetensors",      1189379),
-              ("Character Design V2", "CharacterDesign-FluxV2.safetensors",     765872),    # FluxV2 ver
-              ("Disney Studios",      "Disney-Studios-Flux.safetensors",        738866),
-              ("Comic Book Page",     "ComicBookPage-Flux.safetensors",         841525),    # Comic Strip F1D v1.5
-              ("Swiss Design",        "SwissDesign-Flux.safetensors",           913310),
-              ("Milton Glaser",       "MiltonGlaser-Flux.safetensors",          1003311),
-              ("Graffiti Logo",       "GraffitiLogo-Flux.safetensors",          935989),
-              ("Logo Maker 1024",     "LogoMaker1024-Flux.safetensors",         846937),
-              # Storyboard / Noir / Cinematic
-              ("Storyboard Sketch",       "StoryboardSketch-Flux.safetensors",     869189),
-              ("Storyboarding v2.0",      "Storyboarding-v2-Flux.safetensors",    1849823),
-              ("Sketchy (Illustrious)",   "Sketchy-Illustrious.safetensors",      1452793),
-              ("Film Noir v1.0",          "FilmNoir-v1-Flux.safetensors",          863747),
-              ("Film Noir V1",            "FilmNoir-V1-Flux.safetensors",         1816859),
-              ("Classic + Neo Film Noir", "ClassicNeoFilmNoir-Flux.safetensors",  1307068),
-              ("Cinematic 1940s",         "Cinematic1940s-Flux.safetensors",      1527024),
-              ("Cinematic Style v4",      "CinematicStyle-v4-Flux.safetensors",   1850943),
-              ("Wong Kar-wai",            "WongKarwai-Cinematic-Flux.safetensors",  747253),
-              ("Cinematic Film Stock",    "CinematicFilmStock-Flux.safetensors",  1408148),
-              ("Retro Cinematic",         "RetroCinematic-Flux.safetensors",      1246680),
-          ]],
-    ]
+    if updated:
+        YAML.write_text(
+            yaml.dump(entries, allow_unicode=True, sort_keys=False,
+                      default_flow_style=False)
+        )
+        print(f"\n  Updated {updated} entr{'y' if updated == 1 else 'ies'} in models.yaml\n")
+    else:
+        print(f"\n  All CivitAI entries are up to date.\n")
 
 # ─── DOWNLOAD ENGINE ──────────────────────────────────────────────────────────
 
@@ -375,10 +277,19 @@ def main():
                         help="Only download this section (e.g. loras, wan, flux)")
     parser.add_argument("--skip", metavar="SECTION",
                         help="Skip this section")
+    parser.add_argument("--update-cv", action="store_true",
+                        help="Refresh CivitAI versionIds in models.yaml then exit")
     args = parser.parse_args()
 
     hf_token = _get_token("HF_TOKEN", "~/.cache/huggingface/token")
     cv_token = _get_token("CIVITAI_API_KEY", "~/.civitai_token")
+
+    if args.update_cv:
+        if not cv_token:
+            print("  ✗  No CivitAI token. Set CIVITAI_API_KEY or ~/.civitai_token")
+            sys.exit(1)
+        update_civitai(cv_token)
+        return
 
     if not hf_token:
         print("  ⚠  No HuggingFace token. Set HF_TOKEN or ~/.cache/huggingface/token")
@@ -386,7 +297,7 @@ def main():
         print("  ⚠  No CivitAI token. Set CIVITAI_API_KEY or ~/.civitai_token"
               " — CivitAI downloads will fail.")
 
-    items = catalog(hf_token, cv_token)
+    items = load_catalog(hf_token, cv_token)
     all_sections = sorted({i["section"] for i in items})
 
     if args.only:

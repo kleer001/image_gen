@@ -17,6 +17,34 @@ import sys
 from datetime import date
 from pathlib import Path
 
+YAML = Path(__file__).parent.parent / "models.yaml"
+
+
+def load_yaml_catalog():
+    """
+    Load models.yaml and return {filename: entry} for known models.
+    Returns empty dict if PyYAML is unavailable or models.yaml is missing.
+    """
+    try:
+        import yaml
+    except ImportError:
+        return {}
+    if not YAML.exists():
+        return {}
+    try:
+        entries = yaml.safe_load(YAML.read_text()) or []
+    except Exception:
+        return {}
+    catalog = {}
+    for entry in entries:
+        if entry.get("type") == "shards":
+            # shards have no single dest — skip (they're rarely unindexed)
+            continue
+        dest = entry.get("dest", "")
+        if dest:
+            catalog[Path(dest).name] = entry
+    return catalog
+
 REPO = Path(__file__).parent.parent
 INDEX = REPO / "INDEX.md"
 
@@ -114,8 +142,13 @@ def format_size(size_bytes):
         return f"{size_bytes // 1024}K"
 
 
-def build_unindexed_section(new_files):
-    """Build the ## Unindexed section content for new files."""
+def build_unindexed_section(new_files, catalog=None):
+    """Build the ## Unindexed section content for new files.
+
+    If catalog is provided (dict of {filename: yaml_entry}), known files are
+    pre-filled with base, trigger, and source from models.yaml.
+    """
+    catalog = catalog or {}
     lines = [
         "",
         "---",
@@ -143,10 +176,17 @@ def build_unindexed_section(new_files):
         section = MODEL_DIRS.get(subdir, subdir)
         lines.append(f"### {section} (`{subdir}/`)")
         lines.append("")
-        lines.append("| File | Size | Base | Trigger | Notes |")
-        lines.append("|---|---|---|---|---|")
+        lines.append("| File | Size | Base | Trigger | Source | Notes |")
+        lines.append("|---|---|---|---|---|---|")
         for fname, size, rel in sorted(files):
-            lines.append(f"| `{fname}` | {format_size(size)} | — | — | TODO |")
+            entry = catalog.get(fname, {})
+            base    = entry.get("base", "—")
+            trigger = entry.get("trigger") or "—"
+            source  = f"[source]({entry['source']})" if entry.get("source") else "—"
+            notes   = entry.get("notes") or "TODO"
+            lines.append(
+                f"| `{fname}` | {format_size(size)} | {base} | {trigger} | {source} | {notes} |"
+            )
         lines.append("")
 
     return "\n".join(lines)
@@ -169,6 +209,7 @@ def sync():
 
     content = INDEX.read_text()
     filesystem = scan_filesystem()
+    catalog = load_yaml_catalog()
 
     # 1. Remove rows for deleted files
     content = remove_rows_for_deleted(content, filesystem)
@@ -195,7 +236,7 @@ def sync():
 
     # 5. Append new Unindexed section if needed
     if new_files:
-        content = content.rstrip() + "\n" + build_unindexed_section(new_files) + "\n"
+        content = content.rstrip() + "\n" + build_unindexed_section(new_files, catalog) + "\n"
         print(f"  Added {len(new_files)} new files to Unindexed section", file=sys.stderr)
     else:
         print("  No new files to index", file=sys.stderr)

@@ -202,7 +202,7 @@
       ],
       "properties": {},
       "widgets_values": [
-        "RealESRGAN_x2.pth"
+        "4x-UltraSharp.pth"
       ]
     },
     {
@@ -305,7 +305,7 @@
       ],
       "properties": {},
       "widgets_values": [
-        "v1-5-pruned-emaonly.ckpt"
+        "Illustrious-XL-v0.1.safetensors"
       ]
     },
     {
@@ -334,8 +334,8 @@
       ],
       "properties": {},
       "widgets_values": [
-        512,
-        512,
+        1024,
+        1024,
         1
       ]
     }

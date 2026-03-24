@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-03-23
+Last updated: 2026-03-24
 
 ---
 
@@ -21,6 +21,10 @@ Last updated: 2026-03-23
 | File | Size | Base | Notes |
 |---|---|---|---|
 | `Illustrious-XL-v0.1.safetensors` | 6.5G | SDXL | Anime/illustration; use `sdxl.vae.safetensors` |
+| `sd_xl_base_1.0.safetensors` | 6.5G | SDXL | Vanilla SDXL 1.0 base; broadest LoRA compatibility |
+| `sd_xl_refiner_1.0.safetensors` | 5.7G | SDXL | Two-stage refinement pass; pair with Base after generation |
+| `noobai-xl-vpred10.safetensors` | 6.6G | NoobAI | v-prediction 1.0; distinct base derived from SDXL — use LoRAs tagged for NoobAI specifically |
+| `pony-diffusion-xl-v6.safetensors` | 6.5G | Pony | Distinct base derived from SDXL — use LoRAs tagged for Pony; prompts require `score_9, score_8_up, score_7_up` prefix for best results |
 | `svd_xt.safetensors` | 9.0G | SVD | Stable Video Diffusion XT — image-to-video, 25 frames |
 
 ### Diffusion Models (Flux)
@@ -71,11 +75,16 @@ Last updated: 2026-03-23
 | `RetroAnime-Flux.safetensors` | 1.1G | none | 0.8–1.2 | [civitai/721039](https://civitai.com/models/721039) |
 | `FluxMythSharpL1nes.safetensors` | 74M | `SharpL1nes` | 0.8–1.0 | [civitai/599757](https://civitai.com/models/599757) |
 
-### Illustration
+### Illustration (Flux)
 | File | Size | Trigger | Weight | Source |
 |---|---|---|---|---|
 | `IllustrationConcept-Flux.safetensors` | 74M | none | 0.4–0.8 | [civitai/858800](https://civitai.com/models/858800) |
 | `PainterlyFantasy-Flux.safetensors` | 74M | `in the style of ckpf,` | 0.8–1.0 | [civitai/1059859](https://civitai.com/models/1059859) |
+
+### Illustration (SDXL)
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `watercolor-illustration-sdxl.safetensors` | 244M | none | 0.5–0.8 | [civitai/2795688](https://civitai.com/models/) |
 
 ### Cartoon
 | File | Size | Trigger | Weight | Source |
@@ -103,14 +112,26 @@ Last updated: 2026-03-23
 ### Film Noir & Cinematic (Flux)
 | File | Size | Trigger | Weight | Source |
 |---|---|---|---|---|
-| `FilmNoir-v1-Flux.safetensors` | 164M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `FilmNoir-V1-Flux.safetensors` | 146M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `ClassicNeoFilmNoir-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `Cinematic1940s-Flux.safetensors` | 164M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `CinematicStyle-v4-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `WongKarwai-Cinematic-Flux.safetensors` | 584M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `CinematicFilmStock-Flux.safetensors` | 292M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
-| `RetroCinematic-Flux.safetensors` | 36M | TBD | 0.8–1.0 | [civitai/TBD](https://civitai.com/models/) |
+| `FilmNoir-v1-Flux.safetensors` | 164M | `Film Noir`, `1940's` | 0.7–1.0 | [civitai/311769](https://civitai.com/models/311769) |
+| `FilmNoir-V1-Flux.safetensors` | 146M | none | 0.8–1.0 | [civitai/1605523](https://civitai.com/models/1605523) |
+| `ClassicNeoFilmNoir-Flux.safetensors` | 292M | `Film Noir`, `1940's` | 0.7–1.0 | [civitai/311769](https://civitai.com/models/311769) — ⚠️ same model as FilmNoir-v1 (duplicate download, same versionId) |
+| `Cinematic1940s-Flux.safetensors` | 164M | `cinematic_1940s` | 0.8–1.0 | [civitai/1351798](https://civitai.com/models/1351798) |
+| `CinematicStyle-v4-Flux.safetensors` | 292M | `Cinematic style` | 0.4–0.6 | [civitai/680417](https://civitai.com/models/680417) |
+| `WongKarwai-Cinematic-Flux.safetensors` | 584M | `Wong Kar-wei Cinematic Style`, `Wong Kar-wei`, `Vague background and prospect` | 0.7 | [civitai/667594](https://civitai.com/models/667594) |
+| `CinematicFilmStock-Flux.safetensors` | 292M | `cinematic film style`, `filmstrip`, `Kodak film style` | 0.8–1.0 | [civitai/273500](https://civitai.com/models/273500) |
+| `RetroCinematic-Flux.safetensors` | 36M | `In the style of ff-rcs` | 0.8–1.0 | [civitai/1109567](https://civitai.com/models/1109567) |
+
+### Graphic Design / Logo (SDXL)
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `bauhaus-design-sdxl.safetensors` | 218M | none | 0.5–0.9 | [civitai/1953791](https://civitai.com/models/) |
+| `halftone-xl.safetensors` | 163M | none | 0.5–1.0 | [civitai/359311](https://civitai.com/models/) — halftone/print-texture; closest available SDXL risograph proxy |
+
+### Utility / Speed (SDXL)
+| File | Size | Base | Notes |
+|---|---|---|---|
+| `sdxl-lightning-4step.safetensors` | 376M | SDXL | 4-step fast inference; sampler: `euler`, scheduler: `sgm_uniform`, steps: 4, CFG: 1.0–2.0 |
+| `lcm-lora-sdxl.safetensors` | 376M | SDXL | LCM fast inference; sampler: `lcm`, steps: 4–8, CFG: 1.0 |
 
 ### Special Tools
 | File | Size | Base | Notes |
@@ -143,6 +164,8 @@ Last updated: 2026-03-23
 | File | Size | Notes |
 |---|---|---|
 | `OpenPoseXL2.safetensors` | 4.7G | Pose control for Illustrious XL / SDXL |
+| `controlnet-canny-sdxl.safetensors` | 2.4G | Edge/line control for Illustrious XL / SDXL; use standard `ControlNetLoader` node |
+| `controlnet-depth-sdxl.safetensors` | 2.4G | Depth/composition control for Illustrious XL / SDXL; use standard `ControlNetLoader` node |
 
 ---
 
@@ -233,27 +256,32 @@ Path: `diffusion_models/wan2.2-i2v/low_noise/` — 6 shards identical names, ~55
 
 ## Workflows
 
-| File | Size | Notes |
-|---|---|---|
-| `controlnet_depth.json` | 8K | Flux depth ControlNet workflow |
-| `controlnet_pose.json` | 16K | Flux pose ControlNet workflow |
-| `flux_continuum_1-7-0.json` | 1M | Flux Continuum v1.7.0 — full-featured Flux pipeline |
-| `flux_continuum_1-7-1_beta.json` | 1M | Flux Continuum v1.7.1 beta |
-| `flux_continuum_light.json` | 824K | Flux Continuum light version |
-| `flux_controlnet_canny.json` | 10K | Flux + Canny ControlNet |
-| `flux_controlnet_depth.json` | 10K | Flux + Depth ControlNet |
-| `flux_inpaint.json` | 10K | Flux inpainting |
-| `flux_outpaint.json` | 11K | Flux outpainting |
-| `flux_redux.json` | 23K | Flux Redux style conditioning |
-| `flux_txt2img.json` | 18K | Flux text-to-image baseline |
-| `flux_txt2img_checkpoint.json` | 7K | Flux txt2img using checkpoint loader |
-| `img2img.json` | 6K | Image-to-image (SDXL/Illustrious) |
-| `inpaint.json` | 6K | Inpainting (SDXL) |
-| `inpaint_outpaint.json` | 8K | Combined inpaint+outpaint |
-| `lora_basic.json` | 6K | Single LoRA workflow |
-| `lora_multiple.json` | 7K | Multi-LoRA workflow |
-| `sdxl_basic.json` | 25K | SDXL/Illustrious baseline |
-| `upscale_esrgan.json` | 6K | ESRGAN 4x upscaling |
+| File | Size | Model | Notes |
+|---|---|---|---|
+| `flux_txt2img.json` | 18K | **Flux.1-dev** | Text-to-image baseline; uses UNETLoader + DualCLIPLoader |
+| `flux_txt2img_checkpoint.json` | 7K | **Flux.1-dev** | Same as above but via CheckpointLoader |
+| `flux_inpaint.json` | 10K | **Flux.1-dev** | Inpainting |
+| `flux_outpaint.json` | 11K | **Flux.1-dev** | Outpainting |
+| `flux_controlnet_canny.json` | 10K | **Flux.1-canny-dev** | Uses native `flux1-canny-dev.safetensors` model (not XLabs ControlNet) |
+| `flux_controlnet_depth.json` | 10K | **Flux.1-depth-dev** | Uses native `flux1-depth-dev.safetensors` model directly (LoRA node removed) |
+| `flux_redux.json` | 23K | **Flux.1-dev** | Style/image conditioning; requires `flux1-redux-dev.safetensors` + `sigclip_vision_patch14_384.safetensors` |
+| `flux_continuum_1-7-0.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.0 — full-featured pipeline with samplers, upscale, LoRA |
+| `flux_continuum_1-7-1_beta.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.1 beta |
+| `flux_continuum_light.json` | 824K | **Flux.1-dev** | Flux Continuum light (reduced node count) |
+| `sdxl_basic.json` | 25K | **SDXL Base 1.0 + Refiner** | Two-stage pipeline; both models installed |
+| `controlnet_depth.json` | 8K | **Illustrious XL** | Depth ControlNet; uses `controlnet-depth-sdxl.safetensors` via ControlNetLoader |
+| `controlnet_pose.json` | 16K | **Illustrious XL** | Pose ControlNet; uses `OpenPoseXL2.safetensors` + `sdxl.vae.safetensors` |
+| `img2img.json` | 6K | **Illustrious XL** | Image-to-image; 1024×1024 latent |
+| `inpaint.json` | 6K | **Illustrious XL** | Inpainting; 1024×1024 latent |
+| `inpaint_outpaint.json` | 8K | **Illustrious XL** | Combined inpaint+outpaint; 1024×1024 latent |
+| `lora_basic.json` | 6K | **Illustrious XL** | Single LoRA; 1024×1024 latent — update LoraLoader filename to desired LoRA |
+| `lora_multiple.json` | 7K | **Illustrious XL** | Multi-LoRA; 1024×1024 latent — update LoraLoader filenames to desired LoRAs |
+| `upscale_esrgan.json` | 6K | **Illustrious XL** | Generate + upscale; uses `4x-UltraSharp.pth`; 1024×1024 latent |
+| `hunyuanvideo_t2v.json` | 5K | **HunyuanVideo 1.5** | Text-to-video 720p; requires ComfyUI-HunyuanVideoWrapper + VideoHelperSuite |
+| `wan22_i2v_a14b.json` | 20K | **WAN 2.2 A14B** | Image-to-video; dual high/low noise expert samplers; requires ComfyUI-WanVideoWrapper + KJNodes + VideoHelperSuite; ⚠️ may need merged KJ fp8 shards vs. raw shards |
+| `flux_kontext_edit.json` | 6K | **Flux.1-Kontext-dev** | In-context image editing; native ComfyUI nodes only; requires ComfyUI ≥0.3.38 |
+| `xlabs_controlnet_canny.json` | 8K | **Flux.1-dev** | XLabs Canny ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
+| `xlabs_controlnet_depth.json` | 8K | **Flux.1-dev** | XLabs Depth ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
 
 ---
 

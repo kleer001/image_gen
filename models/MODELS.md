@@ -123,18 +123,11 @@ Both ComfyUI and A1111 read from here via config.
 
 ---
 
-## Film-Aesthetic LoRAs (Flux.1-dev) — catalog / not yet downloaded
+## Film-Aesthetic LoRAs (Flux.1-dev) — installed
 
-Search CivitAI for these; add actual filenames and versionIds once downloaded.
+See `INDEX.md § Film Noir & Cinematic` for filenames, sizes, and trigger words.
 
-| Target Aesthetic | Search Term | Dir |
-|---|---|---|
-| Film noir / chiaroscuro | `"film noir flux lora"` | `loras/` |
-| Cinematic lighting / anamorphic | `"cinematic lighting flux"` | `loras/` |
-| Brutalist architecture | `"brutalist architecture flux"` | `loras/` |
-| Industrial environments | `"industrial gritty flux"` | `loras/` |
-| Atmospheric haze / fog | `"atmospheric fog flux"` | `loras/` |
-| Film grain / analog texture | `"film grain flux"` | `loras/` |
+Installed: FilmNoir-v1, FilmNoir-V1, ClassicNeoFilmNoir, Cinematic1940s, CinematicStyle-v4, WongKarwai-Cinematic, CinematicFilmStock, RetroCinematic (all Flux.1-dev, trigger words TBD)
 
 ---
 

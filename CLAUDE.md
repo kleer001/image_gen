@@ -50,18 +50,30 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 ## Architecture
 
 **Shared model directory** — both ComfyUI and A1111 read from `models/`:
-- `models/checkpoints/` — SDXL-based `.safetensors` (e.g. Illustrious XL)
-- `models/diffusion_models/` — Flux transformer (`flux1-dev.safetensors`)
-- `models/text_encoders/` — Flux text encoders (T5-XXL fp8, CLIP-L)
-- `models/vae/` — VAEs (`sdxl.vae.safetensors`, `flux-ae.safetensors`)
-- `models/loras/` — 13 Flux.1-dev LoRAs (anime, illustration, graphic design, logo)
-- `models/MODELS.md` — download catalog with sources, trigger words, weights
+- `models/checkpoints/` — SDXL-based `.safetensors` (e.g. Illustrious XL, SVD)
+- `models/diffusion_models/` — Flux and video transformers (Flux.1-dev, Flux.1-Kontext-dev, HunyuanVideo, WAN 2.2)
+- `models/text_encoders/` — Flux encoders (T5-XXL fp8, CLIP-L) + HunyuanVideo/WAN encoders
+- `models/vae/` — VAEs per model family
+- `models/loras/` — Flux.1-dev LoRAs (anime, illustration, cartoon, graphic design, film/storyboard, film noir)
+- `models/controlnet/` — Flux and SDXL ControlNet models
+- `models/upscale_models/` — ESRGAN upscalers
+- `models/animatediff_models/` — AnimateDiff motion module
+- `models/animatediff_motion_lora/` — Camera motion LoRAs (zoom, pan, tilt)
+- `models/MODELS.md` — download catalog with sources and install notes (not authoritative for installed state)
 
 **Config wiring:**
 - `configs/comfyui/extra_model_paths.yaml` → copied to `comfyui/extra_model_paths.yaml` by install script; tells ComfyUI to use the shared `models/` dir
 - `configs/a1111/webui-user.sh` → copied to `automatic1111/webui-user.sh`; sets `--ckpt-dir`, `--lora-dir`, etc.
 
 **MCP integration** — `.mcp.json` at repo root points Claude Code at the running MCP server (`http://127.0.0.1:9000/mcp`). The MCP server auto-discovers ComfyUI workflow JSON files from `workflows/` and exposes each as a tool. Drop a workflow JSON into `workflows/` and it becomes available after restarting the MCP server.
+
+**Custom nodes required for some models:**
+- XLabs ControlNets (`flux-depth-controlnet-v3`, `flux-canny-controlnet-v3`, union models) require the [x-flux-comfyui](https://github.com/XLabs-AI/x-flux-comfyui) custom node installed in `comfyui/custom_nodes/`
+- HunyuanVideo requires [ComfyUI-HunyuanVideoWrapper](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
+- WAN 2.2 requires [ComfyUI-WAN-Wrapper](https://github.com/kijai/ComfyUI-WanWrapper)
+- AnimateDiff requires [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
+
+**`models.yaml`** — machine-readable model catalog used by `scripts/install_models.py`. Each entry has `url`, `dest`, `size`, `auth`, `base`, `purpose`, and `date`. Add new models here to make them installable via the script.
 
 ## Using the ComfyUI MCP
 
@@ -82,20 +94,32 @@ Key tools exposed:
 - `PARAM_INT_<name>` — integer (e.g. `PARAM_INT_STEPS`)
 - `PARAM_FLOAT_<name>` — float (e.g. `PARAM_FLOAT_CFG`)
 
-## Installed Models
+## Capabilities
 
-| Model | Location | Notes |
-|---|---|---|
-| Illustrious XL v0.1 | `checkpoints/` | SDXL-based, anime/illustration |
-| flux1-dev | `diffusion_models/` | 23GB bf16; load at fp8 in ComfyUI |
-| flux-ae | `vae/` | Flux VAE |
-| sdxl.vae.safetensors | `vae/` | SDXL VAE (fp16-fix) |
-| t5xxl_fp8_e4m3fn | `text_encoders/` | Required for Flux |
-| clip_l | `text_encoders/` | Required for Flux |
+What this stack can do, organized by task:
+
+**Image generation**
+- Text-to-image — Flux.1-dev (high quality), Illustrious XL (anime/illustration)
+- Image-to-image — SDXL/Illustrious
+- Inpainting / outpainting — Flux and SDXL
+- In-context image editing — Flux.1-Kontext-dev (edit by text instruction)
+- Style conditioning — Flux Redux (image prompt / style transfer)
+- ControlNet — Canny, Depth, Pose for Flux; Pose for SDXL
+- LoRA styling — anime, retro anime, illustration, cartoon, Disney, comic, Swiss design, Milton Glaser, graffiti logo, film storyboard, film noir, cinematic
+
+**Video generation**
+- Image-to-video — WAN 2.2 I2V (high/low noise variants), SVD-XT (25 frames)
+- Text-to-video — HunyuanVideo 1.5 (720p FP8), AnimateDiff (loop-based, SD1.5)
+- Camera motion control — AnimateDiff camera LoRAs: zoom in/out, pan left/right, tilt up/down
+
+**Post-processing**
+- Upscaling — 4x-UltraSharp (general), RealESRGAN x4plus (realistic), 4x-AnimeSharp (anime)
+
+**Installed model inventory:** see [`INDEX.md`](INDEX.md) — auto-synced on every session, authoritative source of truth for what is actually on disk, including file sizes, trigger words, and LoRA weights.
 
 ## LoRA Notes
 
-All 13 LoRAs in `models/loras/` are trained for **Flux.1-dev** only (not SDXL/Illustrious). To use with Illustrious XL, LoRAs must be specifically tagged for Illustrious or SDXL. See `models/MODELS.md` for trigger words and recommended weights.
+Most LoRAs in `models/loras/` target **Flux.1-dev**. Exceptions: `Sketchy-Illustrious.safetensors` targets Illustrious XL; AnimateDiff camera LoRAs in `models/animatediff_motion_lora/` target SD1.5+AnimateDiff. See `INDEX.md` for per-LoRA trigger words and recommended weights.
 
 ## Downloading Models
 

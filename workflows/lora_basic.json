@@ -100,8 +100,8 @@
       ],
       "properties": {},
       "widgets_values": [
-        512,
-        512,
+        1024,
+        1024,
         1
       ]
     },
@@ -268,7 +268,7 @@
       ],
       "properties": {},
       "widgets_values": [
-        "v1-5-pruned-emaonly.ckpt"
+        "Illustrious-XL-v0.1.safetensors"
       ]
     },
     {
@@ -318,9 +318,9 @@
       ],
       "properties": {},
       "widgets_values": [
-        "epiNoiseoffset_v2.safetensors",
-        1,
-        1
+        "Sketchy-Illustrious.safetensors",
+        0.7,
+        0.7
       ]
     }
   ],

@@ -118,8 +118,8 @@
         "Node name for S&R": "EmptyLatentImage"
       },
       "widgets_values": [
-        832,
-        384,
+        1024,
+        1024,
         1
       ]
     },
@@ -189,7 +189,7 @@
     },
     {
       "id": 33,
-      "type": "DiffControlNetLoader",
+      "type": "ControlNetLoader",
       "pos": [
         131,
         -338
@@ -222,7 +222,7 @@
         "Node name for S&R": "DiffControlNetLoader"
       },
       "widgets_values": [
-        "diff_control_sd15_depth_fp16.safetensors"
+        "controlnet-depth-sdxl.safetensors"
       ]
     },
     {
@@ -405,7 +405,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "v1-5-pruned-emaonly.ckpt"
+        "Illustrious-XL-v0.1.safetensors"
       ]
     }
   ],

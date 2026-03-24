@@ -327,45 +327,6 @@
       ]
     },
     {
-      "id": 37,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        624,
-        -172
-      ],
-      "size": [
-        315,
-        82
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 74
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            76
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoraLoaderModelOnly"
-      },
-      "widgets_values": [
-        "flux1-depth-dev-lora.safetensors",
-        1
-      ]
-    },
-    {
       "id": 23,
       "type": "CLIPTextEncode",
       "pos": [
@@ -424,7 +385,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 76
+          "link": 74
         },
         {
           "name": "positive",
@@ -494,7 +455,7 @@
         "Node name for S&R": "UNETLoader"
       },
       "widgets_values": [
-        "flux1-dev.safetensors",
+        "flux1-depth-dev.safetensors",
         "default"
       ]
     }
@@ -607,14 +568,6 @@
     [
       74,
       31,
-      0,
-      37,
-      0,
-      "MODEL"
-    ],
-    [
-      76,
-      37,
       0,
       3,
       0,
