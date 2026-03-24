@@ -227,20 +227,11 @@ Last updated: 2026-03-24
 > VRAM note: loads ~18–20GB. Cannot run simultaneously with Flux or HunyuanVideo. Requires ComfyUI-WAN-Wrapper.
 > Both `high_noise` and `low_noise` model variants use identical shard filenames.
 
-### Diffusion Model — High Noise
+### Diffusion Models (merged)
 | File | Dir | Size | Notes |
 |---|---|---|---|
-| `diffusion_pytorch_model-00001-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 1/6 |
-| `diffusion_pytorch_model-00002-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 2/6 |
-| `diffusion_pytorch_model-00003-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 3/6 |
-| `diffusion_pytorch_model-00004-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 4/6 |
-| `diffusion_pytorch_model-00005-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 9.3G | Shard 5/6 |
-| `diffusion_pytorch_model-00006-of-00006.safetensors` | `diffusion_models/wan2.2-i2v/high_noise/` | 7.5G | Shard 6/6 |
-
-### Diffusion Model — Low Noise
-> Same filenames as high_noise — tracked above; not re-listed to avoid sync_index.py basename collision.
-
-Path: `diffusion_models/wan2.2-i2v/low_noise/` — 6 shards identical names, ~55G total
+| `wan2.2-i2v-14B-high.safetensors` | `diffusion_models/` | 53G | High-noise expert — handles steps 0–3 in dual-sampler pipeline |
+| `wan2.2-i2v-14B-low.safetensors` | `diffusion_models/` | 53G | Low-noise expert — handles steps 3–6 in dual-sampler pipeline |
 
 ### Text Encoder
 | File | Dir | Size | Notes |

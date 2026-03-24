@@ -89,7 +89,7 @@
       ],
       "properties": {"Node name for S&R": "WanVideoModelLoader"},
       "widgets_values": [
-        "wan2.2-i2v/high_noise",
+        "wan2.2-i2v-14B-high.safetensors",
         "fp16_fast",
         "fp8_e4m3fn_scaled",
         "offload_device",
@@ -120,7 +120,7 @@
       ],
       "properties": {"Node name for S&R": "WanVideoModelLoader"},
       "widgets_values": [
-        "wan2.2-i2v/low_noise",
+        "wan2.2-i2v-14B-low.safetensors",
         "fp16_fast",
         "fp8_e4m3fn_scaled",
         "offload_device",
