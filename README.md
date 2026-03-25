@@ -39,11 +39,16 @@ See [`INDEX.md`](INDEX.md) for the full installed model inventory (auto-synced) 
 
 ## Setup
 
+**Prerequisites:** HuggingFace token at `~/.cache/huggingface/token` (needed for Flux.1-dev), CivitAI API key in `$CIVITAI_API_KEY`. Then, on a fresh machine:
+
 ```bash
-chmod +x scripts/install_comfyui.sh scripts/install_a1111.sh
-./scripts/install_comfyui.sh
-./scripts/install_a1111.sh
+git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
+  bash scripts/install_comfyui.sh && \
+  bash scripts/install_comfyui_mcp.sh && \
+  python3 scripts/install_models.py
 ```
+
+This clones and wires up ComfyUI + the MCP server, then pulls the full model library (~200GB, takes a while). Once done, `imggen` starts everything.
 
 ## Running
 
