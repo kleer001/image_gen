@@ -37,6 +37,40 @@ See [`INDEX.md`](INDEX.md) for the full installed model inventory (auto-synced) 
 
 ---
 
+## Why
+
+> *"Drama is life with the dull bits cut out."*
+> — Alfred Hitchcock
+
+Image generation used to mean knowing your tools cold: which model handles which subject, what LoRA weight to dial in, which sampler converges cleanest at which step count. That knowledge was the bottleneck between an idea and a finished image. It shouldn't be.
+
+This repo is built around the idea that the agent carries that knowledge. `CLAUDE.md` gives any Claude Code instance a complete map of the stack. `INDEX.md` is an auto-synced inventory of every installed model — trigger words, weights, sources, capabilities. The MCP server exposes every workflow as a callable tool. The agent reads, reasons, and executes. You supply the vision.
+
+> *"I'm not funny. What I am is brave."*
+> — Lucille Ball
+
+Manual prompt engineering had its moment. The era of describing what you want and letting the machine figure out the rest is not coming — it's here.
+
+---
+
+## How
+
+> *"Too much of a good thing can be wonderful."*
+> — Mae West
+
+1. **Start the stack:** `imggen`
+2. **Open Claude Code** in this repo — `.mcp.json` auto-connects to the MCP server
+3. **Describe what you want** — style, subject, mood, references, constraints
+4. The agent reads `INDEX.md`, picks the right model and workflow, calls the MCP tools, and generates
+5. Give feedback in plain language; it iterates
+
+For anything deeper — downloading a new LoRA, wiring a custom workflow, batch-generating variations with consistent style — it can do that too. The full capability inventory is in [`INDEX.md`](INDEX.md) and the agent operating instructions are in [`CLAUDE.md`](CLAUDE.md).
+
+> *"If you obey all the rules, you miss all the fun."*
+> — Katharine Hepburn
+
+---
+
 ## Setup
 
 **Prerequisites:** HuggingFace token at `~/.cache/huggingface/token` (needed for Flux.1-dev), CivitAI API key in `$CIVITAI_API_KEY`.
