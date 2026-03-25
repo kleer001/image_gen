@@ -273,7 +273,7 @@ Last updated: 2026-03-24
 | `flux_kontext_edit.json` | 6K | **Flux.1-Kontext-dev** | In-context image editing; native ComfyUI nodes only; requires ComfyUI ≥0.3.38 |
 | `xlabs_controlnet_canny.json` | 8K | **Flux.1-dev** | XLabs Canny ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
 | `xlabs_controlnet_depth.json` | 8K | **Flux.1-dev** | XLabs Depth ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
-| `animatediff_txt2vid.json` | 3K | **SD 1.5** | AnimateDiff text-to-video; 16 frames 512x512; requires ComfyUI-AnimateDiff-Evolved; ⚠️ needs SD 1.5 checkpoint (not installed) — use v1-5-pruned-emaonly.safetensors or dreamshaper_8 |
+| `animatediff_txt2vid.json` | 3K | **SD 1.5** | AnimateDiff text-to-video; 16 frames 512x512; uses `v1-5-pruned-emaonly.safetensors`; requires ComfyUI-AnimateDiff-Evolved |
 
 ---
 
