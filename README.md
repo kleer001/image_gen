@@ -39,8 +39,9 @@ See [`INDEX.md`](INDEX.md) for the full installed model inventory (auto-synced) 
 
 ## Setup
 
-**Prerequisites:** HuggingFace token at `~/.cache/huggingface/token` (needed for Flux.1-dev), CivitAI API key in `$CIVITAI_API_KEY`. Then, on a fresh machine:
+**Prerequisites:** HuggingFace token at `~/.cache/huggingface/token` (needed for Flux.1-dev), CivitAI API key in `$CIVITAI_API_KEY`.
 
+**Linux (CUDA)**
 ```bash
 git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
   bash scripts/install_comfyui.sh && \
@@ -48,7 +49,21 @@ git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
   python3 scripts/install_models.py
 ```
 
-This clones and wires up ComfyUI + the MCP server, then pulls the full model library (~200GB, takes a while). Once done, `imggen` starts everything.
+**macOS (Apple Silicon / Intel — MPS)**
+```bash
+git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
+  bash scripts/install_comfyui.sh && \
+  bash scripts/install_comfyui_mcp.sh && \
+  python3 scripts/install_models.py
+```
+
+**Windows (WSL2 + CUDA recommended)**
+```powershell
+wsl --install
+```
+Then open the WSL terminal and run the Linux one-liner above.
+
+All three clone and wire up ComfyUI + the MCP server, then pull the full model library (~200GB, takes a while). Once done, `imggen` starts everything.
 
 ## Running
 

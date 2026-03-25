@@ -15,8 +15,12 @@ cd "$INSTALL_DIR"
 python3 -m venv .venv
 source .venv/bin/activate
 
-# PyTorch with CUDA 12.1 wheels (compatible with CUDA 12.0 driver)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# PyTorch — CUDA 12.1 on Linux/Windows, MPS on macOS
+if [[ "$(uname)" == "Darwin" ]]; then
+    pip install torch torchvision torchaudio
+else
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+fi
 
 pip install -r requirements.txt
 
