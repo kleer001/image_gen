@@ -23,6 +23,28 @@ pip install -r requirements.txt
 # Link shared model config
 cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
 
+# Custom nodes
+NODES_DIR="${INSTALL_DIR}/custom_nodes"
+install_node() {
+    local repo="$1"
+    local name=$(basename "$repo")
+    if [ -d "${NODES_DIR}/${name}" ]; then
+        echo "${name} already installed, skipping"
+    else
+        git clone "$repo" "${NODES_DIR}/${name}"
+        if [ -f "${NODES_DIR}/${name}/requirements.txt" ]; then
+            pip install -r "${NODES_DIR}/${name}/requirements.txt"
+        fi
+    fi
+}
+
+install_node https://github.com/XLabs-AI/x-flux-comfyui
+install_node https://github.com/kijai/ComfyUI-HunyuanVideoWrapper
+install_node https://github.com/kijai/ComfyUI-WanVideoWrapper
+install_node https://github.com/kijai/ComfyUI-KJNodes
+install_node https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved
+install_node https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
+
 echo ""
 echo "ComfyUI installed."
 echo "Run: cd ${INSTALL_DIR} && source .venv/bin/activate && python main.py --listen --port 8188"
