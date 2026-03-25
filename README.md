@@ -4,6 +4,8 @@
 
 A production-grade local AI image and video generation stack running on a single RTX 3090. Covers the full range from quick SDXL sketches to state-of-the-art Flux edits, impressionist LoRA styling, and 14B-parameter video generation — all callable by a Claude Code agent via MCP without touching a UI.
 
+> **⚠️ The full model library is 320GB on disk.** Run `python3 scripts/install_models.py --check` to see a per-section breakdown before committing. Use `--skip wan` to skip the WAN 2.2 video models and save ~110GB.
+
 **GPU:** RTX 3090 (24GB) &nbsp;|&nbsp; **ComfyUI:** `localhost:8188` &nbsp;|&nbsp; **MCP:** `localhost:9000`
 
 ### What it can do
@@ -88,7 +90,7 @@ wsl --install
 git clone https://github.com/kleer001/image_gen.git && cd image_gen && bash scripts/install_comfyui.sh && bash scripts/install_comfyui_mcp.sh && python3 scripts/install_models.py
 ```
 
-Clones and wires up ComfyUI + the MCP server, then pulls the full model library (~200GB). Once done, `imggen` starts everything.
+Clones and wires up ComfyUI + the MCP server, then pulls the full model library (~320GB). Once done, `imggen` starts everything.
 
 <details>
 <summary><strong>Manual setup (step by step)</strong></summary>
