@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-03-24
+Last updated: 2026-03-25
 
 ---
 
@@ -256,9 +256,9 @@ Last updated: 2026-03-24
 | `flux_controlnet_canny.json` | 10K | **Flux.1-canny-dev** | Uses native `flux1-canny-dev.safetensors` model (not XLabs ControlNet) |
 | `flux_controlnet_depth.json` | 10K | **Flux.1-depth-dev** | Uses native `flux1-depth-dev.safetensors` model directly (LoRA node removed) |
 | `flux_redux.json` | 23K | **Flux.1-dev** | Style/image conditioning; requires `flux1-redux-dev.safetensors` + `sigclip_vision_patch14_384.safetensors` |
-| `flux_continuum_1-7-0.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.0 — full-featured pipeline with samplers, upscale, LoRA |
-| `flux_continuum_1-7-1_beta.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.1 beta |
-| `flux_continuum_light.json` | 824K | **Flux.1-dev** | Flux Continuum light (reduced node count) |
+| `flux_continuum_1-7-0.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.0 — full-featured pipeline; ⚠️ requires ~15 additional custom nodes (rgthree, Impact Pack, KJNodes, mtb, etc.) not currently installed |
+| `flux_continuum_1-7-1_beta.json` | 1M | **Flux.1-dev** | Flux Continuum v1.7.1 beta; same dependencies as v1.7.0 |
+| `flux_continuum_light.json` | 824K | **Flux.1-dev** | Flux Continuum light; same dependency requirements as above |
 | `sdxl_basic.json` | 25K | **SDXL Base 1.0 + Refiner** | Two-stage pipeline; both models installed |
 | `controlnet_depth.json` | 8K | **Illustrious XL** | Depth ControlNet; uses `controlnet-depth-sdxl.safetensors` via ControlNetLoader |
 | `controlnet_pose.json` | 16K | **Illustrious XL** | Pose ControlNet; uses `OpenPoseXL2.safetensors` + `sdxl.vae.safetensors` |
