@@ -251,11 +251,18 @@ def download(entry, idx, total, stats):
 # ─── DISK CHECK ──────────────────────────────────────────────────────────────
 
 def check_disk(needed_bytes):
-    free = shutil.disk_usage(MODELS).free
+    usage = shutil.disk_usage(MODELS)
+    free, total = usage.free, usage.total
     if free < needed_bytes * 1.05:
         print(f"\n  ✗  Insufficient disk space.")
         print(f"     Needed:    {fmt_size(needed_bytes)}")
         print(f"     Available: {fmt_size(free)}")
+        sys.exit(1)
+    remaining = free - needed_bytes
+    if remaining / total < 0.10:
+        print(f"\n  ✗  Install would leave {fmt_size(remaining)} free"
+              f" ({remaining / total * 100:.0f}% of disk — minimum 10% required).")
+        print(f"     Use --skip or --only to reduce the download, or free up space first.")
         sys.exit(1)
     print(f"  Disk: {fmt_size(free)} free, {fmt_size(needed_bytes)} needed — OK")
 
