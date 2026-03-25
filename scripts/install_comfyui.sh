@@ -44,6 +44,9 @@ install_node https://github.com/kijai/ComfyUI-WanVideoWrapper
 install_node https://github.com/kijai/ComfyUI-KJNodes
 install_node https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved
 install_node https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
+install_node https://github.com/Fannovel16/comfyui_controlnet_aux
+install_node https://github.com/Fannovel16/ComfyUI-Frame-Interpolation
+install_node https://github.com/AIFSH/ComfyUI_StoryDiffusion
 
 echo ""
 echo "ComfyUI installed."
