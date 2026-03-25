@@ -41,29 +41,58 @@ See [`INDEX.md`](INDEX.md) for the full installed model inventory (auto-synced) 
 
 **Prerequisites:** HuggingFace token at `~/.cache/huggingface/token` (needed for Flux.1-dev), CivitAI API key in `$CIVITAI_API_KEY`.
 
-**Linux (CUDA)**
+**Linux / macOS:**
 ```bash
-git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
-  bash scripts/install_comfyui.sh && \
-  bash scripts/install_comfyui_mcp.sh && \
-  python3 scripts/install_models.py
+git clone https://github.com/kleer001/image_gen.git && cd image_gen && bash scripts/install_comfyui.sh && bash scripts/install_comfyui_mcp.sh && python3 scripts/install_models.py
 ```
 
-**macOS (Apple Silicon / Intel — MPS)**
-```bash
-git clone https://github.com/kleer001/image_gen.git && cd image_gen && \
-  bash scripts/install_comfyui.sh && \
-  bash scripts/install_comfyui_mcp.sh && \
-  python3 scripts/install_models.py
-```
-
-**Windows (WSL2 + CUDA recommended)**
+**Windows — open PowerShell as Administrator, then paste into the WSL terminal it opens:**
 ```powershell
 wsl --install
 ```
-Then open the WSL terminal and run the Linux one-liner above.
+```bash
+git clone https://github.com/kleer001/image_gen.git && cd image_gen && bash scripts/install_comfyui.sh && bash scripts/install_comfyui_mcp.sh && python3 scripts/install_models.py
+```
 
-All three clone and wire up ComfyUI + the MCP server, then pull the full model library (~200GB, takes a while). Once done, `imggen` starts everything.
+Clones and wires up ComfyUI + the MCP server, then pulls the full model library (~200GB). Once done, `imggen` starts everything.
+
+<details>
+<summary><strong>Manual setup (step by step)</strong></summary>
+
+#### 1. Clone the repo
+
+```bash
+git clone https://github.com/kleer001/image_gen.git
+cd image_gen
+```
+
+#### 2. Install ComfyUI and custom nodes
+
+```bash
+bash scripts/install_comfyui.sh
+```
+
+Creates a venv, installs PyTorch (CUDA on Linux/Windows, MPS on macOS), installs ComfyUI requirements, and clones all required custom nodes (AnimateDiff, VideoHelperSuite, HunyuanVideoWrapper, WanVideoWrapper, XLabs Flux ControlNet, ControlNet-Aux, Frame-Interpolation, StoryDiffusion, KJNodes).
+
+#### 3. Install the MCP server
+
+```bash
+bash scripts/install_comfyui_mcp.sh
+```
+
+Clones comfyui-mcp-server, creates its venv, and installs dependencies.
+
+#### 4. Download models
+
+```bash
+python3 scripts/install_models.py              # full library (~200GB)
+python3 scripts/install_models.py --check      # preview what's missing + disk needed
+python3 scripts/install_models.py --skip wan   # skip WAN 2.2 (saves 110GB)
+```
+
+Downloads checkpoints, Flux models, video models, LoRAs, ControlNets, VAEs, and upscalers from HuggingFace and CivitAI. Resumes interrupted downloads automatically.
+
+</details>
 
 ## Running
 
