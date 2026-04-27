@@ -75,28 +75,30 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 
 **`models.yaml`** — machine-readable model catalog used by `scripts/install_models.py`. Each entry has `url`, `dest`, `size`, `auth`, `base`, `purpose`, and `date`. Add new models here to make them installable via the script.
 
-## Using the ComfyUI MCP
+## Generating Images via MCP
 
-**Prerequisite:** the stack must be running (`imggen`). Claude Code connects automatically via `.mcp.json` — no manual config needed.
+Run `imggen status`; if down, run `imggen` (~30s for both ports healthy). Claude Code connects via `.mcp.json` once the stack is up.
 
-Key tools exposed:
-- `generate_image` — text-to-image with the default workflow
-- `run_workflow <name>` — run any workflow JSON from `workflows/` by filename (without `.json`)
-- `list_workflows` — see all available workflows
-- `list_models` — see models ComfyUI can see
-- `get_queue_status` — check if jobs are pending/running
-- `view_image` — display a generated image
+Entry point: `run_workflow(workflow_id, overrides={...})`. `workflow_id` is the filename stem from `workflows/`. Override values must be real JSON types (int, float, str) — stringified numbers fail pydantic validation. Workflows without `PARAM_*` placeholders ignore overrides and run with baked-in defaults.
 
-**Adding a workflow:** export any ComfyUI workflow as JSON (Save → Export), drop it in `workflows/`, restart the MCP server (`imggen stop && imggen`). It becomes a callable tool named after the filename.
+Tools:
+- `run_workflow(workflow_id, overrides=None)`, `list_workflows`, `list_models`
+- `get_defaults` / `set_defaults` — baseline image/audio/video settings
+- `get_queue_status`, `get_job(prompt_id)`, `cancel_job(prompt_id)`
+- `list_assets`, `get_asset_metadata(asset_id)`, `view_image(asset_id)`
 
-**Workflow parameters:** to make a workflow accept dynamic inputs, add placeholder strings inside the JSON node inputs:
+Each workflow JSON is also auto-registered as a tool named after its filename.
+
+**Adding a workflow:** export from ComfyUI as JSON, drop in `workflows/`, restart with `imggen stop && imggen`.
+
+**Workflow parameters** (placeholder strings inside node inputs):
 - `PARAM_PROMPT` — text prompt
 - `PARAM_INT_<name>` — integer (e.g. `PARAM_INT_STEPS`)
 - `PARAM_FLOAT_<name>` — float (e.g. `PARAM_FLOAT_CFG`)
 
-## Capabilities
+See `INDEX.md` for installed models, trigger words, and LoRA weights.
 
-What this stack can do, organized by task:
+## Capabilities
 
 **Image generation**
 - Text-to-image — Flux.1-dev (high quality), Illustrious XL (anime/illustration)
@@ -115,7 +117,7 @@ What this stack can do, organized by task:
 **Post-processing**
 - Upscaling — 4x-UltraSharp (general), RealESRGAN x4plus (realistic), 4x-AnimeSharp (anime)
 
-**Installed model inventory:** see [`INDEX.md`](INDEX.md) — auto-synced on every session, authoritative source of truth for what is actually on disk, including file sizes, trigger words, and LoRA weights.
+**Installed model inventory:** [`INDEX.md`](INDEX.md) — authoritative for on-disk state (sizes, trigger words, LoRA weights).
 
 ## LoRA Notes
 
