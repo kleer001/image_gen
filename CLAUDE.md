@@ -89,7 +89,14 @@ Tools:
 
 Each workflow JSON is also auto-registered as a tool named after its filename.
 
-**Adding a workflow:** export from ComfyUI as JSON, drop in `workflows/`, restart with `imggen stop && imggen`.
+**Adding a workflow:** workflow JSONs in `workflows/` must be **API format** (top-level keys are node ids, each value has `class_type` + `inputs`). The MCP server crashes on UI-format exports (top-level `nodes`/`links`/`groups`). Two ways to add one:
+
+1. In ComfyUI, use **Save (API Format)** from the menu, then drop the file in `workflows/`.
+2. If you only have a UI export, run `python3 scripts/ui_to_api.py path/to/file.json ...` (ComfyUI must be running — the converter pulls schemas from `/object_info`). Single-arg form prints to stdout; multi-arg form overwrites in place.
+
+After adding, restart with `imggen stop && imggen`.
+
+`workflows/.ui_originals/` (gitignored) holds the pre-conversion UI exports for the workflows currently in `workflows/`, in case a future converter pass needs the source shape.
 
 **Workflow parameters** (placeholder strings inside node inputs):
 - `PARAM_PROMPT` — text prompt
