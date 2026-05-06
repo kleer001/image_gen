@@ -65,9 +65,12 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 - `configs/comfyui/extra_model_paths.yaml` → copied to `comfyui/extra_model_paths.yaml` by install script; tells ComfyUI to use the shared `models/` dir
 - `configs/a1111/webui-user.sh` → copied to `automatic1111/webui-user.sh`; sets `--ckpt-dir`, `--lora-dir`, etc.
 
-**MCP integration** — `.mcp.json` at repo root points Claude Code at the running MCP server (`http://127.0.0.1:9000/mcp`). The MCP server auto-discovers ComfyUI workflow JSON files from `workflows/` and exposes each as a tool. Drop a workflow JSON into `workflows/` and it becomes available after restarting the MCP server.
+**Two ways to drive the stack:**
 
-**Using from another repo** — `.mcp.json` is only loaded when Claude Code runs from this directory. To use the image-gen tools from a different project, add the same server entry to that project's `.mcp.json`:
+1. **Direct ComfyUI HTTP API** (port 8188) — works from any process on the machine: another repo's script, cron, a shell pipeline, a different Claude Code session. No MCP load required. See [`API_USAGE.md`](API_USAGE.md) for curl + Python recipes. Prefer this for cross-repo use.
+2. **MCP server** (port 9000) — only reachable when Claude Code starts in a directory whose `.mcp.json` lists the server. Adds workflow auto-discovery, defaults management, and asset registry on top of the raw API. Use this when you want those conveniences inside the current Claude Code session.
+
+To use the MCP from another Claude Code project, add this to that project's `.mcp.json` (start `imggen` from this repo first):
 
 ```json
 {
@@ -80,8 +83,6 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 }
 ```
 
-Start the stack from this repo first (`imggen`); the MCP URL is shared.
-
 **Custom nodes required for some models:**
 - XLabs ControlNets (`flux-depth-controlnet-v3`, `flux-canny-controlnet-v3`, union models) require the [x-flux-comfyui](https://github.com/XLabs-AI/x-flux-comfyui) custom node installed in `comfyui/custom_nodes/`
 - HunyuanVideo requires [ComfyUI-HunyuanVideoWrapper](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
@@ -91,6 +92,8 @@ Start the stack from this repo first (`imggen`); the MCP URL is shared.
 **`models.yaml`** — machine-readable model catalog used by `scripts/install_models.py`. Each entry has `url`, `dest`, `size`, `auth`, `base`, `purpose`, and `date`. Add new models here to make them installable via the script.
 
 ## Generating Images via MCP
+
+(For the no-MCP path, see [`API_USAGE.md`](API_USAGE.md).)
 
 Run `imggen status`; if down, run `imggen` (~30s for both ports healthy). Claude Code connects via `.mcp.json` once the stack is up.
 
