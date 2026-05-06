@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-03-25
+Last updated: 2026-05-06
 
 ---
 
