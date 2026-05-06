@@ -21,3 +21,8 @@ __pycache__/
 *.log
 *.tmp
 .cache/
+
+# Claude Code session breadcrumbs
+BREADCRUMB.md
+
+workflows/.ui_originals/
