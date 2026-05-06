@@ -111,6 +111,8 @@ Each workflow JSON is also auto-registered as a tool named after its filename.
 - `PARAM_INT_<name>` — integer (e.g. `PARAM_INT_STEPS`)
 - `PARAM_FLOAT_<name>` — float (e.g. `PARAM_FLOAT_CFG`)
 
+**Showing results to the user:** after generating, build a small local HTML gallery and open it in the user's default browser — it tightens the feedback loop and dodges terminal-image-rendering quirks. See [`BROWSER_DISPLAY.md`](BROWSER_DISPLAY.md) for the full checklist (use a local HTTP server, not `file://`; stage images in a served dir; one URL printed to the user).
+
 See `INDEX.md` for installed models, trigger words, and LoRA weights.
 
 ## Capabilities
