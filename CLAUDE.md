@@ -67,6 +67,21 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 
 **MCP integration** — `.mcp.json` at repo root points Claude Code at the running MCP server (`http://127.0.0.1:9000/mcp`). The MCP server auto-discovers ComfyUI workflow JSON files from `workflows/` and exposes each as a tool. Drop a workflow JSON into `workflows/` and it becomes available after restarting the MCP server.
 
+**Using from another repo** — `.mcp.json` is only loaded when Claude Code runs from this directory. To use the image-gen tools from a different project, add the same server entry to that project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "comfyui": {
+      "type": "streamable-http",
+      "url": "http://127.0.0.1:9000/mcp"
+    }
+  }
+}
+```
+
+Start the stack from this repo first (`imggen`); the MCP URL is shared.
+
 **Custom nodes required for some models:**
 - XLabs ControlNets (`flux-depth-controlnet-v3`, `flux-canny-controlnet-v3`, union models) require the [x-flux-comfyui](https://github.com/XLabs-AI/x-flux-comfyui) custom node installed in `comfyui/custom_nodes/`
 - HunyuanVideo requires [ComfyUI-HunyuanVideoWrapper](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
