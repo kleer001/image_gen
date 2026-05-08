@@ -128,6 +128,7 @@ See `INDEX.md` for installed models, trigger words, and LoRA weights.
 - Style conditioning — Flux Redux (image prompt / style transfer)
 - ControlNet — Canny, Depth, Pose for Flux; Pose for SDXL
 - LoRA styling — anime, retro anime, illustration, cartoon, Disney, comic, Swiss design, Milton Glaser, graffiti logo, film storyboard, film noir, cinematic
+- Storyboards — multi-panel sheet with character identity locked across panels via Flux Kontext (see `## Storyboards` below)
 
 **Video generation**
 - Image-to-video — WAN 2.2 I2V (high/low noise variants), SVD-XT (25 frames)
@@ -138,6 +139,25 @@ See `INDEX.md` for installed models, trigger words, and LoRA weights.
 - Upscaling — 4x-UltraSharp (general), RealESRGAN x4plus (realistic), 4x-AnimeSharp (anime)
 
 **Installed model inventory:** [`INDEX.md`](INDEX.md) — authoritative for on-disk state (sizes, trigger words, LoRA weights).
+
+## Storyboards
+
+Multi-panel storyboards with character/style consistency across panels.
+
+**Driver:** `scripts/storyboard.py <shotlist.yaml>` reads a shot list, renders each panel via the ComfyUI HTTP API, builds an HTML sheet (CSS grid), serves it on a free port from 8765, and opens it in the browser. Format and defaults are documented in the script's module docstring.
+
+**Workflows:**
+- `workflows/storyboard_seed.json` — Flux + storyboard LoRA, text→image. Used for panel 1 when no reference image is supplied.
+- `workflows/storyboard_panel.json` — Flux Kontext + storyboard LoRA, ref+text→image. Used for panels 2..N (and all panels when a reference is supplied), so the wanderer / character / style read as the same across the sheet.
+
+**Identity locking** is via Kontext (in-context editing), not PuLID/InstantCharacter — those were evaluated and rejected (PuLID-Flux is upstream-discontinued; InstantCharacter only ships through StoryDiffusion's non-API-format pipeline).
+
+**Storyboard LoRAs (Flux.1-dev, in `models/loras/`):**
+- `StoryboardSketch-Flux.safetensors` — pencil-sketch panels. Trigger: `Storyboard sketch`. Weight 0.7–0.9.
+- `Storyboarding-v2-Flux.safetensors` — alt sketch flavor. Trigger: `storyboarding`. Weight 1.0.
+- `film-storyboard.safetensors` — colored cinematic In-Context-LoRA, no trigger. Weight 0.8–1.0.
+
+**Aspect ratio quirk:** `width`/`height` in the YAML control panel 1 (the seed). Panels 2..N use `FluxKontextImageScale`, which snaps to Kontext's preferred buckets (square, 1184×880, 1248×832, 1392×752, 1456×720, and portrait flips) based on the **reference image's** aspect — *not* the YAML dims. Net effect: set seed dims to your target aspect (e.g. 1024×576 for 16:9) and every panel follows. Per-shot mixed aspects aren't supported by the current driver.
 
 ## LoRA Notes
 

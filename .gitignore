@@ -24,3 +24,4 @@ __pycache__/
 
 # Claude Code session breadcrumbs
 BREADCRUMB.md
+.claude/scheduled_tasks.lock
