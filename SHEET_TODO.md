@@ -25,14 +25,22 @@ That collides head-on with how this repo automates ComfyUI:
 - `scripts/storyboard.py` and the MCP `run_workflow` path run workflows
   *headless* over the HTTP API with `PARAM_*` placeholder substitution.
 
-**Conclusion:** integrate VNCCS as a **browser workflow at `localhost:8188`**,
-not as MCP tools. The deliverable (the character sheet / sprite set) is
-produced through the ComfyUI canvas using the bundled `VN_Step*` workflows.
-Do **not** drop VNCCS's `VN_Step*.json` files into `workflows/` — they are
-UI-format and will break MCP auto-registration. Keep them in the custom-node
-dir where VNCCS ships them.
+**Conclusion (updated after source investigation):** VNCCS is GUI-*first*, but
+the pipeline **can run headlessly** — its nodes are almost all pure compute.
+Two things stand between you and `/prompt` automation, both solvable (§5.5):
 
-See §5 for what *could* later be automated (and what can't).
+1. The bundled `VN_Step*.json` are **UI-format** (top-level
+   `nodes`/`links`/`groups`) and **will crash the MCP server**. Re-export each
+   via ComfyUI **Save (API Format)** before placing any in `workflows/`. Do not
+   drop the shipped UI-format files in there as-is.
+2. One bootstrap step — provisioning a character's folder + config — lives in a
+   front-end button (`GET /vnccs/create`), not in any node, so it doesn't fire
+   on a `/prompt` POST. Trigger it with a one-line HTTP call or a ~1-line node
+   patch, per character.
+
+With those handled, all 5 stages run over the HTTP API on the same no-MCP path
+as `scripts/storyboard.py`. Until then, the fastest path to a first sheet is the
+**browser at `localhost:8188`**. Full headless recipe + per-stage breakdown in §5.5.
 
 ---
 
@@ -44,13 +52,57 @@ See §5 for what *could* later be automated (and what can't).
 | Model dir | shared `models/` via `configs/comfyui/extra_model_paths.yaml` | adds `ultralytics/`, `sams/` categories | ⚠️ add two new path keys (§2.2) |
 | Custom nodes | cloned explicitly in `scripts/install_comfyui.sh` | VNCCS + several transitive node deps | ⚠️ add to install script (§2.1) |
 | Model fetch | `models.yaml` → `scripts/install_models.py` | 14 files on VNCCS HF (~7.4 GB) + 3 face detectors elsewhere | ⚠️ add entries (§2.3, §3) |
-| Automation | MCP + HTTP API, API-format workflows | interactive UI nodes | ❌ stays manual/browser (§0) |
+| Automation | MCP + HTTP API, API-format workflows | UI-format workflows + 1 stateful bootstrap route | ⚠️ headless-capable with tweaks (§5.5) |
 | VRAM | RTX 3090 24 GB | tuned for 8 GB (RMBG ≤1408) | ✅ comfortable headroom |
 | Output | `outputs/` + `comfyui/output/` (gitignored) | `comfyui/output/VN_CharacterCreatorSuit/<NAME>/{Sheets,Sprites,Lora}` | ✅ none — already gitignored |
 
 VNCCS is SDXL/Illustrious-based, so it does **not** contend with the Flux /
 HunyuanVideo / WAN VRAM budget — it's in the same family as the existing
 `sdxl_basic` / `controlnet_pose` workflows.
+
+---
+
+## 1.5 Branch selection — decide this first
+
+Investigated `main`, `cleanup`, `CharacterStudio` (2026-05-26). All three carry
+an identical README, so the branch differences are code-only.
+
+| Branch | Version | Head | Last commit | vs `main` | Verdict |
+|---|---|---|---|---|---|
+| `main` | 2.1.0 | `7c3281f` | 2026-01-10 | — | ✅ **clone this** — stable, lean deps |
+| `cleanup` | 3.0.0 | `808bab6` | 2026-05-26 | +83 | ⚠️ active next-release; heavy/fragile deps |
+| `CharacterStudio` | 2.1.0 | `c7ac927` | 2026-01-20 | +10 | ❌ avoid — stale 3D PoC, vendors MakeHuman |
+
+**Recommendation: clone `main`.** It's the only released line; deps are light
+(`torch, numpy, Pillow, opencv-python, huggingface_hub, timm`); a failed import
+crashes loudly instead of silently skipping the pack. Untouched since January
+but it works. `scripts/install_comfyui.sh`'s `install_node` clones the default
+branch (`main`) — so the §2.1 line needs no `-b` flag for this choice.
+
+**`cleanup` (v3.0.0) is the real development line** — 83 commits, a CI test
+suite, and new "Control Center" + pipeline nodes (`VNCCS_ControlCenter`,
+`CharacterCreatorV2`, `CharacterCloner`, `ClothesDesigner`, `SpriteManager`,
+`SubgraphPipeline`, **`vnccs_api`**). Adopt it ONLY if you want v3 features and
+can absorb the cost:
+- Heavy `requirements.txt`: **`llama-cpp-python>=0.3.16`** (needs a C/C++
+  toolchain — a classic headless pip failure), plus `trimesh, lightning,
+  lightning_utilities, plyfile, jaxtyping, roma, einops, json_repair` and
+  `huggingface-hub[torch]>=0.22`.
+- Registration is wrapped in one `try/except` that prints `CRITICAL
+  REGISTRATION ERROR` and continues — a missing dep makes the **whole pack
+  silently fail to load**. Always verify nodes registered after install.
+- Removed the `CharacterPreview` node; renamed workflows `*_v1.json` → `*_v2.4.json`.
+- The new **`vnccs_api`** node hints at first-class v3 API support — but it is
+  **not required**: `main` is already headless-capable with a small tweak
+  (§5.5), so this does not force the `cleanup` choice.
+
+**`CharacterStudio`** is a dead 3D-pose-editor experiment (tip commit literally
+"123"; vendors an entire MakeHuman app + a "worldmirror" 3D model — hundreds of
+unrelated `.py` files). Do not use.
+
+- [ ] **Decision:** default to `main`. Revisit `cleanup` only if v3's Control
+      Center / `vnccs_api` headless hook proves worth the `llama-cpp-python`
+      build. If you do, `git clone -b cleanup` and pin to `808bab6`.
 
 ---
 
@@ -160,8 +212,8 @@ hf download MIUProject/VNCCS --include "models/*" \
 
 - [ ] **`CLAUDE.md`** — under `## Capabilities`, add a "Visual novel character
       sheets" line; add a short `## Character Sheets (VNCCS)` section near
-      `## Storyboards` explaining it's a **browser workflow, not MCP** (§0),
-      the 5-stage pipeline, and the output path. Cross-reference: identity
+      `## Storyboards` explaining it's **browser-first but headless-capable**
+      (§0, §5.5), the 5-stage pipeline, and the output path. Cross-reference: identity
       locking here is via a dedicated character-sheet pipeline (SDXL +
       `vn_character_sheet` LoRA + face detailer), distinct from the Flux
       Kontext approach used by storyboards.
@@ -247,23 +299,77 @@ the installer's progress/ETA/disk-check work):
 
 ## 4. Custom-node dependency matrix (verify before scripting §2.1)
 
-VNCCS itself is one node pack, but its workflows reference functionality from
-other packs (hence the README's "Install missing custom nodes" step). Evidence
-from the README + node names, with likely owning pack:
+VNCCS is one node pack, but its workflows reference functionality from other
+packs (hence the README's "Install missing custom nodes" step). The list below
+is **corroborated by the issue tracker** (§4.5) — version skew between these and
+ComfyUI is the #1 source of breakage, so pin them.
 
-| Capability seen in VNCCS | Likely required node pack | Already installed here? |
+| Capability in VNCCS | Required node pack | Installed here? |
 |---|---|---|
-| Face Detailer + `UltralyticsDetectorProvider` + `SAMLoader` (`ultralytics/`, `sams/`) | **ComfyUI-Impact-Pack** (+ Impact-Subpack for the detector provider) | ❌ add |
-| "Seam Fix Mode", "Half Tile + intersections" upscaling | **ComfyUI_UltimateSDUpscale** | ❌ add |
-| "RMBG Resolution" background removal for clean sprites | a background-removal node (e.g. **ComfyUI-RMBG** / `BRIA RMBG`) | ❌ add (confirm which) |
+| Face Detailer + `UltralyticsDetectorProvider` + `SAMLoader` (`ultralytics/`, `sams/`) | **ComfyUI-Impact-Pack** (+ **Impact-Subpack** for the detector provider) | ❌ add |
+| "Seam Fix Mode" / "Half Tile + intersections" upscaling (older sheets) | **ComfyUI_UltimateSDUpscale** | ❌ add |
+| Background removal for clean sprites (`RMBG Resolution`) | **ComfyUI-RMBG** / **BiRefNet** node (see #40) | ❌ add |
+| SeedVR2 upscaling (newer/QWEN pipeline) | **SeedVR2** node (see #55) | ❌ add (only if using QWEN/v3) |
 | Pose preprocessing / OpenPose | `comfyui_controlnet_aux` | ✅ already in install script |
+| QWEN clone/clothes workflows | Qwen-Image-Edit nodes (see #57) | ❌ add (only if using QWEN) |
 
-- [ ] Clone the VNCCS repo locally and grep its `nodes/*.py` imports and the
-      `VN_Step*.json` workflow `class_type` values to produce the **definitive**
-      dependency list — the table above is inferred, not confirmed.
-- [ ] Add each confirmed pack to `scripts/install_comfyui.sh` via `install_node`.
+- [ ] Add each pack needed for the chosen pipeline to `scripts/install_comfyui.sh`
+      via `install_node` (SDXL path needs Impact Pack + Subpack + RMBG +
+      UltimateSDUpscale; QWEN path adds SeedVR2 + Qwen-Image-Edit).
+- [ ] Pin Impact Pack and ComfyUI to a known-good pair (§4.5 #48/#53).
 - [ ] Re-run the smoke test (§2.5) and watch the console for "missing node"
       errors when loading each `VN_Step*` workflow.
+
+---
+
+## 4.5 Known upstream issues → local fixes (set up proactively)
+
+Triaged the VNCCS issue tracker (2026-05-26). Confirmed the node-dep picture in
+§4: the SDXL/Illustrious pipeline (our path) uses **Impact Pack** (FaceDetailer
++ ultralytics/SAM); older sheets use **Ultimate SD Upscale**; the newer/QWEN
+pipeline adds **BiRefNet/RMBG** background-removal and a **SeedVR2** upscaler.
+Four things to handle before the first run:
+
+**1. Pin ComfyUI + Impact Pack — don't run bleeding-edge.**
+- **#48 (open)** — `CharacterSheetCropper` crashes `'NoneType' not subscriptable`
+  at `sheet_crop.py:31` after the ComfyUI ≥0.15.1 mask-API change. Hits the core
+  sprite-sheet crop on day one. *Fix:* pin ComfyUI below the break **or** patch
+  `sheet_crop.py` to guard `mask is None` before indexing.
+- **#53 (closed)** — clean reinstall → Ultimate SD Upscale "12 vs 16 channels" +
+  FaceDetailer `Tensor has no attribute 'copy'` = Impact Pack / ComfyUI version
+  skew. *Fix:* install a matching Impact Pack version; record both commits in INDEX.
+
+**2. Pre-fix workflow model fields + Windows paths (Linux install).**
+- **#49 / #37 (closed)** — workflows hardcode `ckpt_name:
+  Illustrious\ILFlatMix.safetensors` (Windows `\`). *Fix:* edit each `VN_Step*`
+  workflow's `ckpt_name` to your actual Illustrious file, forward slashes.
+- **#43 (open)** — QWEN Step1 ships placeholder model fields ("Green"). *Fix:*
+  set real checkpoint/upscaler dropdowns after import.
+- **#50 (open)** — `EmotionGeneratorV2.load_character_sheet()` → `[Errno 22]
+  Invalid argument` = backslash/path issue. *Fix:* keep all sheet/output paths
+  POSIX — relevant since we drive headless (§5.5).
+
+**3. Verify the heavy node deps actually load.**
+- **#40 (open)** BiRefNet `has no attribute '__file__'` (RMBG weights load);
+  **#55 (open)** SeedVR2 "meta tensors" load failure — both version/weights
+  mismatches, not VRAM. *Fix:* pre-download known-good BiRefNet + SeedVR2
+  weights into the nodes' expected dirs; confirm clean import.
+
+**4. Use SDXL-arch models only.**
+- **#60 (open)** SDXL ControlNet `ValueError: y is None` = wrong-arch ControlNet.
+  *Fix:* use `AnytestV4` / `IllustriousXL_openpose` from §3a (not SD1.5 ones).
+- **#58 (open)** HF `MIUProject/VNCCS` vs `…/VNCCS_V2` LoRA confusion. *Fix:* for
+  SDXL/Illustrious use the V1 set (`vn_character_sheet_v4`, `EmotionCoreV2`); the
+  `V2` LoRAs are QWEN-only.
+
+VRAM glitches (**#54/#59**, open) are low-risk at 24 GB, but #59 (assembled-sheet
+glitch) can still bite — if sheets glitch, drop RMBG resolution to 1024 and lower
+the SeedVR2 target res. Pure feature-requests (#31/#33/#36/#42/#44/#45/#51/#52/#56)
+need no action.
+
+- [ ] Pin a known-good ComfyUI + Impact Pack pair; record commits in `INDEX.md`.
+- [ ] Patch/guard `sheet_crop.py:31` if staying on newer ComfyUI (#48).
+- [ ] Sweep imported `VN_Step*` workflows for `\` paths + placeholder model names.
 
 ---
 
@@ -295,6 +401,74 @@ from the README + node names, with likely owning pack:
 
 ---
 
+## 5.5 Headless automation — feasible, with tweaks
+
+Verdict from reading the node source (`main`; `cleanup`/`CharacterStudio`
+behave the same): **partially headless out of the box, fully scriptable after
+two tweaks.** Almost every node is pure compute — a server-coupling grep shows
+only `emotion_generator_v2` touches `PromptServer`, and only for *optional*,
+read-only UI helper routes the node itself never calls.
+
+### Per-stage breakdown
+
+| Stage | Node | Headless via `/prompt`? |
+|---|---|---|
+| 1 Base character | `CharacterCreator` | ✅ compute runs — **but** the character folder/config must already exist (see blocker) |
+| 2 Clothing sets | `CharacterAssetSelector` | ✅ writes costume config server-side; character must exist; costume must be in the enum or pass `new_costume_name` |
+| 3 Emotions | `EmotionGenerator` / `_v2` | ✅ `generate_emotions()` is pure compute; v2's `/vnccs/get_*` routes are UI-only, not called by the node |
+| 4 Sprites | `SpriteGenerator` | ✅ fully headless — disk crop; input `character` only |
+| 5 LoRA dataset | `DatasetGenerator` | ✅ fully headless — inputs `character`, `game_name` |
+| Poses | `pose_generator` + `web/pose_editor*.js` | ⚠️ compute works, but pose data normally comes from the 3D JS editor — supply joint JSON directly or drop a preset in `presets/poses/` |
+
+### The one blocker
+
+`CharacterCreator.create_character()` operates on the `existing_character`
+dropdown (built by scanning disk) and calls `ensure_character_structure(...)`.
+It does **not** use the `new_character_name` input. The folder +
+`<NAME>_config.json` are created by the front-end "Create New Character" button
+→ `GET /vnccs/create?name=<NAME>` (registered in `__init__.py`). That route does
+**not** fire when you POST a graph to `/prompt`.
+
+### Tweaks to make stages 1–5 scriptable
+
+1. **Pre-seed the character** (pick one), then queue the graph:
+   - hit the route already live on the running server:
+     `GET http://127.0.0.1:8188/vnccs/create?name=<NAME>` — provisions folder +
+     config; **or**
+   - write `output/VN_CharacterCreatorSuit/<NAME>/<NAME>_config.json` + the
+     `Sheets/Faces/Sprites/Naked/neutral` tree yourself (mirror
+     `ensure_character_structure` + the `character_info` dict in
+     `character_creator.py`).
+2. **(cleaner) Patch `create_character`** to honor `new_character_name`
+   (`character_name = new_character_name or existing_character`) so stage 1
+   self-provisions inside the graph and the route dependency disappears. ~1-line
+   change — keep it as a tracked local patch; re-apply on upstream update.
+3. **Re-export every `VN_Step*` workflow to API format** (ComfyUI → Save (API
+   Format)) before placing in `workflows/`. API-graph inputs to wire as this
+   repo's `PARAM_*` placeholders:
+   - CharacterCreator: `existing_character` (name),
+     `sex/age/race/eyes/hair/face/body/skin_color/nsfw/seed/negative_prompt`
+   - selector: `character`, `costume` (+ garment strings)
+   - emotions: `character`, `emotions` (comma list)
+   - sprites / dataset: `character` (+ `game_name`)
+4. **Costumes** need no node tweak, but pass `new_costume_name` or pre-create via
+   `/vnccs/create_costume` — an unknown costume silently falls back to `"Naked"`.
+
+### Recommended integration shape
+
+A thin `scripts/vnccs.py` driver modeled on `scripts/storyboard.py`: read a
+character spec (YAML), `GET /vnccs/create`, then queue the API-format
+`VN_Step1..4` graphs in order via `/prompt`, and build the usual local HTML
+gallery (per `BROWSER_DISPLAY.md`) of the resulting sheet/sprites. This keeps
+VNCCS on the same HTTP-API/no-MCP path as the storyboard driver and sidesteps
+MCP's UI-format crash entirely.
+
+- [ ] Re-export the chosen `VN_Step*` workflows to API format → `workflows/`.
+- [ ] Apply tweak #1 (route call) or #2 (node patch); commit the patch.
+- [ ] (optional) Write `scripts/vnccs.py` headless driver.
+
+---
+
 ## 6. Acceptance criteria
 
 - [ ] `scripts/install_comfyui.sh` clones VNCCS **and** every confirmed
@@ -306,7 +480,9 @@ from the README + node names, with likely owning pack:
 - [ ] Fresh ComfyUI start loads VNCCS with zero import/missing-node errors.
 - [ ] `VN_Step1_CharSheetGenerator` produces a sheet under
       `comfyui/output/VN_CharacterCreatorSuit/<NAME>/Sheets/`.
-- [ ] `CLAUDE.md`, `INDEX.md`, `README.md` updated; VNCCS documented as a
-      browser workflow (not MCP).
+- [ ] `CLAUDE.md`, `INDEX.md`, `README.md` updated; VNCCS documented
+      (browser-first; headless path per §5.5).
+- [ ] Branch chosen per §1.5 (default `main`); ComfyUI + Impact Pack pinned and
+      the §4.5 issue fixes applied/verified.
 </content>
 </invoke>
