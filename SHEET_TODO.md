@@ -100,9 +100,10 @@ can absorb the cost:
 "123"; vendors an entire MakeHuman app + a "worldmirror" 3D model — hundreds of
 unrelated `.py` files). Do not use.
 
-- [ ] **Decision:** default to `main`. Revisit `cleanup` only if v3's Control
-      Center / `vnccs_api` headless hook proves worth the `llama-cpp-python`
-      build. If you do, `git clone -b cleanup` and pin to `808bab6`.
+- [x] **Decision (2026-05-26): target `main`.** Revisit `cleanup` only if v3's
+      Control Center / `vnccs_api` headless hook later proves worth the
+      `llama-cpp-python` build. If you switch, `git clone -b cleanup` and pin to
+      `808bab6`.
 
 ---
 
