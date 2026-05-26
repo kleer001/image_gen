@@ -43,7 +43,7 @@ See §5 for what *could* later be automated (and what can't).
 | Base model | Illustrious-XL-v0.1 (SDXL) already installed | "Any Illustrious-based SDXL" | ✅ none — reuse existing checkpoint |
 | Model dir | shared `models/` via `configs/comfyui/extra_model_paths.yaml` | adds `ultralytics/`, `sams/` categories | ⚠️ add two new path keys (§2.2) |
 | Custom nodes | cloned explicitly in `scripts/install_comfyui.sh` | VNCCS + several transitive node deps | ⚠️ add to install script (§2.1) |
-| Model fetch | `models.yaml` → `scripts/install_models.py` | ~10 new model files on HF | ⚠️ add entries (§2.3) |
+| Model fetch | `models.yaml` → `scripts/install_models.py` | 14 files on VNCCS HF (~7.4 GB) + 3 face detectors elsewhere | ⚠️ add entries (§2.3, §3) |
 | Automation | MCP + HTTP API, API-format workflows | interactive UI nodes | ❌ stays manual/browser (§0) |
 | VRAM | RTX 3090 24 GB | tuned for 8 GB (RMBG ≤1408) | ✅ comfortable headroom |
 | Output | `outputs/` + `comfyui/output/` (gitignored) | `comfyui/output/VN_CharacterCreatorSuit/<NAME>/{Sheets,Sprites,Lora}` | ✅ none — already gitignored |
@@ -105,42 +105,42 @@ entries):
 - URL form: `https://huggingface.co/MIUProject/VNCCS/resolve/main/<path>`.
 - Use `section: vnccs` so `--only vnccs` / `--skip vnccs` work
   (`install_models.py` keys off the `section` field).
-- Set `size: 0` for files whose exact byte size we haven't confirmed — the
-  installer treats `size: 0` as "complete if the file exists and is non-empty"
-  (`scripts/install_models.py:181-185`), same as the CivitAI LoRA entries.
+- Use the **exact byte sizes from §3a** (HF tree is verified) so the disk-check
+  and progress/ETA logic work (`scripts/install_models.py:181-185`).
 - Preserve VNCCS's **sub-folder layout** inside `loras/` and `controlnet/`
-  (e.g. `loras/DMD2/...`, `controlnet/SDXL/...`) — the VNCCS workflows
-  reference LoRAs/ControlNets by that relative path.
+  (e.g. `loras/DMD2/...`, `loras/qwen/VNCCS/...`, `controlnet/SDXL/...`) — the
+  VNCCS workflows reference LoRAs/ControlNets by that relative path.
 
-- [ ] Add the ~10 file entries from §3 to `models.yaml`.
-- [ ] **QWEN LoRA collection** (`loras/QWEN/...`) is a *folder of unknown
-      count*, not a single file — don't hand-list it. Either fetch it with the
-      one-shot command in §2.4, or extend `install_models.py` with a
-      `type: hf_folder` handler (mirrors a repo subdir via `hf download
-      --include`). Flag which approach you took.
+- [ ] Add the 14 single-file entries from §3a to `models.yaml`. The QWEN
+      collection is a **known, fixed set of 5 files** (not an open-ended
+      folder), so just hand-list them like any other entry — no new
+      `hf_folder` handler needed.
+- [ ] Decide on the §3b ultralytics detectors (separate source, or let
+      Impact-Subpack auto-download).
 - [ ] Run `python3 scripts/install_models.py --check --only vnccs` to confirm
       the new section parses and reports correctly.
 
 ### 2.4 Download the models
 
-For the single-file entries (after §2.3):
+All VNCCS HF files (including QWEN) are now single `models.yaml` entries:
 
 ```bash
 python3 scripts/install_models.py --only vnccs
 ```
 
-For the QWEN folder (and as a fallback to mirror the whole VNCCS repo):
+As a fallback / to mirror the whole repo in one shot (matches the verified tree
+exactly):
 
 ```bash
-hf download MIUProject/VNCCS --include "QWEN/*" \
-  --local-dir models/loras/QWEN --local-dir-use-symlinks False
+hf download MIUProject/VNCCS --include "models/*" \
+  --local-dir models --local-dir-use-symlinks False
 ```
 
-- [ ] **Verify the exact HF tree** at https://huggingface.co/MIUProject/VNCCS/tree/main
-      first — the sub-folder paths in §3 are taken from the VNCCS README's
-      ComfyUI install layout and were **not** independently confirmed against
-      the HF file list (the HF API was unreachable from the build
-      environment). Correct any path/filename drift before downloading.
+(The VNCCS HF repo nests everything under a top-level `models/` dir, so its
+`models/loras/...` maps 1:1 onto this repo's `models/loras/...`.)
+
+- [x] HF tree verified 2026-05-26 — paths/sizes in §3a are exact; `ultralytics/`
+      is gone from the repo (see §3b).
 
 ### 2.5 Verification / smoke test
 
@@ -176,38 +176,66 @@ hf download MIUProject/VNCCS --include "QWEN/*" \
 
 ---
 
-## 3. Required models (HuggingFace `MIUProject/VNCCS`)
+## 3. Required models
 
-Destinations are relative to the shared `models/` dir. Sub-folders are
-significant — keep them.
+HF tree **verified** against `https://huggingface.co/MIUProject/VNCCS/tree/main`
+on 2026-05-26 (paths, filenames, and byte sizes below are exact). Destinations
+are relative to the shared `models/` dir. Sub-folders are significant — keep
+them; the VNCCS workflows reference LoRAs/ControlNets by that relative path.
 
-| `section` | `dest` (under `models/`) | Purpose | Size |
-|---|---|---|---|
-| vnccs | `loras/vn_character_sheet_v4.safetensors` | Char-sheet consistency LoRA (v4, current) | verify |
-| vnccs | `loras/vn_character_sheet.safetensors` | Char-sheet LoRA (v1, legacy workflows) | verify |
-| vnccs | `loras/DMD2/dmd2_sdxl_4step_lora_fp16.safetensors` | DMD2 4-step distill (fast sampling) | verify |
-| vnccs | `loras/IL/mimimeter.safetensors` | Illustrious helper LoRA | verify |
-| vnccs | `loras/QWEN/` *(folder)* | QWEN-pipeline LoRA collection — fetch as folder (§2.4) | verify |
-| vnccs | `controlnet/SDXL/AnytestV4.safetensors` | SDXL "anytest" ControlNet | verify |
-| vnccs | `controlnet/SDXL/IllustriousXL_openpose.safetensors` | Illustrious OpenPose ControlNet | verify |
-| vnccs | `ultralytics/bbox/face_yolov8m.pt` | Face bbox detector (YOLOv8m) | ~50M |
-| vnccs | `ultralytics/bbox/face_yolov9c.pt` | Face bbox detector (YOLOv9c) | ~50M |
-| vnccs | `ultralytics/segm/face_yolov8m-seg_60.pt` | Face segmentation (YOLOv8m-seg) | verify |
-| vnccs | `sams/sam_vit_b_01ec64.pth` | Segment-Anything ViT-B | ~375M |
-| vnccs | `upscale_models/4x_APISR_GRL_GAN_generator.pth` | 4× anime upscaler (APISR GRL) | verify |
-| vnccs | `upscale_models/2x_APISR_RRDB_GAN_generator.pth` | 2× anime upscaler (APISR RRDB) | verify |
+### 3a. From `MIUProject/VNCCS` (URL: `…/resolve/main/<dest>`)
+
+| `dest` (under `models/`) | Purpose | Size |
+|---|---|---|
+| `loras/vn_character_sheet_v4.safetensors` | Char-sheet consistency LoRA (v4, current) | 218M |
+| `loras/vn_character_sheet.safetensors` | Char-sheet LoRA (v1, legacy workflows) | 218M |
+| `loras/DMD2/dmd2_sdxl_4step_lora_fp16.safetensors` | DMD2 4-step distill (fast sampling) | 376M |
+| `loras/IL/mimimeter.safetensors` | Illustrious helper LoRA | 50M |
+| `loras/qwen/VNCCS/ClothesHelperUltimateV1_000005100.safetensors` | QWEN clothes-helper LoRA | 141M |
+| `loras/qwen/VNCCS/EmotionCoreV1_000003000.safetensors` | QWEN emotion LoRA (v1) | 281M |
+| `loras/qwen/VNCCS/EmotionCoreV2_000004700.safetensors` | QWEN emotion LoRA (v2, current) | 281M |
+| `loras/qwen/VNCCS/TransferClothes_000006700.safetensors` | QWEN clothes-transfer LoRA | 281M |
+| `loras/qwen/VNCCS/poser_helper_v2_000004200.safetensors` | QWEN pose-helper LoRA (v2) | 281M |
+| `controlnet/SDXL/AnytestV4.safetensors` | SDXL "anytest" ControlNet | 2.3G |
+| `controlnet/SDXL/IllustriousXL_openpose.safetensors` | Illustrious OpenPose ControlNet | 2.3G |
+| `sams/sam_vit_b_01ec64.pth` | Segment-Anything ViT-B | 358M |
+| `upscale_models/4x_APISR_GRL_GAN_generator.pth` | 4× anime upscaler (APISR GRL) | 6.2M |
+| `upscale_models/2x_APISR_RRDB_GAN_generator.pth` | 2× anime upscaler (APISR RRDB) | 17M |
+
+Total from VNCCS HF ≈ **7.4 GB**. Note: the **QWEN path is `loras/qwen/VNCCS/`
+(lowercase `qwen`, then a `VNCCS/` subdir)** — the README's `QWEN/` is stale.
+The repo also ships `model_updater.json` (VNCCS's own download manifest); the
+node may self-fetch/update some of these — worth checking before duplicating.
+
+### 3b. NOT on the VNCCS HF repo — source elsewhere
+
+The `ultralytics/` face detectors the README lists were **removed** from the HF
+repo (latest commit there is literally "Delete models/ultralytics"). They are
+standard Impact-Pack/adetailer assets — fetch from the canonical
+[`Bingsu/adetailer`](https://huggingface.co/Bingsu/adetailer) set instead:
+
+| `dest` (under `models/`) | Purpose | Note |
+|---|---|---|
+| `ultralytics/bbox/face_yolov8m.pt` | Face bbox detector (YOLOv8m) | in `Bingsu/adetailer` |
+| `ultralytics/bbox/face_yolov9c.pt` | Face bbox detector (YOLOv9c) | in `Bingsu/adetailer` |
+| `ultralytics/segm/face_yolov8m-seg_60.pt` | Face segmentation (YOLOv8m-seg) | confirm exact filename/source |
+
+- [ ] Confirm the three detector filenames against `Bingsu/adetailer` before
+      adding URLs (esp. the `-seg_60` variant). Impact-Subpack can also
+      auto-download these on first use — if so, these rows are optional.
 
 **Checkpoint:** none required — VNCCS uses an Illustrious-based SDXL checkpoint,
 and `Illustrious-XL-v0.1.safetensors` is already installed (`INDEX.md`).
 
-Example `models.yaml` entry shape (single file):
+Example `models.yaml` entry shape (single file — use the exact sizes above so
+the installer's progress/ETA/disk-check work):
 
 ```yaml
 - section: vnccs
   name: VNCCS Character Sheet v4
   dest: loras/vn_character_sheet_v4.safetensors
-  url: https://huggingface.co/MIUProject/VNCCS/resolve/main/vn_character_sheet_v4.safetensors
-  size: 0
+  url: https://huggingface.co/MIUProject/VNCCS/resolve/main/loras/vn_character_sheet_v4.safetensors
+  size: 228452916
   auth: hf
   base: sdxl
   purpose: Character-sheet consistency LoRA for VNCCS
@@ -247,12 +275,12 @@ from the README + node names, with likely owning pack:
    that VNCCS writes under `VN_CharacterCreatorSuit/<NAME>/` could be templated,
    and the non-interactive `VN_Step4_SpritesGenerator` *might* be convertible to
    API format — needs investigation, out of scope for first integration.
-2. **HF tree not verified.** Paths in §3 come from the VNCCS README's ComfyUI
-   layout; the HF API was blocked from the build environment. Confirm exact
-   filenames/sub-folders against the live repo before downloading (§2.4).
-3. **QWEN folder.** Variable file set — not expressible as a single
-   `models.yaml` row. Decide: one-shot `hf download` (§2.4) vs. a new
-   `type: hf_folder` handler in `install_models.py`.
+2. **HF tree verified** (2026-05-26). Two surprises vs. the README: the QWEN
+   path is `loras/qwen/VNCCS/` (lowercase), and the `ultralytics/` face
+   detectors were **deleted** from the HF repo — source them from
+   `Bingsu/adetailer` or via Impact-Subpack auto-download (§3b).
+3. **QWEN folder** turned out to be a fixed set of 5 named LoRAs (§3a), so it's
+   hand-listed like everything else — no `hf_folder` handler needed.
 4. **Transitive nodes.** Impact Pack / UltimateSDUpscale / RMBG are inferred
    (§4). Don't ship the install-script change until confirmed against VNCCS
    source, or the smoke test will hit "missing node" walls.
@@ -273,8 +301,8 @@ from the README + node names, with likely owning pack:
       transitive node pack; `timm` installed.
 - [ ] `configs/comfyui/extra_model_paths.yaml` exposes `ultralytics/` + `sams/`,
       copied to the live `comfyui/` install.
-- [ ] `models.yaml` has a `vnccs` section; `install_models.py --only vnccs`
-      downloads all single files; QWEN folder mirrored.
+- [ ] `models.yaml` has a `vnccs` section (14 files incl. the 5 QWEN LoRAs);
+      `install_models.py --only vnccs` downloads them; §3b detectors sourced.
 - [ ] Fresh ComfyUI start loads VNCCS with zero import/missing-node errors.
 - [ ] `VN_Step1_CharSheetGenerator` produces a sheet under
       `comfyui/output/VN_CharacterCreatorSuit/<NAME>/Sheets/`.
