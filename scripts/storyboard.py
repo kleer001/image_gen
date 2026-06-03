@@ -18,6 +18,8 @@ Shot list format (YAML):
     seed: 42                          # base seed; per-panel = base + index
     width: 1024                       # only used for seed (no-reference) panel 1
     height: 1024
+    style_suffix: "..."               # optional; appended to every panel prompt
+                                      # (cinematic depth/light). "" disables it.
     shots:
       - "wide establishing shot, hero on cliff at dawn, storyboarding"
       - "medium shot, hero turns to face camera"
@@ -50,6 +52,18 @@ COMFY_OUTPUT = REPO / "comfyui" / "output"
 COMFY_INPUT = REPO / "comfyui" / "input"
 SERVER = "http://127.0.0.1:8188"
 
+# Appended to every panel prompt at render time (not shown in captions).
+# Encodes cinematic-depth craft: light the air, not just the subject — soft
+# directional key, atmospheric haze, and shallow DOF read as "photographed"
+# rather than "generated", and soft falloff avoids the blown-out edges that
+# produce plastic-looking faces. Override in the shot list with `style_suffix:`
+# (set to "" to disable).
+DEFAULT_STYLE_SUFFIX = (
+    "cinematic lighting, soft directional key light with gentle falloff, "
+    "volumetric atmospheric haze, atmospheric perspective, shallow depth of field, "
+    "no blown-out highlights"
+)
+
 PANEL_DEFAULTS = {
     "lora": "film-storyboard.safetensors",
     "lora_weight": 0.85,
@@ -57,6 +71,7 @@ PANEL_DEFAULTS = {
     "steps": 24,
     "width": 1024,
     "height": 1024,
+    "style_suffix": DEFAULT_STYLE_SUFFIX,
 }
 
 
@@ -133,10 +148,20 @@ def upload_image(path):
     return resp["name"]
 
 
+def compose_prompt(prompt, cfg):
+    """Append the configured cinematic style suffix to a panel prompt.
+
+    Kept separate from the caption text so the gallery shows the user's
+    original prompt while the model receives the craft-augmented version.
+    """
+    suffix = cfg.get("style_suffix", "")
+    return f"{prompt}, {suffix}" if suffix else prompt
+
+
 def render_seed_panel(prompt, cfg, seed):
     wf = load_workflow("storyboard_seed")
     substitute_params(wf, {
-        "prompt": prompt,
+        "prompt": compose_prompt(prompt, cfg),
         "lora_name": cfg["lora"],
         "lora_weight": cfg["lora_weight"],
         "guidance": cfg["guidance"],
@@ -152,7 +177,7 @@ def render_seed_panel(prompt, cfg, seed):
 def render_panel(prompt, ref_image_name, cfg, seed):
     wf = load_workflow("storyboard_panel")
     substitute_params(wf, {
-        "prompt": prompt,
+        "prompt": compose_prompt(prompt, cfg),
         "ref_image": ref_image_name,
         "lora_name": cfg["lora"],
         "lora_weight": cfg["lora_weight"],
