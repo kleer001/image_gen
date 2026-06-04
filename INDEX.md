@@ -85,7 +85,7 @@ Last updated: 2026-06-04
 | File | Size | Trigger | Weight | Source |
 |---|---|---|---|---|
 | `watercolor-illustration-sdxl.safetensors` | 244M | none | 0.5–0.8 | [civitai/2795688](https://civitai.com/models/) |
-| `LineArtF.safetensors` | 218M | `lineart`, `monochrome`, `greyscale` | 0.5–1.0 | [civitai/539031](https://civitai.com/models/539031/lineart-sdxl) — black-and-white lineart drawings; SDXL/Pony |
+| `LineArtF.safetensors` | 218M | `lineart`, `monochrome`, `greyscale` | 0.5–1.0 | [civitai/596934](https://civitai.com/models/596934) — "Line Art Style [SDXL Pony]"; black-and-white lineart drawings (source verified by file SHA256) |
 
 ### Cartoon
 | File | Size | Trigger | Weight | Source |
@@ -127,7 +127,7 @@ Last updated: 2026-06-04
 |---|---|---|---|---|
 | `bauhaus-design-sdxl.safetensors` | 218M | none | 0.5–0.9 | [civitai/1953791](https://civitai.com/models/) |
 | `halftone-xl.safetensors` | 163M | none | 0.5–1.0 | [civitai/359311](https://civitai.com/models/) — halftone/print-texture; closest available SDXL risograph proxy |
-| `Minimalist_vector_art.safetensors` | 218M | `arsmjstyle`, `minimalist vector art` | 1.2–1.5 | [civitai/621570](https://civitai.com/models/621570/arsmjstyle-sdxl) — MidJourney-trained flat minimalist vector style; add `silhouette, monochrome, greyscale, simple background` |
+| `Minimalist_vector_art.safetensors` | 218M | `ArsMJStyle`, `Minimalist Vector Art` | 1.2–1.5 | [civitai/658816](https://civitai.com/models/658816) — "Minimalist vector art" (Pony); flat minimalist vector style; add `silhouette, monochrome, greyscale, simple background` (source verified by file SHA256) |
 
 ### Utility / Speed (SDXL)
 | File | Size | Base | Notes |
