@@ -39,10 +39,10 @@
     "inputs": {
       "compile_args": ["35", 0],
       "model": "Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors",
-      "base_precision": "fp16_fast",
-      "quantization": "fp8_e4m3fn_scaled",
+      "base_precision": "bf16",
+      "quantization": "fp8_e4m3fn",
       "load_device": "offload_device",
-      "attention_mode": "sageattn",
+      "attention_mode": "sdpa",
       "rms_norm_function": "default"
     }
   },
