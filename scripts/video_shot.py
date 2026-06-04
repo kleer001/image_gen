@@ -59,6 +59,11 @@ SERVER = "http://127.0.0.1:8188"
 
 WORKFLOW = "wan22_i2v_a14b"
 
+# Preflight guard. WAN 14B unquantized OOM-crashed the whole machine (see the
+# HARDWARE RED FLAG in CLAUDE.md). If more than this much VRAM is already in use,
+# something heavy is co-loaded and WAN cannot share the card — refuse to launch.
+GPU_BUSY_THRESHOLD_MB = 2000
+
 # Cinematic craft appended to every clip prompt (see the source-video notes in
 # CLAUDE.md): handheld operator life + atmosphere read as "filmed", not generated.
 DEFAULT_STYLE_SUFFIX = (
@@ -228,10 +233,59 @@ def open_in_browser(url):
     return False
 
 
+def gpu_vram():
+    """Return (free_mb, used_mb, total_mb) from nvidia-smi, or None if unreadable."""
+    try:
+        out = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=memory.free,memory.used,memory.total",
+             "--format=csv,noheader,nounits"],
+            text=True, stderr=subprocess.DEVNULL,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    free, used, total = (int(x) for x in out.strip().splitlines()[0].split(","))
+    return free, used, total
+
+
+def preflight(force):
+    """Loud hardware-safety gate before any WAN render. Bypass with --force."""
+    print("\n" + "=" * 72)
+    print("  🚩🚩  WAN VIDEO RENDER — HARDWARE RED FLAG  🚩🚩")
+    print("=" * 72)
+    print("  WAN 14B UNQUANTIZED (bf16 / quantization disabled) HAS CRASHED THIS")
+    print("  WHOLE MACHINE: it tries to load ~28 GB/expert onto a 24 GB card -> OOM.")
+    print("  WAN cannot share the GPU. Nothing else heavy may be loaded.")
+    print("=" * 72)
+
+    vram = gpu_vram()
+    if vram is None:
+        print("  !! nvidia-smi unreadable — CANNOT verify the GPU is clear. Proceed blind.")
+    else:
+        free, used, total = vram
+        print(f"  VRAM: {used} MB used / {total} MB total  ({free} MB free)")
+        if used > GPU_BUSY_THRESHOLD_MB:
+            print(f"  ⛔  {used} MB ALREADY IN USE (> {GPU_BUSY_THRESHOLD_MB} MB) — something")
+            print("      heavy is co-loaded (Flux / HunyuanVideo / A1111 / another WAN run?).")
+            print("      Running WAN now risks a machine crash. Clear the GPU first.")
+        else:
+            print("  ✓  GPU looks clear.")
+    print("=" * 72)
+
+    if force:
+        print("  --force given: skipping confirmation. On your head be it.\n")
+        return
+    reply = input("  Type 'yes' to launch WAN video rendering (anything else aborts): ").strip().lower()
+    if reply != "yes":
+        sys.exit("  aborted — nothing rendered.")
+    print()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("shotlist", help="YAML or JSON shot list")
     ap.add_argument("--keep", action="store_true", help="keep gallery dir after exit")
+    ap.add_argument("--force", "--yes", action="store_true",
+                    help="skip the preflight VRAM/crash-hazard confirmation")
     args = ap.parse_args()
 
     spec = yaml.safe_load(Path(args.shotlist).read_text())
@@ -240,6 +294,8 @@ def main():
     shots = [normalize_shot(s, i, cfg, base_seed) for i, s in enumerate(spec.get("shots", []))]
     if not shots:
         sys.exit("shot list is empty")
+
+    preflight(args.force)
 
     serve_dir = Path(tempfile.mkdtemp(prefix="video_shot_"))
     clips = []
