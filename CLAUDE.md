@@ -175,7 +175,7 @@ Multi-shot video with a browser review gallery, mirroring the storyboard flow.
 
 **Identity across shots:** WAN I2V locks identity only via the start frame. For true reference-driven / multi-image character locking (the open analog to Seedance-style `@image1..@imageN` conditioning), the migration target is **WAN 2.1 VACE 14B** — catalogued in `models.yaml` (reuses the installed WAN VAE + UMT5 encoder; needs ComfyUI-WanVideoWrapper). Not yet installed; see `radar/` for the rationale.
 
-**Recommended post chain (not yet wired):** WAN renders at 720p → per-frame ESRGAN upscale → **RIFE/FILM frame interpolation** for temporal smoothness (the OSS substitute for Topaz Video AI). Frame interpolation needs a custom node (e.g. ComfyUI-Frame-Interpolation) that isn't part of the base stack — install before adding a post step to the driver.
+**Recommended post chain (scaffolded, not yet validated):** WAN renders at 720p → per-frame ESRGAN upscale → **RIFE/FILM frame interpolation** for temporal smoothness (the OSS substitute for Topaz Video AI). Scaffolded in `scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py` (`video_post.py clip.mp4 …` → upscaled/interpolated clip in a browser gallery). RIFE needs a custom node (ComfyUI-Frame-Interpolation) that isn't part of the base stack — install it, then validate per `TODO.md` and promote the scaffold into `workflows/`.
 
 ## LoRA Notes
 

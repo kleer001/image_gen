@@ -53,6 +53,36 @@ ComfyUI-WanVideoWrapper installed and reconcile each item below:
       sampler seed, ref_images wiring), but it has **not** been run end-to-end
       against a live ComfyUI. Validate once the workflow above is confirmed.
 
+## Video post chain (`scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py`)
+
+ESRGAN frame upscale + RIFE interpolation — the OSS substitute for Topaz Video AI.
+Scaffold lives in `scaffolds/` so the MCP does not auto-register it. The ESRGAN
+half uses installed models (`4x-UltraSharp.pth` etc.); the RIFE half does not yet
+exist on the rig.
+
+- [ ] **Install ComfyUI-Frame-Interpolation.** RIFE is not in the base stack.
+      Clone into `comfyui/custom_nodes/` and restart before this can run:
+      <https://github.com/Fannovel16/ComfyUI-Frame-Interpolation>.
+- [ ] **`RIFE VFI` node schema.** Scaffold assumes class_type `RIFE VFI` (with a
+      space) and inputs `frames, ckpt_name, clear_cache_after_n_frames, multiplier,
+      fast_mode, ensemble, scale_factor`. Verify against the installed node — input
+      names and the RIFE checkpoint name (`rife47.pth`) drift between releases.
+- [ ] **`VHS_LoadVideo` schema + video input path.** Scaffold sets `video` to a
+      bare filename and the driver stages the clip into `comfyui/input/`. Confirm
+      VHS_LoadVideo reads from the input dir by filename (vs. needing an upload
+      endpoint) and that output 0 is the IMAGE batch in this VHS version.
+- [ ] **Upscale → interpolate order / VRAM.** Scaffold follows the documented
+      order (4x upscale → downscale to target → RIFE). Interpolating already-upscaled
+      frames is VRAM-heavy; swapping to interpolate-then-upscale is lighter but does
+      more upscale work. Pick per rig headroom.
+- [ ] **Target dims.** Default `1664x960` = exact 2x of an 832x480 render
+      (aspect-preserving). If you render at other dims, set `--width/--height` to
+      2x of those, or the `crop: disabled` ImageScale will stretch.
+- [ ] **Promotion.** After it runs clean, move
+      `scaffolds/video_post_upscale_interp.json` → `workflows/`, restart
+      (`imggen stop && imggen`), repoint `WORKFLOW_FILE` in `scripts/video_post.py`,
+      and strip the `_scaffold` key.
+
 ## Radar follow-ups (`radar/2026-06-03.md`)
 
 - [ ] **Qwen-Image-2.0 (7B)** — open weights were **not** released as of the sweep.
