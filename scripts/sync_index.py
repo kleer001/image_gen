@@ -214,7 +214,18 @@ def sync():
     # 1. Remove rows for deleted files
     content = remove_rows_for_deleted(content, filesystem)
 
-    # 2. Find files not yet indexed
+    # 2. Strip existing Unindexed section (will rebuild it). Must happen
+    #    BEFORE extracting indexed filenames, otherwise files parked in the
+    #    Unindexed table count as "indexed" and silently vanish on this run
+    #    instead of persisting until annotated into a real section.
+    content = re.sub(
+        r"\n---\n\n## Unindexed.*",
+        "",
+        content,
+        flags=re.DOTALL,
+    )
+
+    # 3. Find files not yet indexed
     indexed_filenames = extract_indexed_files(content)
     fs_filenames_map = {Path(p).name: (p, s) for p, s in filesystem.items()}
 
@@ -222,14 +233,6 @@ def sync():
     for fname, (rel, size) in fs_filenames_map.items():
         if fname not in indexed_filenames:
             new_files[rel] = size
-
-    # 3. Strip existing Unindexed section (will rebuild it)
-    content = re.sub(
-        r"\n---\n\n## Unindexed.*",
-        "",
-        content,
-        flags=re.DOTALL,
-    )
 
     # 4. Update timestamp
     content = update_timestamp(content)
