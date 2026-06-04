@@ -242,6 +242,24 @@
     co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and
     treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai
     repo before first fetch (bf16 shards live at the Wan-AI source repo).
+- section: wan
+  name: WAN 2.1 I2V 14B 720P (fp8)
+  dest: diffusion_models/Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors
+  size: 0
+  auth: hf
+  base: wan
+  purpose: Image-to-video that actually fits a 24GB card. Single-model (not 2.2's
+    dual high/low-noise experts), so far simpler and lighter than WAN 2.2 I2V.
+  source: https://huggingface.co/Wan-AI/Wan2.1-I2V-14B-720P
+  date: '2026-06-04'
+  notes: >-
+    True single-file fp8_e4m3fn build (~15.8GB on disk, ~16GB VRAM) — already
+    quantized, so load with quantization:disabled (do NOT re-quantize). Reuses the
+    installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new encoder/VAE
+    download. Runs via ComfyUI-WanVideoWrapper; still cannot co-load with
+    Flux/HunyuanVideo/A1111. 480P variant exists at the same path (swap 720P->480P).
+    size:0 → installer downloads if absent and treats any non-empty file as complete.
 - section: controlnet
   name: Flux Depth ControlNet v3 (XLabs)
   dest: controlnet/flux-depth-controlnet-v3.safetensors
