@@ -743,3 +743,54 @@
   purpose: Retro cinematic color palette for Flux.1-dev
   date: '2026-03-24'
   weight: 0.8-1.0
+- section: loras
+  name: Line Art Style
+  dest: loras/LineArtF.safetensors
+  civitai_version: 666873
+  civitai_model: 596934
+  size: 0
+  auth: civitai
+  base: pony
+  purpose: Black-and-white line-art / monochrome drawing style; SDXL & Pony
+  source: https://civitai.com/models/596934
+  date: '2026-06-04'
+  trigger: lineart, monochrome, greyscale
+  weight: 0.5-1.0
+- section: loras
+  name: Minimalist Vector Art
+  dest: loras/Minimalist_vector_art.safetensors
+  civitai_version: 737180
+  civitai_model: 658816
+  size: 0
+  auth: civitai
+  base: pony
+  purpose: Flat minimalist vector / silhouette style for Pony
+  source: https://civitai.com/models/658816
+  date: '2026-06-04'
+  trigger: ArsMJStyle, Minimalist Vector Art
+  weight: 1.2-1.5
+- section: loras
+  name: Darkcore Style
+  dest: loras/darkcore_pny.safetensors
+  civitai_version: 677108
+  civitai_model: 605731
+  size: 0
+  auth: civitai
+  base: pony
+  purpose: Comic-book noir style (bold lines, washed colors, grim mood) for Pony; trained on AutismMix
+  source: https://civitai.com/models/605731
+  date: '2026-06-04'
+  trigger: s_darkcore style
+  weight: 0.8-1.0
+- section: loras
+  name: Eyes Enhancer
+  dest: loras/eyes_enhancer_pony_v3.safetensors
+  civitai_version: 1612889
+  civitai_model: 365708
+  size: 0
+  auth: civitai
+  base: sdxl
+  purpose: Eye-detail enhancer for SDXL/Pony; use in the positive prompt (no trigger word)
+  source: https://civitai.com/models/365708
+  date: '2026-06-04'
+  weight: 0.4-0.8

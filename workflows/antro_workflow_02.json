@@ -1,0 +1,76 @@
+{
+  "ckpt": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "pony-diffusion-xl-v6.safetensors"
+    }
+  },
+  "lora": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "lora_name": "darkcore_pny.safetensors",
+      "strength_model": 0.9,
+      "strength_clip": 0.9,
+      "model": ["ckpt", 0],
+      "clip": ["ckpt", 1]
+    }
+  },
+  "clip_skip": {
+    "class_type": "CLIPSetLastLayer",
+    "inputs": {
+      "clip": ["lora", 1],
+      "stop_at_clip_layer": -2
+    }
+  },
+  "latent": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "pos": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["clip_skip", 0],
+      "text": "PARAM_PROMPT"
+    }
+  },
+  "neg": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["clip_skip", 0],
+      "text": "score_4, worst quality, low quality, blurry, bad anatomy, deformed, extra limbs, text, watermark, signature, 3d, photo, photorealistic, feral, nsfw, gradient, bokeh, soft shading, shoulders, chest, torso, body, (clothing:1.5), (clothes:1.5), (coat:1.4), (jacket:1.4), (shirt:1.4), (scarf:1.4), (vest:1.3), lapels, buttons, hood, breasts, cleavage, busy background, scenery, debris, clutter, gradient background, (scared:1.3), (wide-eyed:1.2), surprised, shocked, fear, alarmed, worried, (angry:1.2), scowl, frown, furrowed brow, grin, smiling, open mouth, snarl, (raised eyebrows:1.2), emotional, dramatic expression, circle, circular background, halo, ring, spotlight, radial background, vignette, disc, round frame, backdrop, geometric background, badge, border, frame, suit, necktie, bowtie, (collar:1.5), formal wear, colored background, grey background, lavender background, pink background, purple background, bright background, solid color background"
+    }
+  },
+  "ksampler": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": "PARAM_INT_SEED",
+      "steps": 32,
+      "cfg": 7.0,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1.0,
+      "model": ["lora", 0],
+      "positive": ["pos", 0],
+      "negative": ["neg", 0],
+      "latent_image": ["latent", 0]
+    }
+  },
+  "decode": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["ksampler", 0],
+      "vae": ["ckpt", 2]
+    }
+  },
+  "save": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "antro_workflow_02",
+      "images": ["decode", 0]
+    }
+  }
+}

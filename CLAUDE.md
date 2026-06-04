@@ -165,6 +165,14 @@ Multi-panel storyboards with character/style consistency across panels.
 
 ## Video delivery
 
+> 🚩 **HARDWARE RED FLAG — WAN video can crash the whole machine.** WAN 2.2 I2V / WAN 2.1 VACE
+> load a 14B transformer that, **unquantized** (`base_precision: bf16` + `quantization: disabled`),
+> exceeds the 24 GB card and hard-crashes the box (confirmed 2026-06-04). Before running ANY video
+> workflow: (1) **confirm with the user** — it can take the machine down; (2) **verify WAN is the
+> only heavy GPU job** — `nvidia-smi` should show near-empty VRAM, with no Flux/HunyuanVideo/A1111
+> co-loaded (WAN cannot share the GPU); (3) use a **quantized** attention/precision config (fp8
+> non-`_scaled`, or install `sageattention`), never bf16/disabled.
+
 Multi-shot video with a browser review gallery, mirroring the storyboard flow.
 
 **Driver:** `scripts/video_shot.py <shotlist.yaml>` reads a shot list, renders each shot via the WAN 2.2 I2V workflow over the ComfyUI HTTP API, builds an HTML `<video>` gallery (CSS grid), serves it on a free port from 8765, and opens it in the browser. Format and defaults are in the script's module docstring; see `examples/video_shots.example.yaml`.
