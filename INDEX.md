@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-05-08
+Last updated: 2026-06-04
 
 ---
 
@@ -85,6 +85,7 @@ Last updated: 2026-05-08
 | File | Size | Trigger | Weight | Source |
 |---|---|---|---|---|
 | `watercolor-illustration-sdxl.safetensors` | 244M | none | 0.5–0.8 | [civitai/2795688](https://civitai.com/models/) |
+| `LineArtF.safetensors` | 218M | `lineart`, `monochrome`, `greyscale` | 0.5–1.0 | [civitai/539031](https://civitai.com/models/539031/lineart-sdxl) — black-and-white lineart drawings; SDXL/Pony |
 
 ### Cartoon
 | File | Size | Trigger | Weight | Source |
@@ -126,6 +127,7 @@ Last updated: 2026-05-08
 |---|---|---|---|---|
 | `bauhaus-design-sdxl.safetensors` | 218M | none | 0.5–0.9 | [civitai/1953791](https://civitai.com/models/) |
 | `halftone-xl.safetensors` | 163M | none | 0.5–1.0 | [civitai/359311](https://civitai.com/models/) — halftone/print-texture; closest available SDXL risograph proxy |
+| `Minimalist_vector_art.safetensors` | 218M | `arsmjstyle`, `minimalist vector art` | 1.2–1.5 | [civitai/621570](https://civitai.com/models/621570/arsmjstyle-sdxl) — MidJourney-trained flat minimalist vector style; add `silhouette, monochrome, greyscale, simple background` |
 
 ### Utility / Speed (SDXL)
 | File | Size | Base | Notes |
@@ -138,6 +140,12 @@ Last updated: 2026-05-08
 |---|---|---|---|
 | `flux-ip-adapter-v2-xlabs.safetensors` | 1.0G | Flux | XLabs IP-Adapter v2; image prompt conditioning; requires [x-flux-comfyui](https://github.com/XLabs-AI/x-flux-comfyui) |
 | `Sketchy-Illustrious.safetensors` | 217M | **Illustrious XL** | Sketchy line-art style; SDXL base (not Flux!) |
+
+### Pony Diffusion V6 XL
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `darkcore_pny.safetensors` | 94M | `s_darkcore style` | 0.8–1.0 | [civitai/605731](https://civitai.com/models/605731/darkcore-style-sdxl-and-pony) — comic-book style: bold lines, washed colors, grim mood; Pony version trained on AutismMix. Used by `antro_workflow_02`. |
+| `eyes_enhancer_pony_v3.safetensors` | 218M | none (eye enhancer, positive) | 0.4–0.8 | [civitai/365708](https://civitai.com/models/365708/lora-eyes-enhancer-free-use-or-merge) — beautifies eyes; supports varied pupil types |
 
 ---
 
@@ -175,6 +183,13 @@ Last updated: 2026-05-08
 | `4x-UltraSharp.pth` | 64M | Best general upscaler |
 | `RealESRGAN_x4plus.pth` | 64M | Realistic textures |
 | `4x-AnimeSharp.pth` | 64M | Anime/illustration upscaler |
+
+---
+
+## Embeddings (`models/embeddings/`)
+| File | Size | Base | Trigger | Notes |
+|---|---|---|---|---|
+| `zPDXL3.safetensors` | 264K | **Pony Diffusion V6 XL** (and Pony-adjacent) | `embedding:zPDXL3` in negative | "Pony PDXL Negative Embeddings — High Quality V3." Community-standard textual inversion for Pony's known eye/anatomy/censoring failure modes. Used at weight 1.0–2.0 in the **negative** prompt. CivitAI model 332646, version 720175. Does not work on non-Pony checkpoints. |
 
 ---
 
@@ -271,9 +286,24 @@ Last updated: 2026-05-08
 | `xlabs_controlnet_canny.json` | 8K | **Flux.1-dev** | XLabs Canny ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
 | `xlabs_controlnet_depth.json` | 8K | **Flux.1-dev** | XLabs Depth ControlNet v3; requires x-flux-comfyui + ComfyUI-ControlNet-Aux |
 | `animatediff_txt2vid.json` | 3K | **SD 1.5** | AnimateDiff text-to-video; 16 frames 512x512; uses `v1-5-pruned-emaonly.safetensors`; requires ComfyUI-AnimateDiff-Evolved |
+| `antro_workflow_02.json` | 3K | **Pony Diffusion V6 XL + Darkcore LoRA @0.9** | Locked SFW anthro head-portrait recipe — flat-duotone noir, head-and-neck crop. Sampler/scheduler/CFG/steps/clip-skip baked in: `dpmpp_2m` + `karras` + CFG 7.0 + 32 steps + clip skip -2, 1024² square. Full V3-trimmed negative baked in (clothing/torso/emotion/background-disc). Parameters: `PARAM_PROMPT` (full positive — caller supplies score prefix, `s_darkcore style`, `source_furry`, species/breed tags, `duotone/crop/pose` blocks) + `PARAM_INT_SEED`. Used by `ferine_town` portrait pipeline. |
+| `storyboard_seed.json` | 2K | **Flux.1-dev + storyboard LoRA** | Storyboard panel-1 seed (text→image). Params: `PARAM_LORA_NAME`, `PARAM_FLOAT_LORA_WEIGHT`, `PARAM_PROMPT`, `PARAM_INT_WIDTH/HEIGHT/STEPS/SEED`, `PARAM_FLOAT_GUIDANCE`. Driven by `scripts/storyboard.py`. |
+| `storyboard_panel.json` | 2K | **Flux.1-Kontext-dev + storyboard LoRA** | Storyboard panels 2..N (ref+text→image) — locks character/style across the sheet via Kontext. Same params as seed plus `PARAM_REF_IMAGE`. Driven by `scripts/storyboard.py`. |
 
 ---
 
 ## Empty
-- `models/embeddings/` — empty
 - `models/clip/` — empty
+
+---
+
+## Unindexed — needs annotation
+
+> Auto-detected by sync_index.py. Move each row to its proper section and fill in metadata.
+
+### Diffusion Models (`diffusion_models/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors` | 2.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | Official VACE is on the WAN 2.1 base (no official 2.2-VACE exists yet); Apache-2.0. Reuses the installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new encoder/VAE download needed. fp8 single-file build runs on 24GB via ComfyUI-WanVideoWrapper + block swap, same envelope as WAN 2.2 I2V (cannot co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai repo before first fetch (bf16 shards live at the Wan-AI source repo). |
+
