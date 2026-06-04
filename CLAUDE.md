@@ -159,6 +159,24 @@ Multi-panel storyboards with character/style consistency across panels.
 
 **Aspect ratio quirk:** `width`/`height` in the YAML control panel 1 (the seed). Panels 2..N use `FluxKontextImageScale`, which snaps to Kontext's preferred buckets (square, 1184×880, 1248×832, 1392×752, 1456×720, and portrait flips) based on the **reference image's** aspect — *not* the YAML dims. Net effect: set seed dims to your target aspect (e.g. 1024×576 for 16:9) and every panel follows. Per-shot mixed aspects aren't supported by the current driver.
 
+**Cinematic-depth style suffix:** `storyboard.py` appends `DEFAULT_STYLE_SUFFIX` (soft directional key light, volumetric haze, atmospheric perspective, shallow DOF, no blown highlights) to every panel prompt at render time. This "light the air, not just the subject" convention reads as photographed rather than generated and avoids the blown-out edges that produce plastic faces. Override per-sheet with `style_suffix:` in the shot list (`""` disables). Gallery captions still show your original prompt.
+
+**Character reference sheet craft (for the `reference:` image you feed the driver):** generate the character on a **solid neutral-gray background, not white** — pure white kicks light back into the jaw and blows out face edges, baking in glossy/plastic skin that then fights every scene you composite into. Pair gray with **soft directional key light, gentle falloff** (avoid "diffuse/soft lighting" alone — it over-lights). This is a character-sheet convention only; don't force gray backgrounds onto scene panels (that's what the cinematic-depth suffix above is for). For extra skin realism, stack a Flux skin-detailer LoRA (see `radar/` digests) rather than relying on the base model.
+
+## Video delivery
+
+Multi-shot video with a browser review gallery, mirroring the storyboard flow.
+
+**Driver:** `scripts/video_shot.py <shotlist.yaml>` reads a shot list, renders each shot via the WAN 2.2 I2V workflow over the ComfyUI HTTP API, builds an HTML `<video>` gallery (CSS grid), serves it on a free port from 8765, and opens it in the browser. Format and defaults are in the script's module docstring; see `examples/video_shots.example.yaml`.
+
+- Each shot needs a **start frame** (`image:`) plus a motion `prompt:`. Image-to-video carries identity/scene from that frame, so render the frame to look how the clip should look (apply the character-sheet + cinematic-depth craft above).
+- Unlike the storyboard workflows, `wan22_i2v_a14b.json` has no `PARAM_*` placeholders — the driver patches nodes by `class_type` (prompts on `WanVideoTextEncode`, start frame on `LoadImage`, dims on `ImageResizeKJv2`, length on `WanVideoImageToVideoEncode`, seed on **both** `WanVideoSampler` experts, fps on `VHS_VideoCombine`).
+- A cinematic/handheld `style_suffix` is appended to every prompt (`""` disables), echoing the "camera operator life + atmosphere" convention.
+
+**Identity across shots:** WAN I2V locks identity only via the start frame. For true reference-driven / multi-image character locking (the open analog to Seedance-style `@image1..@imageN` conditioning), the migration target is **WAN 2.1 VACE 14B** — catalogued in `models.yaml` (reuses the installed WAN VAE + UMT5 encoder; needs ComfyUI-WanVideoWrapper). Not yet installed; see `radar/` for the rationale.
+
+**Recommended post chain (scaffolded, not yet validated):** WAN renders at 720p → per-frame ESRGAN upscale → **RIFE/FILM frame interpolation** for temporal smoothness (the OSS substitute for Topaz Video AI). Scaffolded in `scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py` (`video_post.py clip.mp4 …` → upscaled/interpolated clip in a browser gallery). RIFE needs a custom node (ComfyUI-Frame-Interpolation) that isn't part of the base stack — install it, then validate per `TODO.md` and promote the scaffold into `workflows/`.
+
 ## LoRA Notes
 
 Most LoRAs in `models/loras/` target **Flux.1-dev**. Exceptions: `Sketchy-Illustrious.safetensors` targets Illustrious XL; AnimateDiff camera LoRAs in `models/animatediff_motion_lora/` target SD1.5+AnimateDiff. See `INDEX.md` for per-LoRA trigger words and recommended weights.

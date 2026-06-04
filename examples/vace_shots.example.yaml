@@ -1,0 +1,29 @@
+# Example shot list for scripts/video_vace.py (WAN 2.1 VACE reference-to-video).
+# SCAFFOLD — needs rig validation first; see /TODO.md.
+#
+# Unlike video_shot.py (which animates a start frame), each shot here takes a
+# `reference:` identity image and a motion `prompt:`. The character is carried
+# by the reference, so the same sheet drives every shot for consistency —
+# the open analog to Seedance's @image identity conditioning.
+#
+#   python3 scripts/video_vace.py examples/vace_shots.example.yaml
+
+num_frames: 81
+fps: 16
+width: 832
+height: 480
+strength: 1.0           # VACE conditioning strength (lower = looser to the prompt)
+seed: 42
+
+shots:
+  - reference: ./refs/zara_sheet.png
+    prompt: "she walks toward camera through neon rain, slow push-in, shallow focus"
+
+  - reference: ./refs/zara_sheet.png
+    prompt: "close-up, she glances over her shoulder, half-smile, rain on the glass"
+    strength: 0.8
+    seed: 9001
+
+  - reference: ./refs/zara_sheet.png
+    prompt: "wide, she crosses an empty intersection, distant headlights, handheld"
+    num_frames: 121

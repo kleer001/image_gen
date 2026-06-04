@@ -222,6 +222,26 @@
   purpose: VAE for WAN 2.1/2.2
   source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
   date: '2026-03-24'
+- section: wan
+  name: WAN 2.1 VACE 14B (fp8)
+  dest: diffusion_models/Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors
+  size: 0
+  auth: hf
+  base: wan
+  purpose: Reference-to-video (R2V) + video-to-video / masked editing — the open analog
+    to Seedance-style multi-image character/identity conditioning. Single biggest
+    gap-filler for character-consistent shots.
+  source: https://huggingface.co/Wan-AI/Wan2.1-VACE-14B
+  date: '2026-06-03'
+  notes: >-
+    Official VACE is on the WAN 2.1 base (no official 2.2-VACE exists yet); Apache-2.0.
+    Reuses the installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new
+    encoder/VAE download needed. fp8 single-file build runs on 24GB via
+    ComfyUI-WanVideoWrapper + block swap, same envelope as WAN 2.2 I2V (cannot
+    co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and
+    treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai
+    repo before first fetch (bf16 shards live at the Wan-AI source repo).
 - section: controlnet
   name: Flux Depth ControlNet v3 (XLabs)
   dest: controlnet/flux-depth-controlnet-v3.safetensors

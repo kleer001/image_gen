@@ -1,0 +1,25 @@
+# Example shot list for scripts/video_shot.py (WAN 2.2 I2V).
+# Each shot animates a start frame; render the frame to look how you want the
+# clip to look, then describe the motion in the prompt. Run with:
+#   python3 scripts/video_shot.py examples/video_shots.example.yaml
+#
+# The driver appends a cinematic-depth/handheld style suffix to every prompt;
+# set `style_suffix: ""` to disable, or override with your own string.
+
+num_frames: 81          # ~5s at 16fps
+fps: 16
+width: 832              # start-frame resize, divisible by 32
+height: 480
+seed: 42                # base seed; per-shot = base + index
+
+shots:
+  - image: ./plates/car_interior.png
+    prompt: "she applies lip gloss, subtle head turn toward the passenger, slow blink"
+
+  - image: ./plates/car_interior.png
+    prompt: "passenger tugs an oversized jacket closed, glances over, half-smile"
+    seed: 9001
+
+  - image: ./plates/neon_street.png
+    prompt: "wide establishing, rain on the asphalt, slow push-in, distant headlights"
+    num_frames: 121      # longer establishing beat
