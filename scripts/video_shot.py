@@ -35,6 +35,7 @@ NOT wired in here — those need custom nodes that aren't part of the base stack
 See the `## Video delivery` notes in CLAUDE.md for the recommended post chain.
 """
 import argparse
+import atexit
 import http.server
 import json
 import os
@@ -280,6 +281,25 @@ def preflight(force):
     print()
 
 
+def launch_guard():
+    """Arm scripts/vram_tripwire.py for this run; SIGKILLs ComfyUI before VRAM/RAM
+    exhaustion can freeze the box. Terminated automatically when this driver exits."""
+    guard = REPO / "scripts" / "vram_tripwire.py"
+    if not guard.exists():
+        print("  !! vram_tripwire.py missing — rendering WITHOUT the freeze guard", flush=True)
+        return None
+    log = open(REPO / "outputs" / "vram_tripwire.log", "a")
+    try:
+        proc = subprocess.Popen([sys.executable, str(guard), "--match", "main.py --listen"],
+                                stdout=log, stderr=subprocess.STDOUT)
+    except OSError as exc:
+        print(f"  !! could not arm freeze guard: {exc} — rendering unguarded", flush=True)
+        return None
+    atexit.register(proc.terminate)
+    print(f"  ✓ freeze guard armed (pid {proc.pid}) — see outputs/vram_tripwire.log", flush=True)
+    return proc
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("shotlist", help="YAML or JSON shot list")
@@ -296,6 +316,7 @@ def main():
         sys.exit("shot list is empty")
 
     preflight(args.force)
+    launch_guard()
 
     serve_dir = Path(tempfile.mkdtemp(prefix="video_shot_"))
     clips = []
