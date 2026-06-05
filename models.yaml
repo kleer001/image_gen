@@ -794,3 +794,25 @@
   source: https://civitai.com/models/365708
   date: '2026-06-04'
   weight: 0.4-0.8
+- section: loras
+  name: WAN 2.2 I2V Lightning 4-step (high noise)
+  dest: loras/wan22_i2v_lightning_4step_high.safetensors
+  url: https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors
+  size: 1226977424
+  auth: hf
+  base: wan
+  purpose: Distill LoRA for WAN 2.2 I2V high-noise expert; 4-step generation at cfg 1. Feeds the high-noise WanVideoModelLoader at strength 1.0 (wired in wan22_i2v_a14b.json). Must pair with the matching low-noise LoRA on the low expert.
+  source: https://huggingface.co/lightx2v/Wan2.2-Lightning
+  date: '2026-06-05'
+  weight: '1.0'
+- section: loras
+  name: WAN 2.2 I2V Lightning 4-step (low noise)
+  dest: loras/wan22_i2v_lightning_4step_low.safetensors
+  url: https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors
+  size: 1226977424
+  auth: hf
+  base: wan
+  purpose: Distill LoRA for WAN 2.2 I2V low-noise expert; 4-step generation at cfg 1. Feeds the low-noise WanVideoModelLoader at strength 1.0 (wired in wan22_i2v_a14b.json). Must pair with the matching high-noise LoRA on the high expert.
+  source: https://huggingface.co/lightx2v/Wan2.2-Lightning
+  date: '2026-06-05'
+  weight: '1.0'

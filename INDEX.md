@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-06-04
+Last updated: 2026-06-05
 
 ---
 
@@ -146,6 +146,12 @@ Last updated: 2026-06-04
 |---|---|---|---|---|
 | `darkcore_pny.safetensors` | 94M | `s_darkcore style` | 0.8–1.0 | [civitai/605731](https://civitai.com/models/605731/darkcore-style-sdxl-and-pony) — comic-book style: bold lines, washed colors, grim mood; Pony version trained on AutismMix. Used by `antro_workflow_02`. |
 | `eyes_enhancer_pony_v3.safetensors` | 218M | none (eye enhancer, positive) | 0.4–0.8 | [civitai/365708](https://civitai.com/models/365708/lora-eyes-enhancer-free-use-or-merge) — beautifies eyes; supports varied pupil types |
+
+### WAN 2.2 I2V — Lightning distill (video)
+| File | Size | Base | Weight | Source |
+|---|---|---|---|---|
+| `wan22_i2v_lightning_4step_high.safetensors` | 1.2G | **WAN 2.2 I2V (high-noise expert)** | 1.0 | [lightx2v/Wan2.2-Lightning](https://huggingface.co/lightx2v/Wan2.2-Lightning) — 4-step distill (rank64 Seko-V1). Wired into `wan22_i2v_a14b.json` (high loader); enables 4 steps @ cfg 1, euler. Pair with the low-noise LoRA. |
+| `wan22_i2v_lightning_4step_low.safetensors` | 1.2G | **WAN 2.2 I2V (low-noise expert)** | 1.0 | [lightx2v/Wan2.2-Lightning](https://huggingface.co/lightx2v/Wan2.2-Lightning) — 4-step distill (rank64 Seko-V1). Wired into `wan22_i2v_a14b.json` (low loader). Sharp output at the fast-tier step count; fixes the under-sampled 6-step blur. |
 
 ---
 
