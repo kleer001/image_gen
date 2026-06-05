@@ -44,7 +44,11 @@
       "quantization": "fp8_e4m3fn",
       "load_device": "offload_device",
       "attention_mode": "sdpa",
-      "rms_norm_function": "default"
+      "rms_norm_function": "default",
+      "lora": [
+        "96",
+        0
+      ]
     }
   },
   "71": {
@@ -55,7 +59,11 @@
       "quantization": "fp8_e4m3fn",
       "load_device": "offload_device",
       "attention_mode": "sdpa",
-      "rms_norm_function": "default"
+      "rms_norm_function": "default",
+      "lora": [
+        "97",
+        0
+      ]
     }
   },
   "39": {
@@ -160,13 +168,13 @@
   "94": {
     "class_type": "INTConstant",
     "inputs": {
-      "value": 6
+      "value": 4
     }
   },
   "91": {
     "class_type": "INTConstant",
     "inputs": {
-      "value": 3
+      "value": 2
     }
   },
   "95": {
@@ -176,8 +184,8 @@
         "94",
         0
       ],
-      "cfg_scale_start": 2,
-      "cfg_scale_end": 2,
+      "cfg_scale_start": 1,
+      "cfg_scale_end": 1,
       "interpolation": "linear",
       "start_percent": 0,
       "end_percent": 0.01
@@ -210,10 +218,10 @@
         "91",
         0
       ],
-      "shift": 8,
+      "shift": 5.0,
       "seed": 43,
       "force_offload": true,
-      "scheduler": "dpm++_sde",
+      "scheduler": "euler",
       "riflex_freq_index": 0,
       "denoise_strength": 1,
       "batched_cfg": false,
@@ -250,10 +258,10 @@
         0
       ],
       "cfg": 1,
-      "shift": 8,
+      "shift": 5.0,
       "seed": 43,
       "force_offload": true,
-      "scheduler": "dpm++_sde",
+      "scheduler": "euler",
       "riflex_freq_index": 0,
       "denoise_strength": 1,
       "batched_cfg": false,
@@ -303,6 +311,20 @@
       "format": "video/h264-mp4",
       "pingpong": false,
       "save_output": true
+    }
+  },
+  "96": {
+    "class_type": "WanVideoLoraSelect",
+    "inputs": {
+      "lora": "wan22_i2v_lightning_4step_high.safetensors",
+      "strength": 1.0
+    }
+  },
+  "97": {
+    "class_type": "WanVideoLoraSelect",
+    "inputs": {
+      "lora": "wan22_i2v_lightning_4step_low.safetensors",
+      "strength": 1.0
     }
   }
 }
