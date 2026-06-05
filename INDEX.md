@@ -307,3 +307,27 @@ Last updated: 2026-06-04
 |---|---|---|---|---|---|
 | `Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors` | 2.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | Official VACE is on the WAN 2.1 base (no official 2.2-VACE exists yet); Apache-2.0. Reuses the installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new encoder/VAE download needed. fp8 single-file build runs on 24GB via ComfyUI-WanVideoWrapper + block swap, same envelope as WAN 2.2 I2V (cannot co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai repo before first fetch (bf16 shards live at the Wan-AI source repo). |
 
+### LoRAs (`loras/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `Qwen-Edit-2509-Multiple-angles.safetensors` | 225M | — | — | — | TODO |
+
+### Text Encoders (`text_encoders/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7G | — | — | — | TODO |
+
+### VAE (`vae/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `qwen_image_vae.safetensors` | 242M | — | — | — | TODO |
+
+### workflows (`workflows/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `qwen_image_edit_multiangle.json` | 1K | — | — | — | TODO |
+

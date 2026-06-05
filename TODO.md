@@ -7,12 +7,9 @@ notes the file it affects and how to confirm it.
 
 ## WAN 2.1 VACE — catalog entry (`models.yaml`)
 
-- [ ] **Exact fp8 filename + size.** The entry `WAN 2.1 VACE 14B (fp8)` points at
-      `Kijai/WanVideo_comfy/resolve/main/Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors`
-      with `size: 0` (installer treats any non-empty file as complete — no byte check).
-      The filename is a best guess from the Kijai naming convention. **Confirm** the
-      real filename on <https://huggingface.co/Kijai/WanVideo_comfy/tree/main> (look
-      for the VACE 14B module) and set the exact `size` once downloaded.
+- [x] **Exact fp8 filename + size.** Confirmed: `Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors`
+      exists on `Kijai/WanVideo_comfy` and is on disk at 2.84 GB. The catalog filename is
+      correct; `size: 0` retained (installer treats any non-empty file as complete).
       Official bf16 source repo: <https://huggingface.co/Wan-AI/Wan2.1-VACE-14B>.
 - [ ] **License/usage** — Apache-2.0 per the model card; re-confirm before redistribution.
 
