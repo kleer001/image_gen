@@ -39,10 +39,6 @@
   "22": {
     "class_type": "WanVideoModelLoader",
     "inputs": {
-      "compile_args": [
-        "35",
-        0
-      ],
       "model": "wan2.2-i2v-14B-high.safetensors",
       "base_precision": "bf16",
       "quantization": "fp8_e4m3fn",
@@ -54,10 +50,6 @@
   "71": {
     "class_type": "WanVideoModelLoader",
     "inputs": {
-      "compile_args": [
-        "35",
-        0
-      ],
       "model": "wan2.2-i2v-14B-low.safetensors",
       "base_precision": "bf16",
       "quantization": "fp8_e4m3fn",
