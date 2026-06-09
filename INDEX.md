@@ -266,6 +266,29 @@ Last updated: 2026-06-05
 
 ---
 
+## Ovi (video + native speech)
+
+> One-pass image+prompt → video with synced voice (WAN 2.2 5B base). Verified on the 24GB
+> 3090 via ComfyUI-WanVideoWrapper Ovi nodes: bf16 + block swap (14 blocks) + offload_device +
+> sageattn → peak ~20GB VRAM, ~5s clip at 704×704/121f in ~247s @ 10 steps. Cannot co-load with
+> Flux/HunyuanVideo. Voice is generated (not cloneable) — for chosen/consistent voices use the
+> voice_loom → lip-sync path instead. Reuses the WAN UMT5-XXL encoder above.
+
+### Diffusion Models
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `Wan_2_2_Ovi_video_model_bf16.safetensors` | `diffusion_models/WanVideo/Ovi/` | 10.4G | Video branch — load via `WanVideoModelLoader` |
+| `Wan_2_2_Ovi_audio_model_bf16.safetensors` | `diffusion_models/WanVideo/Ovi/` | 11.4G | Audio/speech branch — select via `WanVideoExtraModelSelect` |
+
+### VAE / Audio
+| File | Dir | Size | Notes |
+|---|---|---|---|
+| `Wan2_2_VAE_bf16.safetensors` | `vae/` | 1.3G | WAN 2.2 **5B** VAE — required by Ovi; not the 14B's `Wan2.1_VAE.pth` |
+| `mmaudio_vae_16k_bf16.safetensors` | `vae/` | 327M | MMAudio VAE — `OviMMAudioVAELoader` scans the `vae/` folder, so it lives here |
+| `mmaudio_vocoder_bigvgan_best_netG_bf16.safetensors` | `vae/` | 214M | BigVGAN vocoder for Ovi audio — also in `vae/` |
+
+---
+
 ## Workflows
 
 | File | Size | Model | Notes |
