@@ -144,6 +144,11 @@ See `INDEX.md` for installed models, trigger words, and LoRA weights.
 - LoRA styling — anime, retro anime, illustration, cartoon, Disney, comic, Swiss design, Milton Glaser, graffiti logo, film storyboard, film noir, cinematic
 - Storyboards — multi-panel sheet with character identity locked across panels via Flux Kontext (see `## Storyboards` below)
 
+**FLUX.2 Klein 9B** — runs on the isolated `comfyui_flux2/` instance (port 8189), not the production MCP stack (v0.17 ComfyUI can't run FLUX.2); see `scripts/install_comfyui_flux2.sh`. Distilled 9B, 4-step.
+- Text-to-image — `scripts/flux2_klein.py`
+- Reference-driven editing / compositing — `scripts/flux2_klein_edit.py` (one or more `--ref` images via chained ReferenceLatent)
+- Character reference sheets — `scripts/flux2_character_sheet.py` (identity-locked turnaround: front → side profile → back → face close-up; the distilled edit snaps front↔profile, so intermediate 3/4 angles need the base 9B model + more steps)
+
 **Video generation**
 - Image-to-video — WAN 2.2 I2V (high/low noise variants), SVD-XT (25 frames)
 - Text-to-video — HunyuanVideo 1.5 (720p FP8), AnimateDiff (loop-based, SD1.5)
