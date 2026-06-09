@@ -19,10 +19,13 @@ Seedance-parity feature set · **P3** polish / hygiene.
 - [ ] **P1 — Render-through-finish.** Add a `--post` flag (or a thin meta-driver)
       so `video_shot.py` / `video_vace.py` can hand their output clips straight to
       `video_post.py` — one command from start frame to upscaled/interpolated clip.
-- [ ] **P2 — Audio / lip-sync (WAN 2.2 S2V).** The dialogue scenes ("that's a lot
-      of jacket…") need speech-driven video. Catalog `Wan-AI/Wan2.2-S2V-14B`
-      (reuses WAN VAE + UMT5), add a workflow + driver that takes a start frame +
-      audio track. Reference: radar digest.
+- [ ] **P2 — Audio / lip-sync.** The dialogue scenes ("that's a lot of jacket…")
+      need speech-driven video. Three paths: (a) **Ovi** (installed) — one-pass
+      video+native voice, but the voice isn't cloneable; (b) **voice_loom** (sister
+      repo, `omnivoice` voice-clone TTS) → audio-driven lip-sync (**EchoMimicV3**
+      lightest, or Sonic) on a character frame, for a consistent per-character cloned
+      voice; (c) catalog `Wan-AI/Wan2.2-S2V-14B` (reuses WAN VAE + UMT5) as the
+      integrated start-frame+audio option. Reference: radar digest.
 - [ ] **P2 — LTX-2.3 fast-draft engine.** Add LTX-2.3 (fp8/distilled) as a
       low-latency T2V/I2V path for blocking shot timing before committing slow WAN
       renders — and it carries synchronized audio. Catalog + workflow + driver.
@@ -34,18 +37,18 @@ Seedance-parity feature set · **P3** polish / hygiene.
 
 ## Character / identity tooling (the front half of the workflow)
 
-- [ ] **P1 — Character reference-sheet generator.** Tool the "6-panel sheet" the
-      source video describes: full-body + detail shots on a neutral-gray bg with
-      soft key light, identity-locked across panels via Kontext. Currently only
-      documented as craft in `CLAUDE.md` — make it a driver (analog to
-      `storyboard.py`) that emits the `reference:` image the video drivers consume.
+- [x] **P1 — Character reference-sheet generator.** Done via FLUX.2 Klein 9B
+      (`scripts/flux2_character_sheet.py`, isolated `:8189` instance): a t2i seed on
+      neutral-gray + soft key, then reference-locked edits for a front/profile/back/
+      face turnaround — emits the `reference:` image the video drivers consume.
+      Identity-lock is Klein reference-edit, not Kontext.
 - [ ] **P2 — Outfit swap.** A Kontext recipe/workflow for "put outfit X onto
       character Y" (the video's outfit-swap skill), with a note to carry tattoos/
       markings explicitly in the prompt.
-- [ ] **P2 — Install skin-realism LoRAs.** From the radar digest: "Photorealistic
-      Skin — No plastic [FLUX]" and "Portrait Engine — Detailed Skin". Catalog
-      entries + wire into the character-sheet workflow to kill plastic faces at the
-      image stage. Fills a real gap (lots of style LoRAs, no realism/skin detailer).
+- [x] **P2 — Install skin-realism LoRAs.** Done: `aidmaRealisticSkin` ("No plastic")
+      and `PortraitEngine-v2.0-Flux` installed + cataloged. Fills the realism gap
+      (style-heavy LoRA library had no skin detailer). Note: these target **Flux.1-dev**
+      workflows — the FLUX.2 Klein character sheet doesn't load Flux.1 LoRAs.
 - [ ] **P2 — Multi-plate scene composition (needs VACE).** Once VACE is live, a
       driver that takes character + outfit + location plates and composes a scene —
       the open analog to Seedance's `@image1..@imageN` conditioning.
