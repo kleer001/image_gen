@@ -92,9 +92,11 @@ Seedance-parity feature set · **P3** polish / hygiene.
 - [ ] **P3 — Storyboard example.** `examples/` only has video shot lists; add a
       `storyboard.example.yaml` to match (format currently lives only in the
       `storyboard.py` docstring).
-- [ ] **P3 — Periodic radar cadence.** Re-run `/model-radar` on a schedule (the
-      `loop` skill can drive it) to keep the catalog ahead of the fast-moving OSS
-      video frontier.
+- [x] **P3 — Periodic radar cadence.** Done: `UPDATE.html` is the Claude-facing
+      update-sweep runbook (extends the radar to cover **workflows** too); a
+      `SessionStart` hook (`scripts/check_sweep_due.py`) nudges when the newest
+      `radar/` digest is > 7 days old, and `scripts/update_sweep.sh` drives an
+      unattended weekly `claude -p` run via cron.
 
 ## Validation (once the stack is up)
 
