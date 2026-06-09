@@ -30,11 +30,14 @@ GRAY_SUFFIX = (", full character on a solid neutral-gray background, soft direct
                "key light with gentle falloff, even studio framing, photographic")
 
 # (label, edit instruction for panels 2..N). Panel 1 is the seed t2i.
+# Angles are chosen for what the distilled reference-edit hits reliably: it snaps
+# front<->profile cleanly but won't hold an intermediate 3/4 turn (use the base
+# model + more steps for true 3/4). Hence a front/profile/back/face turnaround.
 PANELS = [
-    ("3/4 view", "Show the exact same character in a full-body three-quarter view, "
-                 "identical face, hair, and outfit"),
-    ("Side profile", "Show the exact same character in a side profile, head-and-shoulders, "
-                     "identical face, hair, and outfit"),
+    ("Side profile", "Show the exact same character from a direct side profile, body and "
+                     "head turned 90 degrees to the side, full body, identical face, hair, and outfit"),
+    ("Back view", "Show the exact same character from directly behind, full-body back view, "
+                  "identical hair and outfit"),
     ("Face close-up", "Close-up of the exact same character's face, neutral expression, "
                       "identical features"),
 ]
