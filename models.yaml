@@ -542,6 +542,36 @@
   trigger: in the style of ckpf,
   weight: 0.8-1.0
 - section: loras
+  name: Photorealistic Skin - No plastic (Flux)
+  dest: loras/aidmaRealisticSkin-FLUX-v0.1.safetensors
+  civitai_version: 1301668
+  civitai_model: 1157318
+  size: 76692072
+  auth: civitai
+  base: flux
+  purpose: Skin-realism detailer for Flux.1-dev — kills the pasted-on/plastic-face
+    failure mode. Fills the realism gap left by the style-heavy LoRA library.
+  source: https://civitai.com/models/1157318
+  date: '2026-06-09'
+  trigger: aidmarealisticskin
+  weight: 0.5-1.0
+- section: loras
+  name: Portrait Engine - Detailed Skin V2.0 (Flux)
+  dest: loras/PortraitEngine-v2.0-Flux.safetensors
+  civitai_version: 2426731
+  civitai_model: 2067704
+  size: 2450635671
+  auth: civitai
+  base: flux
+  purpose: Detailed-skin portrait LoRA for Flux.1-dev — natural pores/texture with
+    cinematic lighting + film grain. Pairs with the gray-bg + soft-key character-sheet
+    convention. (Newer versions of this model target Flux.2 Klein / Z-Image; this is
+    the Flux.1-D V2.0 build.)
+  source: https://civitai.com/models/2067704
+  date: '2026-06-09'
+  trigger: none
+  weight: 0.6-1.0
+- section: loras
   name: Character Design V2
   dest: loras/CharacterDesign-FluxV2.safetensors
   civitai_version: 2500612

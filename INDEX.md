@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-06-05
+Last updated: 2026-06-09
 
 ---
 
@@ -121,6 +121,12 @@ Last updated: 2026-06-05
 | `WongKarwai-Cinematic-Flux.safetensors` | 584M | `Wong Kar-wei Cinematic Style`, `Wong Kar-wei`, `Vague background and prospect` | 0.7 | [civitai/667594](https://civitai.com/models/667594) |
 | `CinematicFilmStock-Flux.safetensors` | 292M | `cinematic film style`, `filmstrip`, `Kodak film style` | 0.8–1.0 | [civitai/273500](https://civitai.com/models/273500) |
 | `RetroCinematic-Flux.safetensors` | 36M | `In the style of ff-rcs` | 0.8–1.0 | [civitai/1109567](https://civitai.com/models/1109567) |
+
+### Realism / Skin (Flux)
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `aidmaRealisticSkin-FLUX-v0.1.safetensors` | 75M | `aidmarealisticskin` | 0.5–1.0 | [civitai/1157318](https://civitai.com/models/1157318) — "Photorealistic Skin ⛔ No plastic"; kills pasted-on/plastic faces |
+| `PortraitEngine-v2.0-Flux.safetensors` | 2.4G | none | 0.6–1.0 | [civitai/2067704](https://civitai.com/models/2067704) — "Portrait Engine, Detailed Skin V2.0"; natural pores/texture + cinematic light & film grain. Pairs with gray-bg + soft-key character-sheet convention |
 
 ### Graphic Design / Logo (SDXL)
 | File | Size | Trigger | Weight | Source |
