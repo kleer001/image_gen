@@ -908,3 +908,41 @@
     the MMAudio VAE for the same folder-scan reason.
   source: https://huggingface.co/Kijai/WanVideo_comfy
   date: '2026-06-05'
+- section: flux2
+  name: FLUX.2 Klein 9B (distilled, fp8)
+  dest: diffusion_models/flux-2-klein-9b-fp8.safetensors
+  url: https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors
+  size: 9433061528
+  auth: hf
+  base: flux2
+  purpose: FLUX.2 Klein 9B distilled diffusion model (4-step, cfg 1). Open upgrade
+    path from Flux.1-dev. Uses the Qwen-3 text encoder + flux2-vae below (NOT the
+    Flux.1 T5/CLIP). Loads via core UNETLoader + Flux2Scheduler/CFGGuider/SamplerCustomAdvanced.
+  source: https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8
+  date: '2026-06-09'
+  notes: >-
+    LICENSE-GATED on HF (accept at the source repo before download). Requires a
+    FLUX.2-capable ComfyUI (>= v0.24.0) — the production comfyui/ (v0.17.0) cannot
+    run it. Installed against the isolated comfyui_flux2/ instance (port 8189) built
+    by scripts/install_comfyui_flux2.sh. fp8 ~9.4GB; comfortable on the 24GB 3090.
+- section: flux2
+  name: Qwen-3 8B text encoder (FLUX.2, fp8mixed)
+  dest: text_encoders/qwen_3_8b_fp8mixed.safetensors
+  url: https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors
+  size: 8664848742
+  auth: hf
+  base: flux2
+  purpose: Text encoder for FLUX.2 Klein 9B (replaces Flux.1's T5/CLIP). Loaded via
+    core CLIPLoader with type "flux2".
+  source: https://huggingface.co/Comfy-Org/flux2-klein-9B
+  date: '2026-06-09'
+- section: flux2
+  name: FLUX.2 VAE
+  dest: vae/flux2-vae.safetensors
+  url: https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors
+  size: 336213556
+  auth: hf
+  base: flux2
+  purpose: VAE for the FLUX.2 family (Klein + dev). Loaded via core VAELoader.
+  source: https://huggingface.co/Comfy-Org/flux2-dev
+  date: '2026-06-09'

@@ -25,3 +25,6 @@ __pycache__/
 # Claude Code session breadcrumbs
 BREADCRUMB.md
 .claude/scheduled_tasks.lock
+
+# Isolated FLUX.2 ComfyUI (experimental, separate from production comfyui/)
+/comfyui_flux2/
