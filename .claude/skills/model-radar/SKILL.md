@@ -7,6 +7,8 @@ description: Sweep the open-weights image/video generation landscape — new bas
 
 Survey the current open-weights image- and video-generation landscape, compare it against what this stack already has, and write a dated digest of what is new and worth considering. **Report only — never download, install, start `imggen`, or edit `models.yaml` / `INDEX.md`.**
 
+> **Full procedure & current-state-digestion checklist: [`UPDATE.html`](../../../UPDATE.html) at the repo root.** That page is the authoritative, extended runbook (it also covers the **Workflows** category and the local-vs-remote state-digestion caveats). The steps below mirror it; if they ever diverge, UPDATE.html wins.
+
 This is a sovereign/local rig. Judge "state of the art" only among **open-weights models runnable locally**, not closed APIs (Midjourney, Sora, Veo, Kling) — those are out of scope by design.
 
 ## Hardware ceiling
@@ -21,6 +23,7 @@ Target GPU ceiling: **24 GB VRAM (RTX 3090)**. A model only counts as installabl
    - **Image base models** — new or updated open-weights foundations and notable checkpoints.
    - **Video models** — new or updated open-weights video generators.
    - **LoRAs** — notable new LoRAs for the base families this stack uses (step 2b).
+   - **Workflows (ComfyUI & elsewhere)** — new SOTA *pipelines* for what the stack does or wants (txt2img, Kontext/in-context edit, ControlNet, storyboard, i2v/t2v, upscale + frame-interp). Sources: ComfyUI example workflows, CivitAI (Workflows filter), OpenArt, comfyworkflows.com, GitHub. Prefer API-format graphs; note node deps and 24 GB fit.
    - **ComfyUI nodes / tools** — significant new custom nodes, pipelines, or quantization tooling relevant to the installed models.
 4. **Filter:** drop anything already installed (step 2a) and anything that cannot fit the VRAM ceiling even quantized.
 5. **Rank** by relevance: does it fill a known gap, upgrade an installed model, or unlock a new capability? Demote incremental point releases.
@@ -41,6 +44,9 @@ Window: since <prev-date>. GPU ceiling: <N> GB.
 
 ## LoRAs (for installed families)
 - **<name>** — <family>, trigger `<...>`. Source: <url>. Verdict: <...>.
+
+## Workflows
+- **<name>** — <capability it improves>; format <ComfyUI API / other>, deps <node(s)>. Fits stack: <yes | needs node X>. Source: <url>. Verdict: <skip | watch | try>.
 
 ## ComfyUI nodes / tools
 - **<name>** — <what it adds>. Source: <url>.

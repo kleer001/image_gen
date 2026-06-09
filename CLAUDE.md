@@ -39,6 +39,20 @@ nohup bash scripts/watch_models.sh >> /tmp/watch_models.log 2>&1 &
 - Never touches existing annotated rows
 - Updates the `Last updated` timestamp
 
+## Updating the Pipeline
+
+To keep the stack at the state of the art, run a periodic **update sweep**:
+digest the current repo state, then scan the open-weights landscape for breakthroughs in
+**models, LoRAs, and workflows** that improve what the repo already does.
+
+- **Runbook:** [`UPDATE.html`](UPDATE.html) — the authoritative, Claude-facing instruction page
+  (HTML by design, for richer structure as LLM context). It is **report-only**: the sweep writes a
+  dated digest to `radar/<YYYY-MM-DD>.md` and never downloads, installs, or edits the catalog.
+- **Invoke:** the `/model-radar` skill, or open `UPDATE.html` and follow it (equivalent).
+- **Cadence:** ~weekly. A `SessionStart` hook runs `scripts/check_sweep_due.py`, which nudges when
+  the newest digest is > 7 days old. For unattended runs, install `scripts/update_sweep.sh` as a
+  weekly cron on the rig.
+
 ## Installing from Scratch
 
 ```bash

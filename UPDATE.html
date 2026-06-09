@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>UPDATE — pipeline update-sweep runbook (for Claude instances)</title>
+<style>
+  :root { --ink:#1a1a1a; --mut:#555; --line:#d8d2c8; --bg:#faf8f4; --card:#fff;
+          --accent:#7a4d1d; --warn:#8a1f1f; --warnbg:#fbeaea; --okbg:#eef4ea; --code:#efeae0; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); max-width:960px; margin:2.5em auto;
+         padding:0 1.2em; font:15px/1.55 -apple-system,Segoe UI,system-ui,sans-serif; }
+  h1 { font-size:1.7em; margin:.2em 0 .1em; }
+  h2 { font-size:1.25em; margin:1.8em 0 .5em; padding-bottom:.25em; border-bottom:2px solid var(--line); }
+  h3 { font-size:1.05em; margin:1.2em 0 .35em; color:var(--accent); }
+  .sub { color:var(--mut); margin:.1em 0 1em; }
+  p, li { margin:.4em 0; }
+  ol, ul { padding-left:1.4em; }
+  code { background:var(--code); padding:1px 5px; border-radius:3px; font-size:.92em; }
+  pre { background:var(--code); padding:.9em 1em; border-radius:6px; overflow-x:auto;
+        border:1px solid var(--line); font-size:.86em; line-height:1.45; }
+  table { border-collapse:collapse; width:100%; margin:.6em 0 1em; font-size:.92em; }
+  th, td { border:1px solid var(--line); padding:.5em .65em; vertical-align:top; text-align:left; }
+  th { background:#f1ece2; }
+  .callout { border-left:4px solid var(--accent); background:var(--card); padding:.7em 1em;
+             margin:1em 0; border-radius:0 6px 6px 0; }
+  .warn { border-left-color:var(--warn); background:var(--warnbg); }
+  .ok { border-left-color:#3a6b2a; background:var(--okbg); }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:8px;
+          padding:.2em 1.1em 1em; margin:1em 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .step h2 { margin-top:.8em; border:0; }
+  .tag { display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.04em;
+         text-transform:uppercase; background:var(--accent); color:#fff; padding:.1em .5em;
+         border-radius:3px; vertical-align:middle; }
+  footer { margin-top:2.5em; padding-top:1em; border-top:1px solid var(--line);
+           color:var(--mut); font-size:.85em; }
+  .verdict { font-weight:700; }
+</style>
+</head>
+<body>
+
+<h1>UPDATE — pipeline update-sweep runbook</h1>
+<p class="sub">An instruction document <strong>for a Claude Code instance</strong>, not for a human
+reader. If you are that instance: read this page top to bottom, then execute the sweep.</p>
+
+<div class="callout">
+  <strong>What this is.</strong> A repeatable procedure to keep this local image/video stack at the
+  state of the art. You will (1) <strong>digest the current state</strong> of the repo, then
+  (2) <strong>sweep the open-weights landscape</strong> for breakthroughs — in
+  <strong>models, LoRAs, and workflows</strong> — that improve what this repo already does, and
+  (3) write a dated digest under <code>radar/</code>.
+</div>
+
+<div class="callout warn">
+  <strong>Report only.</strong> This sweep <strong>never</strong> downloads, installs, starts
+  <code>imggen</code>, or edits <code>models.yaml</code> / <code>INDEX.md</code>. Its single output
+  is a markdown digest in <code>radar/</code>. Acting on the digest (cataloging, downloading) is a
+  separate, human-approved step.
+</div>
+
+<h2>Hardware ceiling</h2>
+<p>Target GPU: <strong>24&nbsp;GB VRAM (RTX&nbsp;3090)</strong>. A model/workflow only counts as
+installable if it fits in 24&nbsp;GB, including via quantization (GGUF / fp8). Flag anything that
+fits <em>only</em> quantized and note the quality/speed cost. If <code>nvidia-smi</code> is
+available, detect the real VRAM and use that instead of the written ceiling. This is a
+<strong>sovereign/local rig</strong>: judge "state of the art" only among
+<strong>open-weights models runnable locally</strong> — never closed APIs (Midjourney, Sora, Veo,
+Kling), which are out of scope by design.</p>
+
+<!-- ───────────────────────── STEP 1 ───────────────────────── -->
+<div class="step">
+<h2><span class="tag">Step 1</span> Digest the current repo state</h2>
+<p>Read the <strong>tracked catalog files</strong> to learn what is already installed, which base
+families are in use, and what the stack can currently do:</p>
+<table>
+  <tr><th>File</th><th>What to extract</th></tr>
+  <tr><td><code>INDEX.md</code></td><td>Authoritative on-disk inventory — installed model/LoRA
+    filenames (your <strong>exclusion set</strong>), base families, trigger words, LoRA weights.</td></tr>
+  <tr><td><code>models.yaml</code></td><td>Machine catalog — every known model's <code>base:</code>,
+    <code>section:</code>, source, date. Anything here is "already known," not new.</td></tr>
+  <tr><td><code>models/MODELS.md</code></td><td>Human notes on style families and search patterns.</td></tr>
+  <tr><td><code>workflows/*.json</code></td><td>The 26 installed workflows = the capabilities the
+    stack performs today (txt2img, Kontext edit, ControlNet, storyboard, i2v/t2v, upscale, …).</td></tr>
+  <tr><td>newest <code>radar/*.md</code></td><td>Prior digest — its date is your "since" boundary
+    (see Step&nbsp;2); its open follow-ups (<code>watch</code> verdicts) are re-check candidates.</td></tr>
+  <tr><td><code>TODO.md</code>, <code>ROADMAP.md</code></td><td>Known gaps and wanted capabilities —
+    weight the sweep toward things that fill these.</td></tr>
+</table>
+<div class="callout warn">
+  <strong>Local or remote.</strong> Digest state from the <strong>tracked files above</strong>, not
+  from the <code>models/</code> directory — it is gitignored and <strong>absent in remote/web
+  sessions</strong>. Do not <code>ls models/</code> to decide what is installed; trust
+  <code>INDEX.md</code> + <code>models.yaml</code>.
+</div>
+<p>From this, derive: (a) the set of installed filenames, (b) the base families in use
+(<em>derive from <code>INDEX.md</code> — do not assume a fixed list</em>), and (c) the current
+capability/workflow set.</p>
+</div>
+
+<!-- ───────────────────────── STEP 2 ───────────────────────── -->
+<div class="step">
+<h2><span class="tag">Step 2</span> Establish the window</h2>
+<p>The newest dated digest in <code>radar/</code> sets the <strong>"since" boundary</strong> — report
+only what is new since then. If <code>radar/</code> has no dated digests, or this is an explicit
+first/catch-up run, use the <strong>last 14 days</strong>. Record the window and the detected GPU
+ceiling in the digest header.</p>
+</div>
+
+<!-- ───────────────────────── STEP 3 ───────────────────────── -->
+<div class="step">
+<h2><span class="tag">Step 3</span> Sweep the categories</h2>
+<p>Run several focused web searches per category. The <strong>Workflows</strong> row is the
+addition that makes this broader than a pure model sweep — actively look for new SOTA
+<em>pipelines</em>, not just weights.</p>
+<table>
+  <tr><th>Category</th><th>What to look for</th><th>Primary sources / where to search</th></tr>
+  <tr>
+    <td><strong>Image base models</strong></td>
+    <td>New or updated open-weights foundations & notable checkpoints that beat or upgrade an
+        installed image model.</td>
+    <td>HuggingFace model cards & trending; CivitAI checkpoints; official release notes.</td>
+  </tr>
+  <tr>
+    <td><strong>Video models</strong></td>
+    <td>New/updated open-weights video generators (T2V, I2V, S2V, FLF2V, long-shot) within the VRAM
+        envelope of the installed WAN / Hunyuan path.</td>
+    <td>HuggingFace; project GitHubs (Wan, Hunyuan, LTX, FramePack); release notes.</td>
+  </tr>
+  <tr>
+    <td><strong>LoRAs</strong> (for installed families)</td>
+    <td>Notable new LoRAs for the base families found in Step&nbsp;1 (Flux.1-dev, Illustrious/SDXL,
+        SD1.5, WAN). Capture trigger + recommended weight.</td>
+    <td>CivitAI (filter by base model); HuggingFace; author pages.</td>
+  </tr>
+  <tr>
+    <td><strong>Workflows</strong> (ComfyUI &amp; elsewhere) <span class="tag">new</span></td>
+    <td>New SOTA <em>pipelines</em> for what the repo does or wants (txt2img, Kontext/in-context
+        edit, ControlNet, storyboard/identity-lock, i2v/t2v, upscale + frame-interp). Prefer
+        API-format ComfyUI graphs; note node dependencies and whether they fit 24&nbsp;GB.</td>
+    <td>ComfyUI <code>example_workflows</code> / docs; CivitAI (Workflows filter); OpenArt workflow
+        gallery; comfyworkflows.com; relevant GitHub repos &amp; node READMEs.</td>
+  </tr>
+  <tr>
+    <td><strong>ComfyUI nodes / tools</strong></td>
+    <td>Significant new custom nodes, quantization tooling, or pipeline helpers relevant to the
+        installed models (and to unblocking <code>ROADMAP.md</code> items).</td>
+    <td>ComfyUI Registry; GitHub (kijai, XLabs, Kosinkadink, etc.); release notes.</td>
+  </tr>
+</table>
+</div>
+
+<!-- ───────────────────────── STEP 4 ───────────────────────── -->
+<div class="step">
+<h2><span class="tag">Step 4</span> Filter, rank, verify</h2>
+<ul>
+  <li><strong>Filter:</strong> drop anything already installed (Step&nbsp;1 exclusion set) or already
+      in <code>models.yaml</code>; drop anything that cannot fit 24&nbsp;GB even quantized.</li>
+  <li><strong>Rank</strong> by relevance: does it fill a known gap (<code>TODO.md</code> /
+      <code>ROADMAP.md</code>), upgrade an installed model, or unlock a new capability? Demote
+      incremental point releases.</li>
+  <li><strong>Verify skeptically:</strong> prefer primary sources (HuggingFace / CivitAI model
+      cards, GitHub release notes). Many "best of" lists are vendor or SEO blogs — mark any claim
+      resting only on a vendor blog as <em>unverified</em>.</li>
+  <li><strong>Cite a source URL for every entry.</strong></li>
+</ul>
+</div>
+
+<!-- ───────────────────────── STEP 5 ───────────────────────── -->
+<div class="step">
+<h2><span class="tag">Step 5</span> Write the digest</h2>
+<p>Write to <code>radar/&lt;YYYY-MM-DD&gt;.md</code> using today's date, then print a summary of at
+most 5 lines. Assign each entry a verdict — <span class="verdict">skip</span> (not a fit),
+<span class="verdict">watch</span> (promising but not actionable yet, e.g. weights unreleased), or
+<span class="verdict">try</span> (worth considering for install). If a category turns up nothing,
+say so explicitly rather than padding.</p>
+
+<h3>Digest template</h3>
+<pre># Model Radar — &lt;YYYY-MM-DD&gt;
+Window: since &lt;prev-date | "repo start (~14 days)"&gt;. GPU ceiling: &lt;N&gt; GB.
+
+## Image base models
+- **&lt;name&gt;** (&lt;params&gt;, &lt;license&gt;) — &lt;what changed / why it matters&gt;. Fits 24 GB: &lt;yes | quantized only | no&gt;. Source: &lt;url&gt;. Verdict: **&lt;skip | watch | try&gt;**.
+
+## Video models
+- ...
+
+## LoRAs (for installed families)
+- **&lt;name&gt;** — &lt;family&gt;, trigger `&lt;...&gt;`, weight &lt;...&gt;. Source: &lt;url&gt;. Verdict: **&lt;...&gt;**.
+
+## Workflows
+- **&lt;name&gt;** — &lt;capability it improves&gt;; format &lt;ComfyUI API / other&gt;, deps &lt;node(s)&gt;. Fits stack: &lt;yes | needs node X&gt;. Source: &lt;url&gt;. Verdict: **&lt;skip | watch | try&gt;**.
+
+## ComfyUI nodes / tools
+- **&lt;name&gt;** — &lt;what it adds&gt;. Source: &lt;url&gt;.
+
+## Bottom line
+&lt;2-3 sentences: anything worth acting on, or "nothing material this window."&gt;</pre>
+</div>
+
+<h2>Guardrails</h2>
+<ul>
+  <li>Report only. Never download, never edit <code>INDEX.md</code> / <code>models.yaml</code>,
+      never start the stack.</li>
+  <li>Open weights, locally runnable, fits 24&nbsp;GB — anything else is out of scope.</li>
+  <li>Cite a source URL for every entry; flag vendor-blog-only claims as <em>unverified</em>.</li>
+  <li>Keep it scannable — a handful of high-signal entries beats an exhaustive dump.</li>
+</ul>
+
+<h2>Cadence</h2>
+<p>Run roughly <strong>weekly</strong>. Two mechanisms keep this on schedule:</p>
+<ul>
+  <li><strong>Session reminder (primary).</strong> A <code>SessionStart</code> hook runs
+      <code>scripts/check_sweep_due.py</code>, which prints a "sweep due" nudge whenever the newest
+      <code>radar/</code> digest is &gt; 7 days old. Works locally and in remote/web sessions.</li>
+  <li><strong>Unattended cron (optional).</strong> <code>scripts/update_sweep.sh</code> drives a
+      headless <code>claude -p</code> run of this very page. Install on the rig as, e.g.:
+      <pre>0 9 * * 1  /path/to/image_gen/scripts/update_sweep.sh   # Mondays 09:00</pre></li>
+</ul>
+<p>This procedure is also exposed as the <code>/model-radar</code> skill
+(<code>.claude/skills/model-radar/SKILL.md</code>), which defers to this page as the source of
+truth. Invoking <code>/model-radar</code> and "follow UPDATE.html" are equivalent.</p>
+
+<footer>
+  Report-only update-sweep runbook · output lands in <code>radar/&lt;date&gt;.md</code> ·
+  self-contained, no external assets.
+</footer>
+
+</body>
+</html>
