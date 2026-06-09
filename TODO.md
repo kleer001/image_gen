@@ -57,9 +57,9 @@ Scaffold lives in `scaffolds/` so the MCP does not auto-register it. The ESRGAN
 half uses installed models (`4x-UltraSharp.pth` etc.); the RIFE half does not yet
 exist on the rig.
 
-- [ ] **Install ComfyUI-Frame-Interpolation.** RIFE is not in the base stack.
-      Clone into `comfyui/custom_nodes/` and restart before this can run:
-      <https://github.com/Fannovel16/ComfyUI-Frame-Interpolation>.
+- [x] **Install ComfyUI-Frame-Interpolation.** Installed at
+      `comfyui/custom_nodes/ComfyUI-Frame-Interpolation`. Still verify the node loads
+      and the RIFE checkpoint downloads on first run (see schema item below).
 - [ ] **`RIFE VFI` node schema.** Scaffold assumes class_type `RIFE VFI` (with a
       space) and inputs `frames, ckpt_name, clear_cache_after_n_frames, multiplier,
       fast_mode, ensemble, scale_factor`. Verify against the installed node — input

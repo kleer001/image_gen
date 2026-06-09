@@ -816,3 +816,65 @@
   source: https://huggingface.co/lightx2v/Wan2.2-Lightning
   date: '2026-06-05'
   weight: '1.0'
+- section: ovi
+  name: Ovi 5B video model (bf16)
+  dest: diffusion_models/WanVideo/Ovi/Wan_2_2_Ovi_video_model_bf16.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Ovi/Wan_2_2_Ovi_video_model_bf16.safetensors
+  size: 11133067584
+  auth: hf
+  base: wan
+  purpose: Ovi one-pass video+native-speech generator (WAN 2.2 5B base). Loads via
+    WanVideoModelLoader; pair with the Ovi audio model on WanVideoExtraModelSelect.
+    Image+prompt -> video with synced voice; voice is generated, not cloneable.
+  source: https://huggingface.co/character-ai/Ovi
+  date: '2026-06-05'
+  notes: >-
+    Verified runnable on 24GB 3090 via ComfyUI-WanVideoWrapper Ovi nodes: bf16 +
+    block swap (14 blocks) + load_device offload_device + sageattn. Peak ~20GB VRAM
+    (under a 21GB guard ceiling), ~5s clip at 704x704/121 frames in ~247s @ 10 steps.
+    Cannot co-load with Flux/HunyuanVideo. Reuses the installed UMT5-XXL encoder
+    (text_encoders/wan-umt5-xxl-enc-bf16.pth). Needs the Wan2.2 VAE + MMAudio pair below.
+- section: ovi
+  name: Ovi 5B audio model (bf16)
+  dest: diffusion_models/WanVideo/Ovi/Wan_2_2_Ovi_audio_model_bf16.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Ovi/Wan_2_2_Ovi_audio_model_bf16.safetensors
+  size: 12188668376
+  auth: hf
+  base: wan
+  purpose: Ovi audio branch (synced speech). Selected via WanVideoExtraModelSelect and
+    fused into the Ovi video model at load. Required for the speech output.
+  source: https://huggingface.co/character-ai/Ovi
+  date: '2026-06-05'
+- section: ovi
+  name: WAN 2.2 VAE (bf16)
+  dest: vae/Wan2_2_VAE_bf16.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_2_VAE_bf16.safetensors
+  size: 1409401152
+  auth: hf
+  base: wan
+  purpose: WAN 2.2 5B VAE — required by Ovi (the installed Wan2.1_VAE.pth is for the
+    14B A14B pipeline and is NOT interchangeable here). Loaded via WanVideoVAELoader.
+  source: https://huggingface.co/Kijai/WanVideo_comfy
+  date: '2026-06-05'
+- section: ovi
+  name: MMAudio VAE 16k (bf16)
+  dest: vae/mmaudio_vae_16k_bf16.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Ovi/mmaudio_vae_16k_bf16.safetensors
+  size: 343320940
+  auth: hf
+  base: wan
+  purpose: MMAudio VAE for Ovi audio decode (OviMMAudioVAELoader). Must live in vae/ —
+    that loader scans the vae folder (the shared models/ dir), not a separate mmaudio dir.
+  source: https://huggingface.co/Kijai/WanVideo_comfy
+  date: '2026-06-05'
+- section: ovi
+  name: MMAudio BigVGAN vocoder (bf16)
+  dest: vae/mmaudio_vocoder_bigvgan_best_netG_bf16.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Ovi/mmaudio_vocoder_bigvgan_best_netG_bf16.safetensors
+  size: 224551036
+  auth: hf
+  base: wan
+  purpose: BigVGAN vocoder for Ovi audio (OviMMAudioVAELoader). Place in vae/ alongside
+    the MMAudio VAE for the same folder-scan reason.
+  source: https://huggingface.co/Kijai/WanVideo_comfy
+  date: '2026-06-05'
