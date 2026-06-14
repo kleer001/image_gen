@@ -946,3 +946,49 @@
   purpose: VAE for the FLUX.2 family (Klein + dev). Loaded via core VAELoader.
   source: https://huggingface.co/Comfy-Org/flux2-dev
   date: '2026-06-09'
+- section: checkpoints
+  name: Stable Diffusion v1.5 (pruned, ema-only)
+  dest: checkpoints/v1-5-pruned-emaonly.safetensors
+  url: https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
+  size: 4265146304
+  auth: hf
+  base: sd15
+  purpose: Base SD1.5 checkpoint for AnimateDiff workflows (animatediff_txt2vid.json,
+    dwpose_walk_animatediff scaffold). Swap for a stronger SD1.5 character model
+    (e.g. an anime/photoreal community ckpt) for better faces/hands.
+  source: https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5
+  date: '2026-06-14'
+- section: controlnet
+  name: OpenPose ControlNet v1.1 (SD1.5, fp16)
+  dest: controlnet/control_v11p_sd15_openpose_fp16.safetensors
+  url: https://huggingface.co/comfyanonymous/ControlNet-v1-1_fp16_safetensors/resolve/main/control_v11p_sd15_openpose_fp16.safetensors
+  size: 722601100
+  auth: hf
+  base: sd15
+  purpose: Body+hand pose control for SD1.5 / AnimateDiff. Consumes OpenPose-format
+    skeletons (e.g. from the DWPose preprocessor). Used by the dwpose_walk scaffold.
+  source: https://huggingface.co/comfyanonymous/ControlNet-v1-1_fp16_safetensors
+  date: '2026-06-14'
+- section: ipadapter
+  name: IP-Adapter Plus (SD1.5)
+  dest: ipadapter/ip-adapter-plus_sd15.safetensors
+  url: https://huggingface.co/h94/IP-Adapter/resolve/main/models/ip-adapter-plus_sd15.safetensors
+  size: 98183768
+  auth: hf
+  base: sd15
+  purpose: Reference-image identity conditioning for SD1.5. The "PLUS (high strength)"
+    preset in IPAdapterUnifiedLoader (ComfyUI_IPAdapter_plus) selects this file.
+    Carries character identity across the dwpose_walk animation.
+  source: https://huggingface.co/h94/IP-Adapter
+  date: '2026-06-14'
+- section: clip_vision
+  name: CLIP-ViT-H-14 (IP-Adapter SD1.5 image encoder)
+  dest: clip_vision/CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors
+  url: https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors
+  size: 2528373448
+  auth: hf
+  base: sd15
+  purpose: Image encoder required by the SD1.5 IP-Adapter (Plus). IPAdapterUnifiedLoader
+    expects it in models/clip_vision/ under this filename.
+  source: https://huggingface.co/h94/IP-Adapter
+  date: '2026-06-14'

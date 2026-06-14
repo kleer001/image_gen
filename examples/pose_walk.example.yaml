@@ -1,0 +1,38 @@
+# Example shot list for scripts/pose_walk.py
+# (DWPose -> OpenPose ControlNet -> AnimateDiff SD1.5, IPAdapter identity lock).
+#
+# Each shot pairs a *driving walk video* (supplies the gait, via DWPose) with a
+# *character identity image* (supplies who is walking, via IPAdapter) and a text
+# prompt. Run with:
+#   python3 scripts/pose_walk.py examples/pose_walk.example.yaml
+#
+# SCAFFOLD: the workflow + custom nodes + weights must be installed and verified
+# first — see /TODO.md. The driver appends a character-animation style suffix to
+# every prompt; set `style_suffix: ""` to disable, or override with your own.
+
+reference: ./refs/zara.png   # global identity image (IPAdapter); per-shot override allowed
+fps: 8                       # output playback rate
+sample_fps: 8                # driving-video resample rate (gait speed)
+width: 512                   # SD1.5 sweet spot ~512-768
+height: 768
+num_frames: 16               # one AnimateDiff context window
+select_every_nth: 1          # subsample the driving clip (2 = every other frame)
+steps: 20
+cfg: 7.0
+ipadapter_weight: 0.8        # identity strength: 0.6 looser .. 1.0 tighter
+controlnet_strength: 1.0     # pose adherence
+seed: 42                     # base seed; per-shot = base + index
+
+shots:
+  - video: ./drive/walk_loop.mp4
+    prompt: "a young woman in a red jacket and blue jeans, full body, walking"
+
+  - video: ./drive/walk_loop.mp4
+    prompt: "the same young woman, three-quarter view, walking toward camera"
+    seed: 9001
+
+  - video: ./drive/walk_loop.mp4
+    prompt: "an old man with a wooden cane, brown coat, full body, walking slowly"
+    reference: ./refs/grandpa.png   # per-shot identity override
+    ipadapter_weight: 0.9
+    seed: 7777
