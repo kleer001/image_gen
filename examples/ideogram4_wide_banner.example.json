@@ -1,0 +1,8 @@
+{
+  "high_level_description": "An ultra-wide panoramic banner: a row of colorful hot-air balloons drifting over green rolling hills at sunrise.",
+  "style_description": {"aesthetics": "vivid, cheerful, crisp", "lighting": "warm golden sunrise", "medium": "wide panoramic landscape photograph"},
+  "compositional_deconstruction": {
+    "background": "Rolling green hills under a soft sunrise sky, an ultra-wide panorama.",
+    "elements": [{"type": "obj", "bbox": [80, 40, 620, 960], "desc": "a row of several colorful hot-air balloons with different patterns drifting across the sky"}]
+  }
+}

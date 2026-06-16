@@ -1,0 +1,503 @@
+{
+  "high_level_description": "A photograph looking straight down at 49 distinct everyday objects on a clean wooden workbench, the objects large and crowded so they overlap and touch each other, all really resting on the wood.",
+  "style_description": {
+    "aesthetics": "natural, realistic, crowded flat-lay",
+    "lighting": "soft even overhead light with gentle realistic contact shadows",
+    "medium": "top-down product photograph, sharp focus"
+  },
+  "compositional_deconstruction": {
+    "background": "A clean smooth wooden workbench with warm wood grain, shot from directly straight above. The objects are large and packed close together, overlapping and resting on top of one another on the bare wood, casting soft contact shadows, all part of one real photograph.",
+    "elements": [
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          0,
+          201,
+          201
+        ],
+        "desc": "acorn"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          83,
+          201,
+          343
+        ],
+        "desc": "apple"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          225,
+          201,
+          485
+        ],
+        "desc": "axe"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          367,
+          201,
+          627
+        ],
+        "desc": "bell"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          509,
+          201,
+          769
+        ],
+        "desc": "bolt"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          651,
+          201,
+          911
+        ],
+        "desc": "bottle"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          0,
+          793,
+          201,
+          1000
+        ],
+        "desc": "bowl"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          0,
+          343,
+          201
+        ],
+        "desc": "brush"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          83,
+          343,
+          343
+        ],
+        "desc": "bulb"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          225,
+          343,
+          485
+        ],
+        "desc": "button"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          367,
+          343,
+          627
+        ],
+        "desc": "cactus"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          509,
+          343,
+          769
+        ],
+        "desc": "camera"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          651,
+          343,
+          911
+        ],
+        "desc": "candle"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          83,
+          793,
+          343,
+          1000
+        ],
+        "desc": "carrot"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          0,
+          485,
+          201
+        ],
+        "desc": "cherry"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          83,
+          485,
+          343
+        ],
+        "desc": "clock"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          225,
+          485,
+          485
+        ],
+        "desc": "cog"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          367,
+          485,
+          627
+        ],
+        "desc": "compass"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          509,
+          485,
+          769
+        ],
+        "desc": "crayon"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          651,
+          485,
+          911
+        ],
+        "desc": "crown"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          225,
+          793,
+          485,
+          1000
+        ],
+        "desc": "cup"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          0,
+          627,
+          201
+        ],
+        "desc": "dice"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          83,
+          627,
+          343
+        ],
+        "desc": "donut"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          225,
+          627,
+          485
+        ],
+        "desc": "egg"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          367,
+          627,
+          627
+        ],
+        "desc": "fan"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          509,
+          627,
+          769
+        ],
+        "desc": "feather"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          651,
+          627,
+          911
+        ],
+        "desc": "fork"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          367,
+          793,
+          627,
+          1000
+        ],
+        "desc": "gear"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          0,
+          769,
+          201
+        ],
+        "desc": "gem"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          83,
+          769,
+          343
+        ],
+        "desc": "guitar"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          225,
+          769,
+          485
+        ],
+        "desc": "hammer"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          367,
+          769,
+          627
+        ],
+        "desc": "hat"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          509,
+          769,
+          769
+        ],
+        "desc": "heart"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          651,
+          769,
+          911
+        ],
+        "desc": "key"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          509,
+          793,
+          769,
+          1000
+        ],
+        "desc": "kite"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          0,
+          911,
+          201
+        ],
+        "desc": "knife"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          83,
+          911,
+          343
+        ],
+        "desc": "leaf"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          225,
+          911,
+          485
+        ],
+        "desc": "lemon"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          367,
+          911,
+          627
+        ],
+        "desc": "lock"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          509,
+          911,
+          769
+        ],
+        "desc": "marble"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          651,
+          911,
+          911
+        ],
+        "desc": "mushroom"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          651,
+          793,
+          911,
+          1000
+        ],
+        "desc": "nail"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          0,
+          1000,
+          201
+        ],
+        "desc": "pencil"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          83,
+          1000,
+          343
+        ],
+        "desc": "pepper"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          225,
+          1000,
+          485
+        ],
+        "desc": "ring"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          367,
+          1000,
+          627
+        ],
+        "desc": "scissors"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          509,
+          1000,
+          769
+        ],
+        "desc": "seashell"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          651,
+          1000,
+          911
+        ],
+        "desc": "spoon"
+      },
+      {
+        "type": "obj",
+        "bbox": [
+          793,
+          793,
+          1000,
+          1000
+        ],
+        "desc": "star"
+      }
+    ]
+  }
+}
