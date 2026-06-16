@@ -1,0 +1,14 @@
+{
+  "high_level_description": "A top-down knolling flat-lay of 144 completely different everyday objects, neatly arranged in an even 12-by-12 grid, each cell a unique object with no duplicates.",
+  "style_description": {
+    "aesthetics": "clean organized knolling flat-lay, catalog-like, hyperdetailed",
+    "lighting": "bright even overhead studio lighting, soft shadows",
+    "medium": "high-resolution top-down product photography, sharp focus"
+  },
+  "compositional_deconstruction": {
+    "background": "A flat neutral light-gray surface shot straight from directly above. 144 small objects arranged in a precise even 12x12 grid, evenly spaced with equal gaps, each object roughly the same scale. Every object is completely unique and different from all the others, no two alike and no repeats: a wide assortment across many categories - hand tools, kitchen utensils, stationery and office supplies, fruits and vegetables, hardware like keys bolts screws and gears, sewing notions like buttons spools and thimbles, art supplies like brushes crayons and paint tubes, small musical instruments, seashells, leaves and flowers, coins, and assorted trinkets.",
+    "elements": [
+      {"type": "obj", "bbox": [30, 30, 970, 970], "desc": "The full even 12x12 knolling grid of 144 distinct, non-repeating everyday objects spanning many different categories"}
+    ]
+  }
+}
