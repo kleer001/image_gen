@@ -27,17 +27,11 @@ Shot list format (YAML):
         seed: 9999                    # per-shot override
 """
 import argparse
-import http.server
 import json
 import mimetypes
-import os
 import shutil
-import socket
-import socketserver
-import subprocess
 import sys
 import tempfile
-import threading
 import time
 import urllib.parse
 import urllib.request
@@ -45,6 +39,9 @@ import uuid
 from pathlib import Path
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import gallery  # noqa: E402
 
 REPO = Path("/media/menser/fauna/image_gen")
 WORKFLOWS = REPO / "workflows"
@@ -196,63 +193,14 @@ def normalize_shot(shot, idx, base_seed):
 
 
 def build_gallery(serve_dir, panels, cfg):
-    rows = []
-    for i, p in enumerate(panels):
-        rows.append(f"""
-        <figure>
-          <img src="{p['file']}" alt="panel {i+1}">
-          <figcaption><b>{i+1}</b> · seed {p['seed']}<br>{p['prompt']}</figcaption>
-        </figure>""")
-    html = f"""<!doctype html>
-<html><head><meta charset="utf-8"><title>Storyboard</title>
-<style>
-  body {{ background:#f6f3ee; color:#222; font:13px/1.4 -apple-system,system-ui,sans-serif; max-width:1200px; margin:2em auto; padding:0 1em; }}
-  header {{ border-bottom:1px solid #ccc; padding-bottom:.6em; margin-bottom:1.5em; }}
-  .sheet {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.2em; }}
-  figure {{ margin:0; background:#fff; border:1px solid #bbb; box-shadow:0 1px 3px rgba(0,0,0,.08); display:flex; flex-direction:column; }}
-  img {{ width:100%; display:block; border-bottom:1px solid #ccc; }}
-  figcaption {{ padding:.5em .7em; font-size:12px; color:#333; min-height:3em; }}
-  footer {{ margin-top:2em; padding-top:1em; border-top:1px solid #ccc; font-size:12px; color:#666; }}
-  code {{ background:#eae6df; padding:1px 4px; border-radius:3px; }}
-</style></head>
-<body>
-<header>
-  <h1>Storyboard · {len(panels)} panels</h1>
-  <div>LoRA: <code>{cfg['lora']}</code> @ {cfg['lora_weight']} · guidance {cfg['guidance']} · steps {cfg['steps']}</div>
-</header>
-<div class="sheet">{''.join(rows)}</div>
-<footer>served from <code>{serve_dir}</code></footer>
-</body></html>
-"""
-    (Path(serve_dir) / "index.html").write_text(html)
-
-
-def free_port(start=8765):
-    for port in range(start, start + 50):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.bind(("127.0.0.1", port))
-                return port
-            except OSError:
-                continue
-    raise RuntimeError("no free port in 8765..8814")
-
-
-def serve(serve_dir, port):
-    handler = lambda *a, **kw: http.server.SimpleHTTPRequestHandler(*a, directory=serve_dir, **kw)
-    httpd = socketserver.TCPServer(("127.0.0.1", port), handler)
-    threading.Thread(target=httpd.serve_forever, daemon=True).start()
-    return httpd
-
-
-def open_in_browser(url):
-    if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
-        return False
-    try:
-        subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return True
-    except FileNotFoundError:
-        return False
+    cards = [{"src": p["file"],
+              "caption": f"<b>{i + 1}</b> · seed {p['seed']}<br>{p['prompt']}"}
+             for i, p in enumerate(panels)]
+    subtitle = (f"LoRA: <code>{cfg['lora']}</code> @ {cfg['lora_weight']} · "
+                f"guidance {cfg['guidance']} · steps {cfg['steps']}")
+    gallery.write_gallery(serve_dir, f"Storyboard · {len(panels)} panels", cards,
+                          media="img", theme="light", subtitle=subtitle,
+                          footer=f"served from <code>{serve_dir}</code>")
 
 
 def main():
@@ -296,24 +244,7 @@ def main():
         panels.append({"file": local.name, "prompt": s["prompt"], "seed": s["seed"]})
 
     build_gallery(serve_dir, panels, cfg)
-    port = free_port()
-    httpd = serve(str(serve_dir), port)
-    url = f"http://localhost:{port}/index.html"
-    opened = open_in_browser(url)
-
-    print()
-    print(url)
-    if not opened:
-        print("(no display detected — open the URL above; forward with `ssh -L %d:localhost:%d ...` if remote)" % (port, port))
-    print(f"\nCtrl-C to stop the server.")
-    try:
-        while True:
-            time.sleep(3600)
-    except KeyboardInterrupt:
-        httpd.shutdown()
-        if not args.keep:
-            shutil.rmtree(serve_dir, ignore_errors=True)
-        print("stopped.")
+    gallery.serve_and_block(serve_dir, keep=args.keep)
 
 
 if __name__ == "__main__":

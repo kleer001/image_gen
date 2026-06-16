@@ -36,22 +36,21 @@ See the `## Video delivery` notes in CLAUDE.md for the recommended post chain.
 """
 import argparse
 import atexit
-import http.server
 import json
 import os
 import shutil
-import socket
-import socketserver
 import subprocess
 import sys
 import tempfile
-import threading
 import time
 import urllib.request
 import uuid
 from pathlib import Path
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import gallery  # noqa: E402
 
 REPO = Path("/media/menser/fauna/image_gen")
 WORKFLOWS = REPO / "workflows"
@@ -187,51 +186,11 @@ def normalize_shot(shot, idx, cfg, base_seed):
 
 
 def build_gallery(serve_dir, clips, cfg):
-    cards = []
-    for i, c in enumerate(clips):
-        cards.append(f"""
-      <figure>
-        <video src="{c['file']}" controls loop muted playsinline preload="metadata"></video>
-        <figcaption><b>{i+1}</b> · seed {c['seed']} · {c['num_frames']}f @ {cfg['fps']}fps<br>{c['prompt']}</figcaption>
-      </figure>""")
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Video shots</title>
-<style>
-  body {{ background:#0f0f12; color:#eee; font:13px/1.4 -apple-system,system-ui,sans-serif; max-width:1200px; margin:2em auto; padding:0 1em; }}
-  .grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:1em; }}
-  figure {{ margin:0; background:#1a1a1f; border:1px solid #333; border-radius:6px; overflow:hidden; }}
-  video {{ width:100%; display:block; background:#000; }}
-  figcaption {{ padding:.6em .8em; color:#bbb; }}
-  code {{ background:#26262d; padding:1px 4px; border-radius:3px; }}
-</style></head><body>
-  <h2>Video shots — {len(clips)} clips</h2>
-  <div class="grid">{''.join(cards)}</div>
-</body></html>"""
-    (serve_dir / "index.html").write_text(html)
-
-
-def free_port(start=8765):
-    for port in range(start, start + 100):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex(("127.0.0.1", port)) != 0:
-                return port
-    raise RuntimeError("no free port found")
-
-
-def serve(serve_dir, port):
-    handler = lambda *a, **k: http.server.SimpleHTTPRequestHandler(*a, directory=serve_dir, **k)
-    httpd = socketserver.TCPServer(("127.0.0.1", port), handler)
-    threading.Thread(target=httpd.serve_forever, daemon=True).start()
-    return httpd
-
-
-def open_in_browser(url):
-    for cmd in (["xdg-open", url], ["firefox", url]):
-        try:
-            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return True
-        except FileNotFoundError:
-            continue
-    return False
+    cards = [{"src": c["file"],
+              "caption": f"<b>{i + 1}</b> · seed {c['seed']} · {c['num_frames']}f @ {cfg['fps']}fps<br>{c['prompt']}"}
+             for i, c in enumerate(clips)]
+    gallery.write_gallery(serve_dir, f"Video shots — {len(clips)} clips", cards,
+                          media="video", theme="dark")
 
 
 def gpu_vram():
@@ -329,19 +288,7 @@ def main():
                       "seed": s["seed"], "num_frames": s["num_frames"]})
 
     build_gallery(serve_dir, clips, cfg)
-    port = free_port()
-    serve(str(serve_dir), port)
-    url = f"http://localhost:{port}/index.html"
-    opened = open_in_browser(url)
-    print(f"\n  Gallery: {url}" + ("" if opened else "  (open it manually)"))
-    print("  Ctrl-C to stop the server." + ("" if args.keep else f"  Temp dir {serve_dir} removed on exit."))
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        if not args.keep:
-            shutil.rmtree(serve_dir, ignore_errors=True)
-        print("\n  stopped.")
+    gallery.serve_and_block(serve_dir, keep=args.keep)
 
 
 if __name__ == "__main__":

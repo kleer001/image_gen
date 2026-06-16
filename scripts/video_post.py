@@ -30,10 +30,10 @@ import json
 import shutil
 import sys
 import tempfile
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import gallery  # noqa: E402
 import video_shot as vs  # noqa: E402
 
 REPO = vs.REPO
@@ -76,25 +76,12 @@ def run_post(src, cfg):
 
 def build_gallery(serve_dir, clips, cfg):
     out_fps = int(cfg["fps"]) * int(cfg["multiplier"])
-    cards = []
-    for i, c in enumerate(clips):
-        cards.append(f"""
-      <figure>
-        <video src="{c['file']}" controls loop muted playsinline preload="metadata"></video>
-        <figcaption><b>{i+1}</b> · {c['src']}<br>{cfg['width']}x{cfg['height']} · {out_fps}fps (x{cfg['multiplier']} RIFE) · {cfg['upscale_model']}</figcaption>
-      </figure>""")
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Post chain</title>
-<style>
-  body {{ background:#0f0f12; color:#eee; font:13px/1.4 -apple-system,system-ui,sans-serif; max-width:1200px; margin:2em auto; padding:0 1em; }}
-  .grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:1em; }}
-  figure {{ margin:0; background:#1a1a1f; border:1px solid #333; border-radius:6px; overflow:hidden; }}
-  video {{ width:100%; display:block; background:#000; }}
-  figcaption {{ padding:.6em .8em; color:#bbb; }}
-</style></head><body>
-  <h2>Post chain — {len(clips)} clips (upscale + RIFE)</h2>
-  <div class="grid">{''.join(cards)}</div>
-</body></html>"""
-    (serve_dir / "index.html").write_text(html)
+    cards = [{"src": c["file"],
+              "caption": f"<b>{i + 1}</b> · {c['src']}<br>{cfg['width']}x{cfg['height']} · "
+                         f"{out_fps}fps (x{cfg['multiplier']} RIFE) · {cfg['upscale_model']}"}
+             for i, c in enumerate(clips)]
+    gallery.write_gallery(serve_dir, f"Post chain — {len(clips)} clips (upscale + RIFE)",
+                          cards, media="video", theme="dark")
 
 
 def main():
@@ -128,19 +115,7 @@ def main():
         clips.append({"file": local.name, "src": Path(src).name})
 
     build_gallery(serve_dir, clips, cfg)
-    port = vs.free_port()
-    vs.serve(str(serve_dir), port)
-    url = f"http://localhost:{port}/index.html"
-    opened = vs.open_in_browser(url)
-    print(f"\n  Gallery: {url}" + ("" if opened else "  (open it manually)"))
-    print("  Ctrl-C to stop the server." + ("" if args.keep else f"  Temp dir {serve_dir} removed on exit."))
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        if not args.keep:
-            shutil.rmtree(serve_dir, ignore_errors=True)
-        print("\n  stopped.")
+    gallery.serve_and_block(serve_dir, keep=args.keep)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+# Example shot list for scripts/storyboard.py (Flux + Flux Kontext).
+# Panel 1 is seeded (or uses `reference:` if given); panels 2..N are in-context
+# edits of the reference so the character/style read as the same across the sheet.
+# Run with:
+#   python3 scripts/storyboard.py examples/storyboard.example.yaml
+#
+# The driver appends a cinematic-depth style suffix to every panel prompt;
+# set `style_suffix: ""` to disable, or override with your own string.
+# Gallery captions still show your original prompt, not the suffix.
+
+# reference: ./refs/wanderer.png   # optional; if absent, panel 1 is seeded from the prompt
+lora: film-storyboard.safetensors  # storyboard LoRA (see CLAUDE.md "Storyboards")
+lora_weight: 0.85
+guidance: 2.5
+steps: 24
+seed: 42                           # base seed; per-panel = base + index
+
+# width/height only set panel 1 (the seed). Panels 2..N snap to Kontext buckets
+# off the reference's aspect, so set the seed dims to your target aspect and the
+# whole sheet follows. 1024x576 ≈ 16:9.
+width: 1024
+height: 576
+
+shots:
+  - "wide establishing shot, lone wanderer on a cliff at dawn, storyboarding"
+  - "medium shot, the wanderer turns to face camera, wind in the cloak"
+  - prompt: "close-up, determined eyes, rain beginning to fall"
+    seed: 9999                     # per-shot seed override
