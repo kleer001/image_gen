@@ -1,0 +1,15 @@
+{
+  "high_level_description": "A ginger cat wearing a tiny pointed wizard hat, reading a glowing spellbook in a cozy candlelit library.",
+  "style_description": {
+    "aesthetics": "warm, whimsical, storybook",
+    "lighting": "soft golden candlelight, gentle falloff",
+    "medium": "richly detailed digital painting"
+  },
+  "compositional_deconstruction": {
+    "background": "A cozy library at night: tall wooden bookshelves packed with old books, warm ambient glow.",
+    "elements": [
+      {"type": "obj", "bbox": [220, 280, 820, 680], "desc": "A fluffy ginger tabby cat sitting upright, wearing a tiny dark-blue pointed wizard hat with little gold stars, looking down at a book"},
+      {"type": "obj", "bbox": [560, 300, 860, 720], "desc": "An open spellbook on a table, its pages emitting soft glowing magical light"}
+    ]
+  }
+}

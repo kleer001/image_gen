@@ -979,26 +979,30 @@
   date: '2026-06-09'
 - type: diffusers_repo
   section: ideogram
-  name: Ideogram 4 (nf4)
-  dest_dir: ideogram-4-nf4
-  hf_repo: ideogram-ai/ideogram-4-nf4
+  name: Ideogram 4 (nf4, diffusers)
+  dest_dir: ideogram-4-nf4-diffusers
+  hf_repo: ideogram-ai/ideogram-4-nf4-diffusers
   size: 16100000000
   auth: hf
   base: ideogram
   purpose: 9.3B open-weight T2I with a structured JSON prompting interface (bbox
     layout + color-palette controls, native 2K, multilingual text rendering). nf4
     4-bit build, fits the 24GB 3090; nf4 (not fp8) is the diffusers-supported CUDA
-    path AND avoids the fp8 compute-kernel issue on sm_86.
-  source: https://huggingface.co/ideogram-ai/ideogram-4-nf4
+    path AND avoids the fp8 compute-kernel issue on sm_86. VALIDATED running via
+    scripts/ideogram4_t2i.py.
+  source: https://huggingface.co/ideogram-ai/ideogram-4-nf4-diffusers
   date: '2026-06-16'
   notes: >-
     LICENSE-GATED + Non-Commercial (accept at the repo; a shipped/commercial game
-    needs the separate paid license). Full diffusers repo, NOT a single ComfyUI
-    safetensors — pull with `HF_HUB_DISABLE_XET=1 hf download ideogram-ai/ideogram-4-nf4
-    --local-dir models/ideogram-4-nf4`. Pipeline `Ideogram4Pipeline` (diffusers from
-    main + bitsandbytes); text encoder Qwen3-VL, VAE AutoencoderKLFlux2,
-    FlowMatchEulerDiscreteScheduler. Needs an isolated env like FLUX.2 (not the v0.17
-    ComfyUI). GPU inference not yet validated.
+    needs the separate paid license). Use the `-nf4-diffusers` repo for the diffusers
+    Ideogram4Pipeline (separate to_q/k/v); the plain `ideogram-ai/ideogram-4-nf4`
+    repo uses fused qkv for the ideogram-oss run_inference.py CLI and will NOT load
+    via Ideogram4Pipeline. Pull with `HF_HUB_DISABLE_XET=1 hf download
+    ideogram-ai/ideogram-4-nf4-diffusers --local-dir models/ideogram-4-nf4-diffusers`.
+    Runs in the dedicated `ideogram4_env/.venv` (torch cu121 + diffusers-from-main +
+    bitsandbytes + transformers w/ Qwen3-VL), NOT ComfyUI. Load with
+    `device_map="cuda"` (NOT .to()). The model expects a JSON caption — raw text
+    triggers the baked-in safety placeholder. ~4.5 min/1024px @ 48 steps on the 3090.
 - section: checkpoints
   name: Stable Diffusion v1.5 (pruned, ema-only)
   dest: checkpoints/v1-5-pruned-emaonly.safetensors
