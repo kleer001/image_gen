@@ -18,24 +18,27 @@ import threading
 import time
 from pathlib import Path
 
+# Media render at NATURAL resolution (1:1 pixels) so detail can be judged
+# honestly — no width:100% downscaling. Items flow and wrap; the page scrolls
+# for media larger than the viewport.
 _THEMES = {
     "light": (
-        "body{background:#f6f3ee;color:#222;font:13px/1.4 -apple-system,system-ui,sans-serif;max-width:1200px;margin:2em auto;padding:0 1em;}"
+        "body{background:#f6f3ee;color:#222;font:13px/1.4 -apple-system,system-ui,sans-serif;margin:1.5em;}"
         "header{border-bottom:1px solid #ccc;padding-bottom:.6em;margin-bottom:1.5em;}"
-        ".grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.2em;}"
+        ".grid{display:flex;flex-wrap:wrap;align-items:flex-start;gap:1.2em;}"
         "figure{margin:0;background:#fff;border:1px solid #bbb;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;flex-direction:column;}"
-        "img{width:100%;display:block;border-bottom:1px solid #ccc;}"
-        "figcaption{padding:.5em .7em;font-size:12px;color:#333;min-height:3em;}"
+        "img{display:block;width:auto;height:auto;max-width:none;border-bottom:1px solid #ccc;}"
+        "figcaption{padding:.5em .7em;font-size:12px;color:#333;max-width:60ch;}"
         "footer{margin-top:2em;padding-top:1em;border-top:1px solid #ccc;font-size:12px;color:#666;}"
         "code{background:#eae6df;padding:1px 4px;border-radius:3px;}"
     ),
     "dark": (
-        "body{background:#0f0f12;color:#eee;font:13px/1.4 -apple-system,system-ui,sans-serif;max-width:1200px;margin:2em auto;padding:0 1em;}"
+        "body{background:#0f0f12;color:#eee;font:13px/1.4 -apple-system,system-ui,sans-serif;margin:1.5em;}"
         "header{border-bottom:1px solid #333;padding-bottom:.6em;margin-bottom:1em;}"
-        ".grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1em;}"
+        ".grid{display:flex;flex-wrap:wrap;align-items:flex-start;gap:1em;}"
         "figure{margin:0;background:#1a1a1f;border:1px solid #333;border-radius:6px;overflow:hidden;}"
-        "video{width:100%;display:block;background:#000;}"
-        "figcaption{padding:.6em .8em;color:#bbb;}"
+        "video{display:block;width:auto;height:auto;max-width:none;background:#000;}"
+        "figcaption{padding:.6em .8em;color:#bbb;max-width:60ch;}"
         "footer{margin-top:2em;padding-top:1em;border-top:1px solid #333;font-size:12px;color:#888;}"
         "code{background:#26262d;padding:1px 4px;border-radius:3px;}"
     ),
