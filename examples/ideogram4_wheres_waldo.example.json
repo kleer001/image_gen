@@ -1,0 +1,19 @@
+{
+  "high_level_description": "A busy hidden-object puzzle page: a crowded toy-shop shelf packed with colorful toys, with one tiny bright-red origami paper crane hidden among them.",
+  "style_description": {
+    "aesthetics": "bright, cheerful, highly detailed children's hidden-object book illustration",
+    "lighting": "even bright daylight, soft shadows",
+    "medium": "clean digital illustration with crisp lines"
+  },
+  "compositional_deconstruction": {
+    "background": "Wooden toy-shop shelves from floor to ceiling, densely packed with colorful toys, boxes, and trinkets.",
+    "elements": [
+      {"type": "obj", "bbox": [150, 780, 250, 880], "desc": "A small bright-red origami paper crane, the hidden target, partly tucked between objects on a high shelf"},
+      {"type": "obj", "bbox": [300, 60, 620, 300], "desc": "A row of fuzzy teddy bears in assorted colors"},
+      {"type": "obj", "bbox": [620, 100, 900, 420], "desc": "A bin of wooden alphabet blocks and small toy cars"},
+      {"type": "obj", "bbox": [120, 300, 420, 620], "desc": "Shelves of board-game boxes and stacked jigsaw puzzles"},
+      {"type": "obj", "bbox": [450, 540, 800, 880], "desc": "A cluster of rubber balls, spinning tops, and a tin toy robot"},
+      {"type": "obj", "bbox": [650, 600, 880, 780], "desc": "Several green and blue origami paper frogs, decoys similar to the red crane"}
+    ]
+  }
+}
