@@ -1,5 +1,4 @@
 {
-  "_scaffold": "UNVALIDATED — video post chain: ESRGAN frame upscale + RIFE frame interpolation. Authored by hand; RIFE requires the ComfyUI-Frame-Interpolation custom node (NOT part of the base stack) and the VHS_LoadVideo / RIFE VFI node input names have NOT been verified against installed versions. See /TODO.md. Lives in scaffolds/ (not workflows/) so the MCP does not auto-register it until validated.",
   "1": {
     "class_type": "VHS_LoadVideo",
     "inputs": {
@@ -21,14 +20,23 @@
   "3": {
     "class_type": "ImageUpscaleWithModel",
     "inputs": {
-      "upscale_model": ["2", 0],
-      "image": ["1", 0]
+      "upscale_model": [
+        "2",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ]
     }
   },
   "4": {
     "class_type": "ImageScale",
     "inputs": {
-      "image": ["3", 0],
+      "image": [
+        "3",
+        0
+      ],
       "upscale_method": "lanczos",
       "width": 1664,
       "height": 960,
@@ -38,19 +46,28 @@
   "5": {
     "class_type": "RIFE VFI",
     "inputs": {
-      "frames": ["4", 0],
+      "frames": [
+        "4",
+        0
+      ],
       "ckpt_name": "rife47.pth",
       "clear_cache_after_n_frames": 10,
       "multiplier": 2,
       "fast_mode": true,
       "ensemble": true,
-      "scale_factor": 1.0
+      "scale_factor": 1.0,
+      "dtype": "float32",
+      "torch_compile": false,
+      "batch_size": 1
     }
   },
   "6": {
     "class_type": "VHS_VideoCombine",
     "inputs": {
-      "images": ["5", 0],
+      "images": [
+        "5",
+        0
+      ],
       "frame_rate": 32,
       "loop_count": 0,
       "filename_prefix": "WanPost_Upscale_RIFE",

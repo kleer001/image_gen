@@ -55,35 +55,26 @@ ComfyUI-WanVideoWrapper installed and reconcile each item below:
       patching, single-sampler seed, ref_images wiring, and clip output all confirmed.
       Also added the missing preflight + freeze-guard arm (mirroring video_shot.py).
 
-## Video post chain (`scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py`)
+## Video post chain (`workflows/video_post_upscale_interp.json` + `scripts/video_post.py`)
 
 ESRGAN frame upscale + RIFE interpolation — the OSS substitute for Topaz Video AI.
-Scaffold lives in `scaffolds/` so the MCP does not auto-register it. The ESRGAN
-half uses installed models (`4x-UltraSharp.pth` etc.); the RIFE half does not yet
-exist on the rig.
+VALIDATED + PROMOTED this session. Smoke test: a VACE clip (832×480/49f/16fps)
+→ 1664×960/97f/32fps in one pass; upscaled frame clean.
 
-- [x] **Install ComfyUI-Frame-Interpolation.** Installed at
-      `comfyui/custom_nodes/ComfyUI-Frame-Interpolation`. Still verify the node loads
-      and the RIFE checkpoint downloads on first run (see schema item below).
-- [ ] **`RIFE VFI` node schema.** Scaffold assumes class_type `RIFE VFI` (with a
-      space) and inputs `frames, ckpt_name, clear_cache_after_n_frames, multiplier,
-      fast_mode, ensemble, scale_factor`. Verify against the installed node — input
-      names and the RIFE checkpoint name (`rife47.pth`) drift between releases.
-- [ ] **`VHS_LoadVideo` schema + video input path.** Scaffold sets `video` to a
-      bare filename and the driver stages the clip into `comfyui/input/`. Confirm
-      VHS_LoadVideo reads from the input dir by filename (vs. needing an upload
-      endpoint) and that output 0 is the IMAGE batch in this VHS version.
-- [ ] **Upscale → interpolate order / VRAM.** Scaffold follows the documented
-      order (4x upscale → downscale to target → RIFE). Interpolating already-upscaled
-      frames is VRAM-heavy; swapping to interpolate-then-upscale is lighter but does
-      more upscale work. Pick per rig headroom.
-- [ ] **Target dims.** Default `1664x960` = exact 2x of an 832x480 render
-      (aspect-preserving). If you render at other dims, set `--width/--height` to
-      2x of those, or the `crop: disabled` ImageScale will stretch.
-- [ ] **Promotion.** After it runs clean, move
-      `scaffolds/video_post_upscale_interp.json` → `workflows/`, restart
-      (`imggen stop && imggen`), repoint `WORKFLOW_FILE` in `scripts/video_post.py`,
-      and strip the `_scaffold` key.
+- [x] **ComfyUI-Frame-Interpolation** loads; `rife47.pth` (20.4 MB) auto-downloads
+      on first run (first GitHub endpoint 404s, falls back to the Fannovel16 release).
+- [x] **`RIFE VFI` node schema.** class_type `RIFE VFI` (with space) confirmed.
+      Live node has extra REQUIRED inputs the scaffold lacked: `dtype` (float32),
+      `torch_compile` (**false** — fp8 compile fails on sm_86), `batch_size` (1);
+      `scale_factor`/`ckpt_name` are combos (`rife47.pth` is a valid option). All added.
+- [x] **`VHS_LoadVideo` schema + video input path.** Confirmed: `video` is a combo
+      of input-dir files; the driver stages the clip into `comfyui/input/` and passes
+      the bare filename; output 0 is the IMAGE batch.
+- [x] **Upscale → interpolate order / VRAM.** Documented order (4x upscale → downscale
+      → RIFE) ran fine; GPU stayed light (~2 GB) — no need to swap order on this rig.
+- [x] **Target dims.** Default `1664x960` = 2x of 832×480; matched the VACE clip.
+- [x] **Promotion.** Done — moved to `workflows/`, `_scaffold` stripped, `WORKFLOW_FILE`
+      repointed. ComfyUI not restarted (no MCP this session; driver uses the HTTP API).
 
 ## Radar follow-ups (`radar/2026-06-03.md`)
 

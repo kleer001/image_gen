@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Video post chain: ESRGAN frame upscale + RIFE interpolation -> HTML gallery.
 
-SCAFFOLD. The companion workflow `scaffolds/video_post_upscale_interp.json` is
-UNVALIDATED and RIFE needs the ComfyUI-Frame-Interpolation custom node, which is
-NOT part of the base stack. See /TODO.md before relying on this. Once validated,
-promote the workflow into workflows/ and point WORKFLOW_FILE there.
+Drives `workflows/video_post_upscale_interp.json` (validated). RIFE needs the
+ComfyUI-Frame-Interpolation custom node; its checkpoint (e.g. rife47.pth) is
+fetched on first run. The RIFE node's torch_compile is off — torch.compile fp8
+kernels fail on the sm_86 card (see CLAUDE.md / the gpu memory note).
 
 The OSS substitute for Topaz Video AI: takes the clips out of video_shot.py /
 video_vace.py (720p-class, 16 fps) and (1) upscales each frame with an installed
@@ -37,9 +37,8 @@ import gallery  # noqa: E402
 import video_shot as vs  # noqa: E402
 
 REPO = vs.REPO
-SCAFFOLDS = REPO / "scaffolds"
 COMFY_INPUT = REPO / "comfyui" / "input"
-WORKFLOW_FILE = SCAFFOLDS / "video_post_upscale_interp.json"
+WORKFLOW_FILE = REPO / "workflows" / "video_post_upscale_interp.json"
 
 
 def load_workflow():
@@ -97,7 +96,7 @@ def main():
     args = ap.parse_args()
 
     if not WORKFLOW_FILE.exists():
-        sys.exit(f"missing workflow scaffold: {WORKFLOW_FILE}")
+        sys.exit(f"missing workflow: {WORKFLOW_FILE}")
 
     cfg = {
         "fps": args.fps, "multiplier": args.multiplier,
