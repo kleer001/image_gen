@@ -204,6 +204,32 @@ Multi-shot video with a browser review gallery, mirroring the storyboard flow.
 
 **Recommended post chain (scaffolded, not yet validated):** WAN renders at 720p → per-frame ESRGAN upscale → **RIFE/FILM frame interpolation** for temporal smoothness (the OSS substitute for Topaz Video AI). Scaffolded in `scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py` (`video_post.py clip.mp4 …` → upscaled/interpolated clip in a browser gallery). RIFE needs a custom node (ComfyUI-Frame-Interpolation) that isn't part of the base stack — install it, then validate per `TODO.md` and promote the scaffold into `workflows/`.
 
+## Pose-driven walking animation (scaffolded, not yet validated)
+
+Posing a **consistent character** in a **simple walking animation** from a driving
+walk clip: **DWPose → OpenPose ControlNet → AnimateDiff (SD1.5)**, with an
+**IPAdapter** carrying identity across frames. The driving video supplies the gait;
+the reference image + prompt supply *who* is walking. Chosen over WAN VACE (the
+heavier, red-flagged SOTA path) and per-frame Flux (which flickers) because it's the
+lightest path with the best temporal coherence for short walk cycles — runs on a
+24GB card with no WAN-style hardware hazard.
+
+**Driver:** `scripts/pose_walk.py <shotlist.yaml>` — per shot takes a driving
+`video:` + identity `reference:` + motion `prompt:`; DWPose extracts the skeleton,
+the OpenPose ControlNet drives limbs per frame, AnimateDiff keeps it coherent, and
+the IPAdapter locks the character. Mirrors the storyboard/`video_shot` flow (HTTP
+API + browser gallery); patches the workflow by `class_type` (and by `_meta` title for
+the two prompt nodes). See `examples/pose_walk.example.yaml`.
+
+**Workflow:** `scaffolds/dwpose_walk_animatediff.json` (in `scaffolds/`, not
+`workflows/`, so the MCP doesn't auto-register it until validated). Needs three
+custom nodes (ComfyUI-AnimateDiff-Evolved, comfyui_controlnet_aux, ComfyUI_IPAdapter_plus)
+and the SD1.5 + OpenPose-CN + IPAdapter weights (catalogued in `models.yaml`). Authored
+from the cloud session, so node schemas are **unverified** — install, validate, and
+promote per the `## DWPose walking animation` checklist in `TODO.md`. Tune
+`ipadapter_weight` (identity) against `controlnet_strength` (pose). For better faces,
+swap the base SD1.5 checkpoint for a stronger character model.
+
 ## LoRA Notes
 
 Most LoRAs in `models/loras/` target **Flux.1-dev**. Exceptions: `Sketchy-Illustrious.safetensors` targets Illustrious XL; AnimateDiff camera LoRAs in `models/animatediff_motion_lora/` target SD1.5+AnimateDiff. See `INDEX.md` for per-LoRA trigger words and recommended weights.

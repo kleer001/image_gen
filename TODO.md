@@ -85,3 +85,83 @@ VALIDATED + PROMOTED this session. Smoke test: a VACE clip (832×480/49f/16fps)
       with heavy optimization, another pushes 32 GB for fp8 "production quality").
       Confirm the real 24 GB ceiling/quality tradeoff with the fp8 + distilled
       checkpoint on the rig before committing to it.
+
+## DWPose walking animation — scaffold (`scaffolds/dwpose_walk_animatediff.json` + `scripts/pose_walk.py`)
+
+Option-1 pipeline for posing consistent characters in simple walking animations:
+**driving walk video → DWPose → OpenPose ControlNet → AnimateDiff (SD1.5), with
+IPAdapter carrying the character's identity.** Light enough for a 24GB card, no
+WAN-style hardware red-flag. Authored from the cloud session (no GPU/ComfyUI
+there), so every node schema below is UNVERIFIED. The workflow lives in
+`scaffolds/` so the MCP does not auto-register it until validated.
+
+### 1. Install custom nodes (into `comfyui/custom_nodes/`)
+
+- [ ] **ComfyUI-AnimateDiff-Evolved** (`ADE_*` nodes) — motion module / temporal coherence.
+      `git clone https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved`
+      (also required by the existing `workflows/animatediff_txt2vid.json`).
+- [ ] **comfyui_controlnet_aux** (`DWPreprocessor`) — DWPose skeleton extraction.
+      `git clone https://github.com/Fannovel16/comfyui_controlnet_aux` then
+      `pip install -r requirements.txt` in the comfyui venv (onnxruntime / mmpose deps).
+- [ ] **ComfyUI_IPAdapter_plus** (`IPAdapterUnifiedLoader`, `IPAdapter`) — identity lock.
+      `git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus`.
+- [ ] **VideoHelperSuite** (`VHS_LoadVideo`, `VHS_VideoCombine`) — already present (the
+      video drivers use `VHS_VideoCombine`); confirm `VHS_LoadVideo` loads too.
+- [ ] *(optional upgrade)* **ComfyUI-Advanced-ControlNet** — if stock
+      `ControlNetApplyAdvanced` mis-maps the per-frame pose batch onto the latent
+      batch, swap node 12 for `ControlNetLoaderAdvanced` + `ACN_AdvancedControlNetApply`.
+
+### 2. Install weights (catalog entries already added to `models.yaml`)
+
+- [ ] `python3 scripts/install_models.py --only checkpoints`  → `v1-5-pruned-emaonly.safetensors`
+      (⚠ the old `runwayml/stable-diffusion-v1-5` repo was deleted; catalog points at the
+      community mirror `stable-diffusion-v1-5/stable-diffusion-v1-5` — confirm it resolves,
+      or swap in a stronger SD1.5 character checkpoint for better faces/hands).
+- [ ] `python3 scripts/install_models.py --only controlnet`   → `control_v11p_sd15_openpose_fp16.safetensors`
+- [ ] `python3 scripts/install_models.py --only ipadapter`    → `ip-adapter-plus_sd15.safetensors`
+- [ ] `python3 scripts/install_models.py --only clip_vision`  → `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors`
+- [ ] `python3 scripts/install_models.py --only animatediff`  → `mm_sd_v15_v3.safetensors` (already catalogued; install if absent)
+- [ ] **DWPose detector weights** auto-download on first `DWPreprocessor` run into
+      `comfyui/custom_nodes/comfyui_controlnet_aux/ckpts` (`yolox_l.onnx`,
+      `dw-ll_ucoco_384_bs5.torchscript.pt`). Verify the rig has network access for that
+      first run; if the filenames differ from the workflow's `bbox_detector` /
+      `pose_estimator` values, update node `3`.
+
+### 3. Config
+
+- [x] Added `ipadapter: ipadapter/` to `configs/comfyui/extra_model_paths.yaml` (was missing).
+- [ ] Propagate it: re-run the relevant install script (copies the config into
+      `comfyui/extra_model_paths.yaml`), or add the line by hand if ComfyUI is already
+      installed. Without it, `models/ipadapter/` won't be discovered.
+
+### 4. Verify node schemas (drift between releases — reconcile in the graph editor)
+
+- [ ] **`DWPreprocessor`** input names (`detect_hand/body/face`, `resolution`,
+      `bbox_detector`, `pose_estimator`) and the exact detector filenames.
+- [ ] **`VHS_LoadVideo`** — output 0 is the IMAGE batch; `frame_load_cap` /
+      `select_every_nth` / `force_rate` behave as assumed; it reads from `comfyui/input/`
+      by bare filename (the driver stages the clip there).
+- [ ] **`IPAdapterUnifiedLoader`** preset string — scaffold uses `"PLUS (high strength)"`;
+      confirm it maps to `ip-adapter-plus_sd15` + the CLIP-ViT-H encoder. Confirm the
+      apply node is `IPAdapter` (inputs `model, ipadapter, image, weight, start_at,
+      end_at, weight_type`) vs `IPAdapterAdvanced` in the installed version.
+- [ ] **Batch match** — `EmptyLatentImage.batch_size` MUST equal the DWPose frame count
+      (= VHS `frame_load_cap`). The driver ties both to `num_frames`; the driving clip must
+      have ≥ `num_frames × select_every_nth` frames or the batches mismatch.
+- [ ] **`ADE_AnimateDiffLoaderGen1`** `beta_schedule: autoselect` is valid for the v3
+      motion module; tune `context_length`/`context_overlap` for clips > 16 frames.
+
+### 5. Smoke test
+
+- [ ] Drop a short walk clip at `./drive/walk_loop.mp4` and a character portrait at
+      `./refs/zara.png` (neutral-gray bg + soft key, per the character-sheet craft in
+      CLAUDE.md), then: `python3 scripts/pose_walk.py examples/pose_walk.example.yaml`.
+      Iterate `ipadapter_weight` (identity 0.6→1.0) vs `controlnet_strength` (pose).
+
+### 6. Promotion (once it renders correctly)
+
+- [ ] Move `scaffolds/dwpose_walk_animatediff.json` → `workflows/`, strip the `_scaffold`
+      key, restart (`imggen stop && imggen`) so the MCP auto-registers it.
+- [ ] Repoint `WORKFLOW_FILE` in `scripts/pose_walk.py` to the `workflows/` path.
+- [ ] Add a `## Pose-driven animation` capability note + INDEX.md rows for the new
+      models, and consider a gait/motion LoRA pass via `/model-radar`.
