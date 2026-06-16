@@ -265,6 +265,8 @@ def main():
     ap.add_argument("--keep", action="store_true", help="keep gallery dir after exit")
     ap.add_argument("--force", "--yes", action="store_true",
                     help="skip the preflight VRAM/crash-hazard confirmation")
+    ap.add_argument("--post", action="store_true",
+                    help="hand each clip to video_post.py (2x ESRGAN upscale + RIFE x2)")
     args = ap.parse_args()
 
     spec = yaml.safe_load(Path(args.shotlist).read_text())
@@ -274,6 +276,13 @@ def main():
     if not shots:
         sys.exit("shot list is empty")
 
+    post_cfg = None
+    if args.post:
+        import video_post as vp  # lazy: video_post imports video_shot, avoid the cycle
+        post_cfg = {"fps": int(cfg["fps"]), "multiplier": 2,
+                    "width": 2 * int(cfg["width"]), "height": 2 * int(cfg["height"]),
+                    "upscale_model": "4x-UltraSharp.pth", "rife_ckpt": "rife47.pth"}
+
     preflight(args.force)
     launch_guard()
 
@@ -282,6 +291,9 @@ def main():
     for i, s in enumerate(shots):
         print(f"[{i+1}/{len(shots)}] {s['prompt'][:70]}  (seed {s['seed']}, {s['num_frames']}f)")
         out = render_shot(s, cfg)
+        if post_cfg:
+            print(f"      post: upscale+interpolate -> {post_cfg['width']}x{post_cfg['height']} @ x{post_cfg['multiplier']}")
+            out = vp.run_post(out, post_cfg)
         local = serve_dir / f"shot_{i+1:02d}{out.suffix}"
         shutil.copy(out, local)
         clips.append({"file": local.name, "prompt": s["prompt"],
