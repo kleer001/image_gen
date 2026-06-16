@@ -20,35 +20,40 @@ in `scaffolds/` (not `workflows/`) on purpose so the MCP server does **not**
 auto-register it until validated. Open it in the ComfyUI graph editor with
 ComfyUI-WanVideoWrapper installed and reconcile each item below:
 
-- [ ] **Model loading path.** Scaffold loads the VACE module directly via
-      `WanVideoModelLoader`. Some wrapper versions instead need the base WAN 2.1
-      **T2V** model loaded, with the VACE module attached through a separate
-      `WanVideoVACEModelSelect` node feeding a `vace_model` input. Confirm which
-      pattern the installed wrapper uses and rewire if needed.
-- [ ] **`WanVideoVACEEncode` input names.** Scaffold assumes inputs
-      `vae, ref_images, width, height, num_frames, strength, vace_start_percent,
-      vace_end_percent, tiled_vae` and output 0 = `vace_embeds`. Verify the exact
-      input socket names/order against the installed node (they have drifted
-      between wrapper releases). For pure R2V only `ref_images` is wired; `input_frames`
-      / `input_masks` (V2V / inpaint) are intentionally omitted.
-- [ ] **Sampler conditioning input.** Scaffold feeds VACE embeds into
-      `WanVideoSampler.image_embeds` (`["89", 0]`). Confirm the sampler takes
-      vace_embeds there vs. a dedicated input in this wrapper version.
-- [ ] **Sampler settings.** VACE 2.1-14B is a **single** model (not a 2.2-style
-      high/low MoE), so the scaffold uses one sampler with `steps: 25, cfg: 6,
-      shift: 8`. Tune these for VACE — values are placeholders.
-- [ ] **Promotion.** Once it renders correctly, move
-      `scaffolds/wan_vace_r2v.json` → `workflows/wan_vace_r2v.json` and restart
-      (`imggen stop && imggen`) so the MCP auto-registers it. Then update
-      `scripts/video_vace.py`: set `WORKFLOW_FILE` to the `workflows/` path.
-- [ ] Strip the `_scaffold` metadata key when promoting (the driver already
-      drops non-node keys at queue time, but a registered workflow should be clean).
+- [x] **Model loading path.** Reconciled against wrapper `df8f3e4` (2026-02-22):
+      the VACE module is NOT a standalone model. Fixed — the scaffold now loads the
+      base `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors` in `WanVideoModelLoader` and
+      attaches the VACE module via a `WanVideoVACEModelSelect` node into the loader's
+      `extra_model` input (the `vace_model` fn-param is legacy, not an exposed input).
+      NOTE: the base T2V model was missing from disk (only the VACE module was) — now
+      cataloged in `models.yaml` and downloading from `Kijai/WanVideo_comfy`.
+- [x] **`WanVideoVACEEncode` input names.** Verified against the installed node:
+      required `vae, width, height, num_frames, strength, vace_start_percent,
+      vace_end_percent`; optional `input_frames, ref_images, input_masks,
+      prev_vace_embeds, tiled_vae`; output 0 = `vace_embeds` (`WANVIDIMAGE_EMBEDS`).
+      The scaffold's R2V wiring (vae, ref_images, width, height, num_frames, strength,
+      vace_start/end, tiled_vae) matches; `input_frames`/`input_masks` correctly omitted.
+- [x] **Sampler conditioning input.** Verified: `WanVideoSampler.image_embeds` takes
+      `WANVIDIMAGE_EMBEDS`, exactly what `WanVideoVACEEncode` emits. The scaffold's
+      `image_embeds: ["89", 0]` wiring is correct.
+- [x] **Sampler settings.** Switched off the 25-step placeholder: the workflow now
+      runs the lightx2v CFG-step distill LoRA (`WanVideoLoraSelect` strength 1.0 ->
+      loader `lora`) at `steps: 6, cfg: 1.0, shift: 8`. Validated render: ~3m16s for
+      832x480/49f on the 3090 (cfg 1 = single forward pass per step), cleaner output
+      than the 25-step baseline.
+- [x] **Removed `WanVideoTorchCompileSettings`.** torch.compile/inductor emits fp8
+      kernels that fail on this card (RTX 3090 / sm_86 < 89). Eager fp8 runs fine.
+- [x] **Promotion.** Done — `scaffolds/wan_vace_r2v.json` -> `workflows/wan_vace_r2v.json`
+      (`_scaffold` key stripped), `scripts/video_vace.py` `WORKFLOW_FILE` repointed.
+      NOTE: ComfyUI was NOT restarted (MCP server isn't running this session; the driver
+      reads the workflow over the HTTP API directly). Run `imggen stop && imggen` when
+      MCP-based `run_workflow("wan_vace_r2v")` access is wanted.
 
 ## VACE driver (`scripts/video_vace.py`)
 
-- [ ] Python logic is smoke-tested (meta-key stripping, node patching, single
-      sampler seed, ref_images wiring), but it has **not** been run end-to-end
-      against a live ComfyUI. Validate once the workflow above is confirmed.
+- [x] Validated end-to-end against a live ComfyUI: reference upload, prompt/dims/seed
+      patching, single-sampler seed, ref_images wiring, and clip output all confirmed.
+      Also added the missing preflight + freeze-guard arm (mirroring video_shot.py).
 
 ## Video post chain (`scaffolds/video_post_upscale_interp.json` + `scripts/video_post.py`)
 

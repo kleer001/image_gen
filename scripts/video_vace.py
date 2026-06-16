@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """VACE reference-to-video driver: shot list -> WAN 2.1 VACE clips -> HTML gallery.
 
-SCAFFOLD. The companion workflow `scaffolds/wan_vace_r2v.json` is UNVALIDATED —
-its VACE node schema has not been checked against an installed
-ComfyUI-WanVideoWrapper, and the VACE 14B module is not installed yet. See
-/TODO.md before relying on this. Once validated, promote the workflow into
-workflows/ (so the MCP auto-registers it) and point WORKFLOW_FILE there.
+Drives `workflows/wan_vace_r2v.json`: base WAN 2.1 T2V 14B (fp8) + the VACE 14B
+module attached via WanVideoVACEModelSelect, with the lightx2v CFG-step distill
+LoRA so a clip renders in ~6 steps / cfg 1 (~3 min at 832x480/49f on the 3090).
+🚩 WAN render — see the hardware red flag in CLAUDE.md; preflight + freeze guard
+arm automatically.
 
 Why this is separate from video_shot.py: WAN 2.2 I2V (video_shot.py) locks
 identity only via a single start frame. VACE adds reference-to-video (R2V) —
@@ -43,13 +43,13 @@ from pathlib import Path
 
 import yaml
 
-# Reuse the generic ComfyUI/HTTP + gallery helpers from the video_shot driver.
+# Reuse the generic ComfyUI/HTTP helpers from video_shot and the gallery server.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import gallery  # noqa: E402
 import video_shot as vs  # noqa: E402
 
 REPO = vs.REPO
-SCAFFOLDS = REPO / "scaffolds"
-WORKFLOW_FILE = SCAFFOLDS / "wan_vace_r2v.json"
+WORKFLOW_FILE = REPO / "workflows" / "wan_vace_r2v.json"
 
 DEFAULT_STYLE_SUFFIX = vs.DEFAULT_STYLE_SUFFIX
 
@@ -105,10 +105,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("shotlist", help="YAML or JSON shot list")
     ap.add_argument("--keep", action="store_true", help="keep gallery dir after exit")
+    ap.add_argument("--force", "--yes", action="store_true",
+                    help="skip the preflight VRAM/crash-hazard confirmation")
     args = ap.parse_args()
 
     if not WORKFLOW_FILE.exists():
-        sys.exit(f"missing workflow scaffold: {WORKFLOW_FILE}")
+        sys.exit(f"missing workflow: {WORKFLOW_FILE}")
 
     spec = yaml.safe_load(Path(args.shotlist).read_text())
     cfg = {**VACE_DEFAULTS, **{k: v for k, v in spec.items() if k != "shots"}}
@@ -116,6 +118,9 @@ def main():
     shots = [normalize_shot(s, i, cfg, base_seed) for i, s in enumerate(spec.get("shots", []))]
     if not shots:
         sys.exit("shot list is empty")
+
+    vs.preflight(args.force)
+    vs.launch_guard()
 
     serve_dir = Path(tempfile.mkdtemp(prefix="video_vace_"))
     clips = []
@@ -128,19 +133,7 @@ def main():
                       "seed": s["seed"], "num_frames": s["num_frames"]})
 
     vs.build_gallery(serve_dir, clips, cfg)
-    port = vs.free_port()
-    vs.serve(str(serve_dir), port)
-    url = f"http://localhost:{port}/index.html"
-    opened = vs.open_in_browser(url)
-    print(f"\n  Gallery: {url}" + ("" if opened else "  (open it manually)"))
-    print("  Ctrl-C to stop the server." + ("" if args.keep else f"  Temp dir {serve_dir} removed on exit."))
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        if not args.keep:
-            shutil.rmtree(serve_dir, ignore_errors=True)
-        print("\n  stopped.")
+    gallery.serve_and_block(serve_dir, keep=args.keep)
 
 
 if __name__ == "__main__":

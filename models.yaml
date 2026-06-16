@@ -223,10 +223,28 @@
   source: https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B
   date: '2026-03-24'
 - section: wan
+  name: WAN 2.1 T2V 14B (fp8)
+  dest: diffusion_models/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors
+  size: 0
+  auth: hf
+  base: wan
+  purpose: Base WAN 2.1 T2V 14B transformer that the VACE module attaches to
+    (via WanVideoVACEModelSelect -> WanVideoModelLoader.extra_model). Required
+    for the reference-to-video (R2V) workflow; the VACE module is not a
+    standalone model.
+  source: https://huggingface.co/Wan-AI/Wan2.1-T2V-14B
+  date: '2026-06-16'
+  notes: >-
+    fp8 single-file build on Kijai/WanVideo_comfy, same VRAM envelope as the
+    other WAN 14B fp8 transformers (24GB via block swap, cannot co-load with
+    Flux/HunyuanVideo). Pull with HF_HUB_DISABLE_XET=1. size:0 until the
+    download completes — fill with real bytes after.
+- section: wan
   name: WAN 2.1 VACE 14B (fp8)
   dest: diffusion_models/Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors
   url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors
-  size: 0
+  size: 3052113849
   auth: hf
   base: wan
   purpose: Reference-to-video (R2V) + video-to-video / masked editing — the open analog
@@ -431,6 +449,19 @@
   purpose: Camera zoom-in motion LoRA for AnimateDiff v2 (32-frame experimental)
   source: https://huggingface.co/Cseti/Basic_camera_motion_LoRAs_sd15-ad2-v1
   date: '2026-03-24'
+- section: loras
+  name: WAN 2.1 T2V 14B lightx2v CFG-step distill (rank32)
+  dest: loras/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors
+  url: https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors
+  size: 316822496
+  auth: hf
+  base: wan
+  purpose: CFG + step distillation for WAN 2.1 T2V 14B — usable output at ~4-6
+    steps with cfg 1 (single forward pass per step). Drives the VACE R2V workflow
+    at distill speed; required by workflows/wan_vace_r2v.json.
+  source: https://huggingface.co/Kijai/WanVideo_comfy
+  date: '2026-06-16'
+  weight: '1.0'
 - section: loras
   name: Film Storyboard In-Context
   dest: loras/film-storyboard.safetensors
