@@ -1,0 +1,15 @@
+{
+  "high_level_description": "A wall of 144 toy robots arranged in a perfectly even 12-by-12 grid, every robot unique and brightly colored, photographed straight-on.",
+  "style_description": {
+    "aesthetics": "playful, glossy, hyperdetailed, crisp",
+    "lighting": "bright even studio softbox lighting, no harsh shadows",
+    "medium": "high-resolution product photography, sharp focus edge to edge",
+    "color_palette": ["#ff1744","#ff6d00","#ffd600","#aeea00","#00c853","#00e5ff","#2979ff","#651fff","#d500f9","#ff4081","#00bfa5","#ff3d00","#c6ff00","#1de9b6","#7c4dff","#f50057"]
+  },
+  "compositional_deconstruction": {
+    "background": "A clean flat neutral light-gray studio wall. Centered on it, a precise grid of exactly 12 columns and 12 rows (144 small toy robots), evenly spaced with equal uniform gaps between every robot and equal margins all around, all robots the same size, aligned in crisp straight rows and columns. Every single robot is unique and different: polished chrome and mirror-metal bodies, oversized round googly eyes, and bold rainbow-striped panels, in every bright saturated rainbow color. A mix of retro tin-toy and modern shapes with antennas, knobs, and dials.",
+    "elements": [
+      {"type": "obj", "bbox": [40, 40, 960, 960], "desc": "The full even 12x12 grid of 144 unique chrome, googly-eyed, rainbow-striped toy robots filling the frame"}
+    ]
+  }
+}

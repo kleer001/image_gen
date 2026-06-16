@@ -53,6 +53,8 @@ def main():
     # bnb-quantized weights must be placed on-device during load (device_map), not
     # moved with .to() afterward (that raises a meta-tensor copy error).
     pipe = Ideogram4Pipeline.from_pretrained(str(MODEL), torch_dtype=torch.bfloat16, device_map="cuda")
+    # Tile the VAE decode so high-res output doesn't spike VRAM at the final step.
+    pipe.vae.enable_tiling()
 
     # The native guidance_schedule is length-48; for any other step count (or an
     # explicit --guidance) use a constant guidance_scale with guidance_schedule=None.
