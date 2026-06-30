@@ -54,7 +54,10 @@ for repo in "${CUSTOM_NODES[@]}"; do
         echo "  $name already present; pulling"
         git -C "$name" pull --ff-only
     else
-        git clone "$repo" "$name"
+        # Disable git-lfs filters: these node repos LFS-track example assets we
+        # don't need (real weights come from models.yaml), and a missing git-lfs
+        # binary otherwise stalls the checkout.
+        git clone -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false "$repo" "$name"
     fi
     if [ -f "$name/requirements.txt" ]; then
         pip install -r "$name/requirements.txt"
