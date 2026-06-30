@@ -89,3 +89,21 @@ Sources: [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) ·
 [ComfyUI-DepthAnythingV3](https://github.com/PozzettiAndrea/ComfyUI-DepthAnythingV3) ·
 [ComfyUI changelog](https://docs.comfy.org/changelog) ·
 [LTX-2.3 models by VRAM](https://ltxworkflow.com/models).
+
+## Validation status (instance on v0.26.2, RTX 3090 / sm_86)
+
+Instance built by `scripts/install_comfyui_v26.sh`, boots on port 8190. Custom-node
+import results: ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3 import
+clean; **ComfyUI-LTXVideo fails to import** against the installed kornia
+(`cannot import name 'pad' from kornia.geometry.transform.pyramid`) — needs a
+kornia version reconcile before LTX-2.3 can run.
+
+- **Krea 2 Turbo: WORKING via `fp8_scaled`.** Generates 1024² in 8 steps. Key
+  correction to the original quant plan: fp8 *loads and runs* on sm_86 because
+  comfy dequantizes fp8->bf16 when `supports_fp8_compute()` is False (it is, on
+  sm_86) — there is no fp8 speedup, but it works. The `int8_convrot` build does
+  NOT load on v0.26.2 (`int8_tensorwise` is absent from `comfy/quant_ops.py`
+  QUANT_ALGOS — needs a newer core), and the krea2-arch GGUF does NOT load
+  (`ComfyUI-GGUF` IMG_ARCH_LIST has no `krea2`). Catalog updated to fp8_scaled.
+- **Bernini-R, LTX-2.3, Depth Anything 3: not yet run end-to-end.** Bernini and
+  DA3 nodes import; LTX blocked on the kornia issue above.
