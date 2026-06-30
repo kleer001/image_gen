@@ -116,7 +116,7 @@
   "34": {
     "class_type": "CheckpointLoaderSimple",
     "inputs": {
-      "ckpt_name": "Illustrious-XL-v0.1.safetensors"
+      "ckpt_name": "Illustrious-XL-v2.0.safetensors"
     }
   }
 }

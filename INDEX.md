@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-06-09
+Last updated: 2026-06-30
 
 ---
 
@@ -20,7 +20,8 @@ Last updated: 2026-06-09
 ### Checkpoints (SDXL / Video)
 | File | Size | Base | Notes |
 |---|---|---|---|
-| `Illustrious-XL-v0.1.safetensors` | 6.5G | SDXL | Anime/illustration; use `sdxl.vae.safetensors` |
+| `Illustrious-XL-v2.0.safetensors` | 6.5G | SDXL | **Primary** anime/illustration checkpoint (all SDXL workflows point here); use `sdxl.vae.safetensors`; better natural-language prompts + color than v0.1 |
+| `Illustrious-XL-v0.1.safetensors` | 6.5G | SDXL | Superseded by v2.0 (kept for reproducibility; safe to delete to reclaim 6.5G); use `sdxl.vae.safetensors` |
 | `sd_xl_base_1.0.safetensors` | 6.5G | SDXL | Vanilla SDXL 1.0 base; broadest LoRA compatibility |
 | `sd_xl_refiner_1.0.safetensors` | 5.7G | SDXL | Two-stage refinement pass; pair with Base after generation |
 | `noobai-xl-vpred10.safetensors` | 6.6G | NoobAI | v-prediction 1.0; distinct base derived from SDXL — use LoRAs tagged for NoobAI specifically |
@@ -74,6 +75,12 @@ Last updated: 2026-06-09
 | `Neurocore-ShadowCircuit-Flux.safetensors` | 74M | `in the style of cksc,` | 0.8–1.0 | [civitai/938811](https://civitai.com/models/938811) |
 | `RetroAnime-Flux.safetensors` | 1.1G | none | 0.8–1.2 | [civitai/721039](https://civitai.com/models/721039) |
 | `FluxMythSharpL1nes.safetensors` | 74M | `SharpL1nes` | 0.8–1.0 | [civitai/599757](https://civitai.com/models/599757) |
+
+### Pixel Art (game / sprites)
+| File | Size | Base | Trigger | Weight | Source |
+|---|---|---|---|---|---|
+| `pixel-Illustrius.safetensors` | 56M | **Illustrious XL** | `pixel` | 0.8–1.0 | [civitai/43820](https://civitai.com/models/43820) — general pixel-art house style; pairs with the sprite LoRA for scenes |
+| `Pixel_Buildings_Flux.safetensors` | 19M | **Flux.1-dev** | none (trained on white bg) | 0.8–1.0 | [civitai/876164](https://civitai.com/models/876164) — pixel buildings/structures for suburbia locations |
 
 ### Illustration (Flux)
 | File | Size | Trigger | Weight | Source |
@@ -340,24 +347,41 @@ Last updated: 2026-06-09
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
+| `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors` | 13.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B) | fp8 single-file build on Kijai/WanVideo_comfy, same VRAM envelope as the other WAN 14B fp8 transformers (24GB via block swap, cannot co-load with Flux/HunyuanVideo). Pull with HF_HUB_DISABLE_XET=1. size:0 until the download completes — fill with real bytes after. |
 | `Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors` | 2.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | Official VACE is on the WAN 2.1 base (no official 2.2-VACE exists yet); Apache-2.0. Reuses the installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new encoder/VAE download needed. fp8 single-file build runs on 24GB via ComfyUI-WanVideoWrapper + block swap, same envelope as WAN 2.2 I2V (cannot co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai repo before first fetch (bf16 shards live at the Wan-AI source repo). |
+| `flux-2-klein-9b-fp8.safetensors` | 8.8G | flux2 | — | [source](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) | LICENSE-GATED on HF (accept at the source repo before download). Requires a FLUX.2-capable ComfyUI (>= v0.24.0) — the production comfyui/ (v0.17.0) cannot run it. Installed against the isolated comfyui_flux2/ instance (port 8189) built by scripts/install_comfyui_flux2.sh. fp8 ~9.4GB; comfortable on the 24GB 3090. |
+| `flux-2-klein-base-4b-fp8.safetensors` | 3.8G | — | — | — | TODO |
+
+### ideogram-4-nf4-diffusers (`ideogram-4-nf4-diffusers/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `diffusion_pytorch_model.safetensors` | 4.9G | — | — | — | TODO |
+| `model.safetensors` | 5.1G | — | — | — | TODO |
 
 ### LoRAs (`loras/`)
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
 | `Qwen-Edit-2509-Multiple-angles.safetensors` | 225M | — | — | — | TODO |
+| `Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors` | 302M | wan | — | [source](https://huggingface.co/Kijai/WanVideo_comfy) | TODO |
+| `pixel_4walk_small_flux2_klein_base_4b_v1.safetensors` | 88M | — | — | — | TODO |
+| `pixel_art_style_v1.0.safetensors` | 164M | — | — | — | TODO |
+| `seamless_texture.safetensors` | 85M | — | — | — | TODO |
 
 ### Text Encoders (`text_encoders/`)
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7G | — | — | — | TODO |
+| `qwen_3_4b.safetensors` | 7.5G | — | — | — | TODO |
+| `qwen_3_8b_fp8mixed.safetensors` | 8.1G | flux2 | — | [source](https://huggingface.co/Comfy-Org/flux2-klein-9B) | TODO |
 
 ### VAE (`vae/`)
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
+| `flux2-vae.safetensors` | 320M | flux2 | — | [source](https://huggingface.co/Comfy-Org/flux2-dev) | TODO |
 | `qwen_image_vae.safetensors` | 242M | — | — | — | TODO |
 
 ### workflows (`workflows/`)
@@ -365,4 +389,6 @@ Last updated: 2026-06-09
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
 | `qwen_image_edit_multiangle.json` | 1K | — | — | — | TODO |
+| `video_post_upscale_interp.json` | 1K | — | — | — | TODO |
+| `wan_vace_r2v.json` | 4K | — | — | — | TODO |
 

@@ -10,6 +10,17 @@
   date: '2026-03-24'
   notes: Use sdxl.vae.safetensors; incompatible with Flux LoRAs
 - section: checkpoints
+  name: Illustrious XL v2.0
+  dest: checkpoints/Illustrious-XL-v2.0.safetensors
+  url: https://huggingface.co/OnomaAIResearch/Illustrious-XL-v2.0/resolve/main/Illustrious-XL-v2.0.safetensors
+  size: 6940000000
+  auth: hf
+  base: sdxl
+  purpose: Primary SDXL checkpoint for anime/illustration workflows (supersedes v0.1)
+  source: https://huggingface.co/OnomaAIResearch/Illustrious-XL-v2.0
+  date: '2026-06-30'
+  notes: Drop-in upgrade from v0.1 (same arch/size, all SDXL LoRAs + VAE compatible); better natural-language prompts and color. Pull with HF_HUB_DISABLE_XET=1 (xet hangs on this network)
+- section: checkpoints
   name: SVD-XT
   dest: checkpoints/svd_xt.safetensors
   url: https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt/resolve/main/svd_xt.safetensors
