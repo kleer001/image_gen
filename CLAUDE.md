@@ -22,6 +22,25 @@ imggen status   # check what's running
 
 A1111 is independent: `cd automatic1111 && ./webui.sh` (port 7860).
 
+## Generator Environments
+
+Multiple isolated generators share one `models/` dir. Production ComfyUI stays
+pinned and frozen; each model family needing a newer engine gets its own pinned
+instance. One heavy GPU job at a time across all of them. Full detail (install,
+VRAM, quant paths, how to add one) in [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
+
+| Env | Port | Engine | For |
+|---|---|---|---|
+| `comfyui/` | 8188 | ComfyUI v0.17.0 | Production: Flux.1, SDXL/Illustrious, Kontext, WAN/Hunyuan/Ovi |
+| `comfyui-mcp-server/` | 9000 | — | MCP layer over production |
+| `automatic1111/` | 7860 | A1111 | Standalone SDXL webui |
+| `comfyui_flux2/` | 8189 | ComfyUI v0.24.0 | FLUX.2 Klein 9B (`flux2_*.py`) |
+| `ideogram4_env/` | — | diffusers venv | Ideogram 4.0 (`ideogram4_t2i.py`) |
+| `comfyui_v26/` | 8190 | ComfyUI v0.26.x | *planned* — Krea 2, Bernini-R, LTX-2.3, DA3 |
+
+A `SessionStart` hook (`scripts/check_envs_documented.py`) warns if a top-level
+generator dir is missing from `ENVIRONMENTS.md`.
+
 ## INDEX.md Auto-Sync
 
 `INDEX.md` is kept current automatically:

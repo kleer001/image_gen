@@ -18,6 +18,11 @@
             "type": "command",
             "command": "python3 \"${CLAUDE_PROJECT_DIR:-.}/scripts/check_sweep_due.py\" 2>/dev/null || true",
             "statusMessage": "Checking update-sweep cadence..."
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR:-.}/scripts/check_envs_documented.py\" 2>/dev/null || true",
+            "statusMessage": "Checking generator environments..."
           }
         ]
       }

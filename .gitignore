@@ -28,4 +28,6 @@ BREADCRUMB.md
 
 # Isolated FLUX.2 ComfyUI (experimental, separate from production comfyui/)
 /comfyui_flux2/
+# Isolated ComfyUI v0.26.x instance (Krea 2 / Bernini-R / LTX-2.3 / DA3)
+/comfyui_v26/
 ideogram4_env/
