@@ -1,10 +1,14 @@
-# Scope — isolated ComfyUI v0.26.x instance (4 newer model families)
+# Scope — isolated ComfyUI v0.26.x instance
 
-Plan for adding Krea 2 Turbo, Bernini-R 1.3B, LTX-2.3, and Depth Anything 3.
-None run on the production v0.17.0 ComfyUI; per the version-isolation policy they
-get a new isolated instance rather than a core upgrade. GPU ceiling: RTX 3090,
-24 GB, **sm_86 (Ampere)** — fp8 *scaled* matmul kernels fail on this GPU; use
-int8 / GGUF / bf16 / fp8-non-scaled paths only.
+Krea 2 Turbo, Bernini-R 1.3B, and Depth Anything 3 run on this instance. None run
+on the production v0.17.0 ComfyUI; per the version-isolation policy they get a new
+isolated instance rather than a core upgrade. GPU ceiling: RTX 3090, 24 GB,
+**sm_86 (Ampere)**: the GPU has no fp8 *compute*, so comfy dequantizes fp8 weights
+to bf16 (they run, no speedup); the Blackwell-only mxfp8/nvfp4 formats are the ones
+that truly don't work. LTX-2.3 was evaluated and **dropped** — its one-pass
+audio+video overlaps the installed Ovi, and its 29 GB fp8 checkpoint exceeds the
+24 GB card (offload-only, slow). The LTX sections below are retained as the
+evaluation record.
 
 ## Approach: one shared instance, ComfyUI v0.26.x, port 8190
 
@@ -92,12 +96,8 @@ Sources: [krea/Krea-2-Turbo](https://huggingface.co/krea/Krea-2-Turbo) ·
 
 ## Validation status (instance on v0.26.2, RTX 3090 / sm_86)
 
-Instance built by `scripts/install_comfyui_v26.sh`, boots on port 8190. All four
-custom nodes import clean (ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3,
-ComfyUI-LTXVideo — 84 LTX node classes register). ComfyUI-LTXVideo needed a patch:
-it imported `pad` from `kornia.geometry.transform.pyramid`, which kornia >= 0.8.3
-dropped (that `pad` was `torch.nn.functional.pad`, already imported as `F`). The
-install script applies this patch after cloning the node.
+Instance built by `scripts/install_comfyui_v26.sh`, boots on port 8190. Custom
+nodes import clean: ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3.
 
 - **Krea 2 Turbo: WORKING via `fp8_scaled`.** Generates 1024² in 8 steps. Key
   correction to the original quant plan: fp8 *loads and runs* on sm_86 because
@@ -106,7 +106,10 @@ install script applies this patch after cloning the node.
   NOT load on v0.26.2 (`int8_tensorwise` is absent from `comfy/quant_ops.py`
   QUANT_ALGOS — needs a newer core), and the krea2-arch GGUF does NOT load
   (`ComfyUI-GGUF` IMG_ARCH_LIST has no `krea2`). Catalog updated to fp8_scaled.
-- **Bernini-R, LTX-2.3, Depth Anything 3: nodes import, not yet run end-to-end.**
-  LTX-2.3 weights (GGUF transformer + int8 gemma + projection + video/audio VAEs)
-  not yet pulled; the GGUF-LTX2 loader support and text-projection wiring in the
-  catalog notes remain to be confirmed with a real render.
+- **LTX-2.3: dropped.** The installed Lightricks node is checkpoint-based (needs
+  the all-in-one `ltx-2.3-22b-dev-fp8` checkpoint + a gemma via
+  `LTXAVTextEncoderLoader`), not the separate-GGUF component set first scoped. The
+  fp8 checkpoint is 29 GB (exceeds 24 GB, offload-only) and its native audio+video
+  overlaps the installed Ovi — not worth the cost on this rig. Catalog entries and
+  the ComfyUI-LTXVideo node removed.
+- **Bernini-R, Depth Anything 3: nodes import; end-to-end validation pending.**

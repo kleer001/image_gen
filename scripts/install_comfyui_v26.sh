@@ -19,7 +19,6 @@ COMFYUI_TAG="v0.26.2"
 CUSTOM_NODES=(
     "https://github.com/city96/ComfyUI-GGUF"              # int8/GGUF loaders (Krea int8, Bernini, LTX int8)
     "https://github.com/neuregex/ComfyUI-BerniniR"        # Bernini-R 1.3B video editor
-    "https://github.com/Lightricks/ComfyUI-LTXVideo"      # LTX-2.3 audio+video
     "https://github.com/PozzettiAndrea/ComfyUI-DepthAnythingV3"  # depth preprocessor
 )
 
@@ -63,16 +62,6 @@ for repo in "${CUSTOM_NODES[@]}"; do
         pip install -r "$name/requirements.txt"
     fi
 done
-
-# ComfyUI-LTXVideo imports `pad` from kornia.geometry.transform.pyramid, which
-# kornia >= 0.8.3 no longer re-exports (kornia's pad was torch.nn.functional.pad,
-# already imported as F in that file). Patch only while the broken import is present.
-LTX_PB="${INSTALL_DIR}/custom_nodes/ComfyUI-LTXVideo/pyramid_blending.py"
-if [ -f "$LTX_PB" ] && grep -qE "^[[:space:]]*pad,[[:space:]]*$" "$LTX_PB"; then
-    echo "  patching ComfyUI-LTXVideo pyramid_blending.py for kornia >= 0.8.3"
-    sed -i '/^[[:space:]]*pad,[[:space:]]*$/d' "$LTX_PB"
-    sed -i 's/= pad(/= F.pad(/g' "$LTX_PB"
-fi
 
 echo ""
 echo "Isolated ComfyUI ${COMFYUI_TAG} installed at ${INSTALL_DIR}"

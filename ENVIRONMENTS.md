@@ -62,19 +62,23 @@ not run on this sm_86 card.
 - Run: `ideogram4_env/.venv/bin/python scripts/ideogram4_t2i.py "prompt"` (or `@scene.json`)
 - Strength: structured-JSON prompting (bbox layout + palette) and in-image text.
 
-### v0.26 instance — `comfyui_v26/` · port 8190 · ComfyUI v0.26.x · PLANNED
+### v0.26 instance — `comfyui_v26/` · port 8190 · ComfyUI v0.26.2 (pinned)
 Isolated ComfyUI for model families newer than v0.17 can load: Krea 2 Turbo,
-Bernini-R 1.3B, LTX-2.3, Depth Anything 3. Full plan (install order, sm_86 quant
-paths, custom nodes, VRAM rules) in `radar/scope-isolated-v26-instance.md`.
-- Install: `scripts/install_comfyui_v26.sh` (to write)
+Bernini-R 1.3B, Depth Anything 3. Details (install order, sm_86 quant paths,
+custom nodes, VRAM rules) in `radar/scope-isolated-v26-instance.md`.
+- Install: `scripts/install_comfyui_v26.sh`
+- Run: `cd comfyui_v26 && .venv/bin/python main.py --listen --port 8190`
+- Custom nodes: ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3
+  (Krea 2 is core-native).
 
 ## GPU / coexistence
 
 One heavy GPU job at a time across **all** environments — never run two large
 transformers, or two instances' heavy jobs, concurrently on the single 24 GB
-3090. Confirm `nvidia-smi` is near-empty before starting WAN/LTX-class jobs.
-sm_86 (Ampere) caveat: fp8 *scaled* matmul kernels fail on this GPU; use int8 /
-GGUF / bf16 / fp8-non-scaled paths.
+3090. Confirm `nvidia-smi` is near-empty before starting WAN-class jobs.
+sm_86 (Ampere) caveat: the GPU has no fp8 *compute* — comfy dequantizes fp8
+weights to bf16 (they load and run, no fp8 speedup). Genuinely incompatible are
+the Blackwell-only formats (mxfp8, nvfp4). Prefer int8 / GGUF / bf16 / fp8.
 
 ## Adding an environment
 
