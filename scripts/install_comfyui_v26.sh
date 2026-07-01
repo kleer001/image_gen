@@ -64,8 +64,18 @@ for repo in "${CUSTOM_NODES[@]}"; do
     fi
 done
 
+# ComfyUI-LTXVideo imports `pad` from kornia.geometry.transform.pyramid, which
+# kornia >= 0.8.3 no longer re-exports (kornia's pad was torch.nn.functional.pad,
+# already imported as F in that file). Patch only while the broken import is present.
+LTX_PB="${INSTALL_DIR}/custom_nodes/ComfyUI-LTXVideo/pyramid_blending.py"
+if [ -f "$LTX_PB" ] && grep -qE "^[[:space:]]*pad,[[:space:]]*$" "$LTX_PB"; then
+    echo "  patching ComfyUI-LTXVideo pyramid_blending.py for kornia >= 0.8.3"
+    sed -i '/^[[:space:]]*pad,[[:space:]]*$/d' "$LTX_PB"
+    sed -i 's/= pad(/= F.pad(/g' "$LTX_PB"
+fi
+
 echo ""
 echo "Isolated ComfyUI ${COMFYUI_TAG} installed at ${INSTALL_DIR}"
 echo "Run: cd ${INSTALL_DIR} && .venv/bin/python main.py --listen --port ${PORT}"
 echo "Next: pull weights per models.yaml / radar/scope-isolated-v26-instance.md"
-echo "  (Krea 2 Turbo int8, Bernini-R 1.3B, LTX-2.3 int8 — NOT fp8_scaled on sm_86)"
+echo "  (sm_86: use int8/GGUF/bf16 or fp8_scaled via dequant — NOT mxfp8/nvfp4)"
