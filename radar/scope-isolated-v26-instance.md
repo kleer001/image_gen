@@ -112,4 +112,8 @@ nodes import clean: ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3.
   fp8 checkpoint is 29 GB (exceeds 24 GB, offload-only) and its native audio+video
   overlaps the installed Ovi — not worth the cost on this rig. Catalog entries and
   the ComfyUI-LTXVideo node removed.
-- **Bernini-R, Depth Anything 3: nodes import; end-to-end validation pending.**
+- **Bernini-R: WORKING.** v2v edit validated on v0.26.2 (768x576, 25 frames):
+  bf16 transformer + fp8 UMT5 encoder (CLIPLoader type wan, dequant) + WAN 2.1 VAE.
+  The shipped workflows are UI-format; convert to API (fill required widget
+  defaults like BerniniRLoadVideo.max_side).
+- **Depth Anything 3: node imports; end-to-end validation pending.**

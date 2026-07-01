@@ -1113,11 +1113,33 @@
   base: wan
   purpose: Bernini-R 1.3B lightweight video editor (Wan2.1-1.3B fine-tune, Apache-2.0)
     — style transfer, watermark/subtitle removal, local region edits, R2V. Runs on
-    comfyui_v26/ via ComfyUI-BerniniR; reuses the installed WAN UMT5-XXL encoder + WAN 2.1 VAE.
+    comfyui_v26/ via ComfyUI-BerniniR; pairs with the umt5 fp8 encoder + WAN 2.1 VAE below.
   source: https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI
   date: '2026-06-30'
   notes: >-
-    bf16, 2.8 GB — fits trivially, no quant concern. Text encoder = the installed
-    umt5_xxl_fp8_e4m3fn_scaled.safetensors (6735906897 bytes; confirm match); if the
-    fp8 encoder fails on sm_86 the repo also ships umt5-xxl-encoder-Q5_K_M.gguf (needs
-    ComfyUI-GGUF). VAE = installed wan_2.1_vae.safetensors. Apache-2.0.
+    bf16, 2.8 GB — fits trivially, no quant concern. VALIDATED on v0.26.2 (v2v edit,
+    768x576, 25 frames). Load the transformer via BerniniRLoadModelNative, the encoder
+    via CLIPLoader (type wan, fp8 dequants on sm_86), VAE via VAELoader. The shipped
+    workflows default to the GGUF encoder (umt5-xxl-encoder-Q5_K_M.gguf via CLIPLoaderGGUF)
+    — either works. Apache-2.0.
+- section: text_encoders
+  name: UMT5-XXL fp8 (Bernini / WAN)
+  dest: text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
+  url: https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI/resolve/main/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
+  size: 6735906897
+  auth: hf
+  base: wan
+  purpose: UMT5-XXL text encoder (fp8) for Bernini-R; standard Comfy-Org WAN encoder.
+    Load via CLIPLoader type wan.
+  source: https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI
+  date: '2026-06-30'
+- section: vae
+  name: WAN 2.1 VAE (Bernini)
+  dest: vae/wan_2.1_vae.safetensors
+  url: https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI/resolve/main/vae/wan_2.1_vae.safetensors
+  size: 253815318
+  auth: hf
+  base: wan
+  purpose: WAN 2.1 VAE (safetensors) for Bernini-R; standard WAN 2.1 VAE.
+  source: https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI
+  date: '2026-06-30'
