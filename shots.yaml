@@ -1,0 +1,9 @@
+num_frames: 49          # ~3s at 16fps — short for a fast first result
+fps: 16
+width: 832
+height: 480
+seed: 42
+
+shots:
+  - image: ./plates/plate01.png
+    prompt: "subtle head turn toward the driver, slow blink, gentle handheld drift, soft neon flicker"

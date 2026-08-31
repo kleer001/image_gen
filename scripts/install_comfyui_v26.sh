@@ -1,6 +1,6 @@
 #!/bin/bash
 # Isolated ComfyUI v0.26.x for model families the production comfyui/ (v0.17.0)
-# cannot load: Krea 2 Turbo, Bernini-R 1.3B, LTX-2.3, Depth Anything 3. Separate
+# cannot load: Krea 2 Turbo, Bernini-R 1.3B, Depth Anything 3. Separate
 # and pinned so a core-version bump can't break the production WAN/Hunyuan/Ovi
 # nodes or the MCP contract. Reuses the shared models/ dir via extra_model_paths.yaml.
 # Sets up the instance + custom nodes only; model weights are pulled separately
@@ -17,7 +17,7 @@ COMFYUI_TAG="v0.26.2"
 
 # Custom nodes (Krea 2 needs none — core-native in v0.26.0).
 CUSTOM_NODES=(
-    "https://github.com/city96/ComfyUI-GGUF"              # int8/GGUF loaders (Krea int8, Bernini, LTX int8)
+    "https://github.com/city96/ComfyUI-GGUF"              # GGUF loaders (Bernini GGUF-encoder fallback)
     "https://github.com/neuregex/ComfyUI-BerniniR"        # Bernini-R 1.3B video editor
     "https://github.com/PozzettiAndrea/ComfyUI-DepthAnythingV3"  # depth preprocessor
 )
@@ -41,7 +41,7 @@ pip install --upgrade pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 
-# Reuse the shared models/ dir (Krea/Bernini/LTX/DA3 files land there).
+# Reuse the shared models/ dir (Krea/Bernini/DA3 files land there).
 cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
 
 # Custom nodes into comfyui_v26/custom_nodes/, installing each one's requirements.

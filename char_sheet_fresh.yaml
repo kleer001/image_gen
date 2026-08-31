@@ -1,0 +1,14 @@
+# Character sheet — Track A: fresh from text (no reference).
+# Panel 1 is seeded from the description; panels 2-3 Kontext-lock to panel 1.
+lora: film-storyboard.safetensors
+lora_weight: 0.0          # base Flux — the sketch LoRA is wrong for a rendered ref
+guidance: 2.5
+steps: 24
+seed: 42
+width: 832
+height: 1152
+style_suffix: "solid neutral gray seamless studio backdrop, soft directional key light with gentle falloff, clean even studio lighting, sharp focus, full detail, no atmospheric haze, no heavy shadows"
+shots:
+  - "character reference portrait, a young woman with long straight auburn hair, fair skin, calm neutral expression, wearing a plain oatmeal hoodie, facing camera, front view, head and shoulders"
+  - "the same young woman, three-quarter view, head and shoulders"
+  - "the same young woman, left side profile view, head and shoulders"

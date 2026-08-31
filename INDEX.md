@@ -349,8 +349,10 @@ Last updated: 2026-06-30
 |---|---|---|---|---|---|
 | `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors` | 13.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B) | fp8 single-file build on Kijai/WanVideo_comfy, same VRAM envelope as the other WAN 14B fp8 transformers (24GB via block swap, cannot co-load with Flux/HunyuanVideo). Pull with HF_HUB_DISABLE_XET=1. size:0 until the download completes — fill with real bytes after. |
 | `Wan2_1-VACE_module_14B_fp8_e4m3fn.safetensors` | 2.8G | wan | — | [source](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) | Official VACE is on the WAN 2.1 base (no official 2.2-VACE exists yet); Apache-2.0. Reuses the installed WAN VAE (Wan2.1_VAE.pth) and UMT5-XXL encoder — no new encoder/VAE download needed. fp8 single-file build runs on 24GB via ComfyUI-WanVideoWrapper + block swap, same envelope as WAN 2.2 I2V (cannot co-load with Flux/HunyuanVideo). size:0 → installer downloads if absent and treats any non-empty file as complete; CONFIRM exact fp8 filename on the Kijai repo before first fetch (bf16 shards live at the Wan-AI source repo). |
+| `bernini_r_1.3B-bf16.safetensors` | 2.6G | wan | — | [source](https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI) | bf16, 2.8 GB — fits trivially, no quant concern. VALIDATED on v0.26.2 (v2v edit, 768x576, 25 frames). Load the transformer via BerniniRLoadModelNative, the encoder via CLIPLoader (type wan, fp8 dequants on sm_86), VAE via VAELoader. The shipped workflows default to the GGUF encoder (umt5-xxl-encoder-Q5_K_M.gguf via CLIPLoaderGGUF) — either works. Apache-2.0. |
 | `flux-2-klein-9b-fp8.safetensors` | 8.8G | flux2 | — | [source](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) | LICENSE-GATED on HF (accept at the source repo before download). Requires a FLUX.2-capable ComfyUI (>= v0.24.0) — the production comfyui/ (v0.17.0) cannot run it. Installed against the isolated comfyui_flux2/ instance (port 8189) built by scripts/install_comfyui_flux2.sh. fp8 ~9.4GB; comfortable on the 24GB 3090. |
 | `flux-2-klein-base-4b-fp8.safetensors` | 3.8G | — | — | — | TODO |
+| `krea2_turbo_fp8_scaled.safetensors` | 12.2G | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | fp8_scaled is the working path on the pinned v0.26.2 + 3090 (VALIDATED): comfy auto-dequantizes fp8->bf16 since supports_fp8_compute is False on sm_86, so it runs (no fp8 speedup). Load via UNETLoader (weight_dtype default), CLIPLoader type krea2, KSampler 8 steps / cfg 1 / euler / simple. NOT int8_convrot — that needs a newer core (int8_tensorwise absent from QUANT_ALGOS in v0.26.2); NOT the krea2-arch GGUF — ComfyUI-GGUF doesn't know that arch yet. AVOID mxfp8/nvfp4 (Blackwell) and bf16 (26 GB). Reuses vae/qwen_image_vae.safetensors (already on disk, 253806246 bytes). Pull with HF_HUB_DISABLE_XET=1. |
 
 ### ideogram-4-nf4-diffusers (`ideogram-4-nf4-diffusers/`)
 
@@ -373,16 +375,19 @@ Last updated: 2026-06-30
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
+| `qwen3vl_4b_bf16.safetensors` | 8.3G | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | bf16 build — use this, not qwen3vl_4b_fp8_scaled (fp8 fails on sm_86). |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7G | — | — | — | TODO |
 | `qwen_3_4b.safetensors` | 7.5G | — | — | — | TODO |
 | `qwen_3_8b_fp8mixed.safetensors` | 8.1G | flux2 | — | [source](https://huggingface.co/Comfy-Org/flux2-klein-9B) | TODO |
+| `umt5_xxl_fp8_e4m3fn_scaled.safetensors` | 6.3G | wan | — | [source](https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI) | TODO |
 
 ### VAE (`vae/`)
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
 | `flux2-vae.safetensors` | 320M | flux2 | — | [source](https://huggingface.co/Comfy-Org/flux2-dev) | TODO |
-| `qwen_image_vae.safetensors` | 242M | — | — | — | TODO |
+| `qwen_image_vae.safetensors` | 242M | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | May already exist at this dest from the Qwen-Image-Edit setup; installer skips a non-empty file. Confirm the installed copy matches (253806246 bytes). |
+| `wan_2.1_vae.safetensors` | 242M | wan | — | [source](https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI) | TODO |
 
 ### workflows (`workflows/`)
 

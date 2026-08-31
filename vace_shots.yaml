@@ -1,0 +1,10 @@
+num_frames: 49
+fps: 16
+width: 832
+height: 480
+strength: 1.0
+seed: 42
+
+shots:
+  - reference: ./refs/ref01.png
+    prompt: "she turns toward camera through soft neon light, gentle push-in, handheld"

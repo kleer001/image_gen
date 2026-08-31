@@ -3,11 +3,14 @@
 /automatic1111/
 /comfyui-mcp-server/
 
-# Outputs (content only, dirs kept)
-/outputs/comfyui/*
-/outputs/a1111/*
-!outputs/comfyui/.gitkeep
-!outputs/a1111/.gitkeep
+# Outputs (content only, dirs kept) — every run directory, not just the two
+# named tools, so a new output folder does not have to be added here by hand.
+/outputs/*/*
+!outputs/*/.gitkeep
+
+# Downloaded upstream model weights. Re-fetchable from the model host, and the
+# safetensors here run to 5 GB each, well past what the remote will take.
+/models/ideogram-4-nf4-diffusers/
 
 # Python
 __pycache__/
