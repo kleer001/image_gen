@@ -33,4 +33,10 @@ BREADCRUMB.md
 /comfyui_flux2/
 # Isolated ComfyUI v0.26.x instance (Krea 2 / Bernini-R / Depth Anything 3)
 /comfyui_v26/
+
+# Isolated MiniMax H3 ComfyUI (v0.35.0, cu130)
+/comfyui_h3/
 ideogram4_env/
+
+# Scratch (session staging: logs, probes, extracted frames)
+/tmp/

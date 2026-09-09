@@ -17,6 +17,7 @@ own port) and **plain diffusers venvs** (script-driven, no server/port).
 | 8188 | production ComfyUI |
 | 8189 | FLUX.2 (`comfyui_flux2`) |
 | 8190 | v0.26 instance (`comfyui_v26`, planned) |
+| 8191 | MiniMax H3 (`comfyui_h3`) |
 | 7860 | A1111 |
 | 9000 | MCP server |
 
@@ -71,14 +72,38 @@ custom nodes, VRAM rules) in `radar/scope-isolated-v26-instance.md`.
 - Custom nodes: ComfyUI-GGUF, ComfyUI-BerniniR, ComfyUI-DepthAnythingV3
   (Krea 2 is core-native).
 
+### MiniMax H3 instance — `comfyui_h3/` · port 8191 · ComfyUI v0.35.0 (pinned)
+Isolated ComfyUI for MiniMax H3, the 33B omni-modal model that generates video
+and its stereo audio in one pass. H3 needs core >= v0.30.0, past what the v0.26
+instance carries. H3 is core-native, so no custom nodes.
+- Install: `scripts/install_comfyui_h3.sh`
+- Run: `cd comfyui_h3 && .venv/bin/python main.py --listen --port 8191 --disable-pinned-memory`
+- **`--disable-pinned-memory` is required** — without it ComfyUI page-locks most of
+  system RAM during H3 load and the OOM-killer fires.
+- **This instance is built against cu130, not the cu121 the others use.** The
+  Comfy-Org repack states int8_convrot is the preferred diffusion-model quant and
+  needs PyTorch on cu130; `fp8_scaled` is the fallback only when cu130 is
+  unavailable, and on this sm_86 card fp8 is dequantized to bf16, which does not fit.
+- Licensing: H3's community license excludes the EU, UK, South Korea and the USA
+  from its Applicable Territory. This rig is in Canada, which is inside it. Any
+  *commercial* product using H3 must display "MiniMax H3" in its UI.
+
 ## GPU / coexistence
 
 One heavy GPU job at a time across **all** environments — never run two large
 transformers, or two instances' heavy jobs, concurrently on the single 24 GB
 3090. Confirm `nvidia-smi` is near-empty before starting WAN-class jobs.
 sm_86 (Ampere) caveat: the GPU has no fp8 *compute* — comfy dequantizes fp8
-weights to bf16 (they load and run, no fp8 speedup). Genuinely incompatible are
-the Blackwell-only formats (mxfp8, nvfp4). Prefer int8 / GGUF / bf16 / fp8.
+weights to bf16 (they load and run, no fp8 speedup). ComfyUI reports its op
+support at model load; on this card that reads:
+
+    Native ops:   asym_w4a8_int8, int8_tensorwise, convrot_w4a4
+    Emulated ops: float8_e5m2, float8_e4m3fn, nvfp4, mxfp8
+
+So mxfp8 and nvfp4 are not hard-incompatible — they run emulated, at a speed
+cost, and a big nvfp4 text encoder is a practical choice when the alternative
+does not fit. int8 is the only quant family with native kernels here, which is
+why int8_convrot is the pick for large transformers. Prefer int8 / GGUF / bf16.
 
 ## Adding an environment
 

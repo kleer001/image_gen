@@ -37,6 +37,7 @@ VRAM, quant paths, how to add one) in [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
 | `comfyui_flux2/` | 8189 | ComfyUI v0.24.0 | FLUX.2 Klein 9B (`flux2_*.py`) |
 | `ideogram4_env/` | — | diffusers venv | Ideogram 4.0 (`ideogram4_t2i.py`) |
 | `comfyui_v26/` | 8190 | ComfyUI v0.26.2 | Krea 2 Turbo, Bernini-R, Depth Anything 3 |
+| `comfyui_h3/` | 8191 | ComfyUI v0.35.0 (cu130) | MiniMax H3 video+audio (`h3_t2v.py`) |
 
 A `SessionStart` hook (`scripts/check_envs_documented.py`) warns if a top-level
 generator dir is missing from `ENVIRONMENTS.md`.

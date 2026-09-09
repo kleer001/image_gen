@@ -45,14 +45,17 @@ _THEMES = {
 }
 
 
-def write_gallery(serve_dir, title, cards, *, media="img", theme="dark", subtitle="", footer=""):
+def write_gallery(serve_dir, title, cards, *, media="img", theme="dark", subtitle="", footer="", muted=True):
     """Write index.html into serve_dir.
 
     cards: list of {"src": filename, "caption": html}. media is "img" or
     "video"; theme is "light" or "dark". subtitle/footer are optional HTML.
+    muted applies to video only — pass False for clips whose audio is part of
+    the output rather than incidental.
     """
     if media == "video":
-        tag = '<video src="{src}" controls loop muted playsinline preload="metadata"></video>'
+        tag = ('<video src="{src}" controls loop playsinline preload="metadata"'
+               + (' muted' if muted else '') + '></video>')
     else:
         tag = '<img src="{src}" alt="">'
     figs = "".join(

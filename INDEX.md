@@ -1,7 +1,7 @@
 # INDEX.md
 
 Actual installed state of this machine. Update when adding models or tools.
-Last updated: 2026-06-30
+Last updated: 2026-09-09
 
 ---
 
@@ -352,7 +352,24 @@ Last updated: 2026-06-30
 | `bernini_r_1.3B-bf16.safetensors` | 2.6G | wan | — | [source](https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI) | bf16, 2.8 GB — fits trivially, no quant concern. VALIDATED on v0.26.2 (v2v edit, 768x576, 25 frames). Load the transformer via BerniniRLoadModelNative, the encoder via CLIPLoader (type wan, fp8 dequants on sm_86), VAE via VAELoader. The shipped workflows default to the GGUF encoder (umt5-xxl-encoder-Q5_K_M.gguf via CLIPLoaderGGUF) — either works. Apache-2.0. |
 | `flux-2-klein-9b-fp8.safetensors` | 8.8G | flux2 | — | [source](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) | LICENSE-GATED on HF (accept at the source repo before download). Requires a FLUX.2-capable ComfyUI (>= v0.24.0) — the production comfyui/ (v0.17.0) cannot run it. Installed against the isolated comfyui_flux2/ instance (port 8189) built by scripts/install_comfyui_flux2.sh. fp8 ~9.4GB; comfortable on the 24GB 3090. |
 | `flux-2-klein-base-4b-fp8.safetensors` | 3.8G | — | — | — | TODO |
+| `flux1-fill-dev.safetensors` | 22.2G | — | — | — | TODO |
 | `krea2_turbo_fp8_scaled.safetensors` | 12.2G | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | fp8_scaled is the working path on the pinned v0.26.2 + 3090 (VALIDATED): comfy auto-dequantizes fp8->bf16 since supports_fp8_compute is False on sm_86, so it runs (no fp8 speedup). Load via UNETLoader (weight_dtype default), CLIPLoader type krea2, KSampler 8 steps / cfg 1 / euler / simple. NOT int8_convrot — that needs a newer core (int8_tensorwise absent from QUANT_ALGOS in v0.26.2); NOT the krea2-arch GGUF — ComfyUI-GGUF doesn't know that arch yet. AVOID mxfp8/nvfp4 (Blackwell) and bf16 (26 GB). Reuses vae/qwen_image_vae.safetensors (already on disk, 253806246 bytes). Pull with HF_HUB_DISABLE_XET=1. |
+| `minimax_h3_fl2va_pruned_int8_convrot.safetensors` | 19.5G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | int8_convrot needs PyTorch on cu130 (comfyui_h3 instance). fp8_scaled is the fallback only without cu130 and does not fit 24 GB here, since sm_86 dequantizes fp8 to bf16. Runs on comfyui_h3 (port 8191), not production. |
+
+### Embeddings (`embeddings/`)
+
+| File | Size | Base | Trigger | Source | Notes |
+|---|---|---|---|---|---|
+| `minimaxh3_art_is_explosion.safetensors` | 500K | — | — | — | TODO |
+| `minimaxh3_blooming_flowers.safetensors` | 1M | — | — | — | TODO |
+| `minimaxh3_bullet_time.safetensors` | 940K | — | — | — | TODO |
+| `minimaxh3_dark_magic.safetensors` | 590K | — | — | — | TODO |
+| `minimaxh3_fire_breath.safetensors` | 1M | — | — | — | TODO |
+| `minimaxh3_four_seasons.safetensors` | 1M | — | — | — | TODO |
+| `minimaxh3_kiss_camera.safetensors` | 970K | — | — | — | TODO |
+| `minimaxh3_spiral_ascent.safetensors` | 1M | — | — | — | TODO |
+| `minimaxh3_storm_magic.safetensors` | 1M | — | — | — | TODO |
+| `minimaxh3_truman_show.safetensors` | 900K | — | — | — | TODO |
 
 ### ideogram-4-nf4-diffusers (`ideogram-4-nf4-diffusers/`)
 
@@ -367,6 +384,7 @@ Last updated: 2026-06-30
 |---|---|---|---|---|---|
 | `Qwen-Edit-2509-Multiple-angles.safetensors` | 225M | — | — | — | TODO |
 | `Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors` | 302M | wan | — | [source](https://huggingface.co/Kijai/WanVideo_comfy) | TODO |
+| `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` | 1.8G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | Pair with BasicScheduler steps=4. An 8-step variant exists for more quality. |
 | `pixel_4walk_small_flux2_klein_base_4b_v1.safetensors` | 88M | — | — | — | TODO |
 | `pixel_art_style_v1.0.safetensors` | 164M | — | — | — | TODO |
 | `seamless_texture.safetensors` | 85M | — | — | — | TODO |
@@ -375,6 +393,7 @@ Last updated: 2026-06-30
 
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
+| `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` | 14.6G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | Per the Comfy-Org repack README this nvfp4 quant does not require a Blackwell GPU, unlike nvfp4 generally. CLIPLoader type is "minimax". |
 | `qwen3vl_4b_bf16.safetensors` | 8.3G | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | bf16 build — use this, not qwen3vl_4b_fp8_scaled (fp8 fails on sm_86). |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7G | — | — | — | TODO |
 | `qwen_3_4b.safetensors` | 7.5G | — | — | — | TODO |
@@ -386,6 +405,8 @@ Last updated: 2026-06-30
 | File | Size | Base | Trigger | Source | Notes |
 |---|---|---|---|---|---|
 | `flux2-vae.safetensors` | 320M | flux2 | — | [source](https://huggingface.co/Comfy-Org/flux2-dev) | TODO |
+| `minimax_h3_audio_vae_fp32.safetensors` | 577M | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | TODO |
+| `minimax_h3_video_vae_fp16.safetensors` | 4.9G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | TODO |
 | `qwen_image_vae.safetensors` | 242M | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | May already exist at this dest from the Qwen-Image-Edit setup; installer skips a non-empty file. Confirm the installed copy matches (253806246 bytes). |
 | `wan_2.1_vae.safetensors` | 242M | wan | — | [source](https://huggingface.co/neuregex/Bernini-1.3B-ComfyUI) | TODO |
 
