@@ -14,7 +14,13 @@ PORT=8191
 # the newest stable and carries the later H3 fixes.
 COMFYUI_TAG="v0.35.0"
 
-# H3 is core-native — no custom nodes required.
+# H3 itself is core-native. The one custom pack is FaceRefine, which fixes the
+# model's documented weakness on small faces: H3 renders a face badly once the
+# head is a small fraction of the frame, and that is a property of head size in
+# pixels rather than of output resolution, so raising the canvas does not cure it.
+CUSTOM_NODES=(
+    "https://github.com/Carasibana/ComfyUI-H3-FaceRefine"   # per-frame face crop, refine, stitch
+)
 
 # Shallow clone straight at the pinned tag. The instance never tracks master, so
 # the history is dead weight, and the full clone is large enough that it fails on
@@ -48,6 +54,22 @@ pip install -r requirements.txt
 
 # Reuse the shared models/ dir.
 cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
+
+mkdir -p "${INSTALL_DIR}/custom_nodes"
+cd "${INSTALL_DIR}/custom_nodes"
+for repo in "${CUSTOM_NODES[@]}"; do
+    name=$(basename "$repo")
+    if [ -d "$name/.git" ]; then
+        echo "  $name already present; pulling"
+        git -C "$name" pull --ff-only
+    else
+        git clone --depth 1 -c filter.lfs.smudge= -c filter.lfs.process= \
+            -c filter.lfs.required=false "$repo" "$name"
+    fi
+    if [ -f "$name/requirements.txt" ]; then
+        pip install -r "$name/requirements.txt"
+    fi
+done
 
 echo ""
 echo "Isolated ComfyUI ${COMFYUI_TAG} installed at ${INSTALL_DIR}"
