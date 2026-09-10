@@ -14,6 +14,7 @@ Usage:
 
 Requires:
     PyYAML                    pip install pyyaml
+    hf                        pip install huggingface_hub  (diffusers-repo entries)
     $CIVITAI_API_KEY  or  ~/.civitai_token
     ~/.cache/huggingface/token  (or $HF_TOKEN)
 
@@ -85,6 +86,18 @@ def _expand_shards(raw, hf_token):
     return entries
 
 
+def _resolve_repo(raw, hf_token):
+    """A multi-file HuggingFace repo (diffusers layout) pulled whole, not per-file."""
+    return {
+        "section": raw["section"],
+        "name":    raw["name"],
+        "dest":    raw["dest_dir"],
+        "repo":    raw["hf_repo"],
+        "size":    raw.get("size", 0),
+        "auth":    hf_token if raw.get("auth") == "hf" else "",
+    }
+
+
 def _resolve_entry(raw, hf_token, cv_token):
     """Convert a single YAML entry to a download dict."""
     auth = raw.get("auth", "none")
@@ -110,6 +123,8 @@ def load_catalog(hf_token, cv_token):
     for raw in raw_entries:
         if raw.get("type") == "shards":
             items.extend(_expand_shards(raw, hf_token))
+        elif raw.get("type") == "diffusers_repo":
+            items.append(_resolve_repo(raw, hf_token))
         else:
             items.append(_resolve_entry(raw, hf_token, cv_token))
     return items
@@ -174,6 +189,8 @@ def update_civitai(cv_token):
 # ─── DOWNLOAD ENGINE ──────────────────────────────────────────────────────────
 
 def _file_size(path):
+    if path.is_dir():
+        return sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
     try: return path.stat().st_size
     except FileNotFoundError: return 0
 
@@ -181,7 +198,7 @@ def _file_size(path):
 def _is_complete(entry):
     dest = MODELS / entry["dest"]
     if not dest.exists(): return False
-    sz = dest.stat().st_size
+    sz = _file_size(dest)
     return sz > 0 if entry["size"] == 0 else sz >= entry["size"]
 
 
@@ -190,6 +207,14 @@ def _wget_cmd(url, dest, auth):
     if auth:
         cmd.insert(3, f"--header=Authorization: Bearer {auth}")
     return cmd
+
+
+def _hf_cmd(repo, dest, auth):
+    """Whole-repo pull. Xet is disabled: it stalls on large multi-file repos."""
+    env = {**os.environ, "HF_HUB_DISABLE_XET": "1"}
+    if auth:
+        env["HF_TOKEN"] = auth
+    return ["hf", "download", repo, "--local-dir", str(dest)], env
 
 
 def _poll_progress(proc, dest, entry, stats, start_bytes, t0):
@@ -225,11 +250,14 @@ def download(entry, idx, total, stats):
           + (f" ({fmt_size(expected)})" if expected > 0 else ""))
 
     dest.parent.mkdir(parents=True, exist_ok=True)
-    cmd = _wget_cmd(entry["url"], dest, entry.get("auth"))
+    if "repo" in entry:
+        cmd, env = _hf_cmd(entry["repo"], dest, entry["auth"])
+    else:
+        cmd, env = _wget_cmd(entry["url"], dest, entry.get("auth")), None
 
     for attempt in range(1, 4):
         start_bytes = _file_size(dest)
-        proc = subprocess.Popen(cmd, stderr=subprocess.DEVNULL)
+        proc = subprocess.Popen(cmd, stderr=subprocess.DEVNULL, env=env)
         elapsed = _poll_progress(proc, dest, entry, stats, start_bytes, time.time())
 
         if _is_complete(entry):
@@ -245,7 +273,7 @@ def download(entry, idx, total, stats):
     print(f"       ✗  FAILED (see {LOG.name})")
     with open(LOG, "a") as f:
         f.write(f"FAILED after 3 attempts: {entry['name']} → {dest}\n"
-                f"  url: {entry['url']}\n\n")
+                f"  source: {entry.get('url') or entry['repo']}\n\n")
     return "fail"
 
 # ─── DISK CHECK ──────────────────────────────────────────────────────────────
