@@ -1,0 +1,51 @@
+# The reverse move: start tight on the face and pull out to the whole ring.
+#
+# Companion to h3_circus.yaml's push-in. A pull-out is the harder direction for
+# reference identity — the face is largest in the opening frames, where the model
+# has the least context established, and it has to stay the same person while the
+# frame fills with a scene the reference never contained.
+#
+#   scripts/h3_ref2v.py examples/h3_circus_pullout.yaml
+title: MiniMax H3 — big top, pulling out
+seconds: 5
+width: 864
+height: 480
+seed: 7
+steps: 8
+ref_image_size: max
+loras:
+  - [minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors, 1.0]
+
+references:
+  - refs/h3/menser.jpg
+
+shots:
+  - label: continuous, face to wide
+    prompt: |-
+      subject_definitions: <Picture 1> is the performer: an adult man, and his
+      face, hairline, beard and build must be reproduced exactly as shown.
+
+      summary: A five-second continuous shot that begins tight on the performer's
+      concentrating face and pulls out to a wide of him juggling three running
+      chainsaws in the centre ring of a three-ring circus.
+
+      retention_analysis: The performer's exact face from <Picture 1> must be
+      unmistakable in the opening close framing and must remain the same man as
+      the camera pulls back: same bone structure, same hairline, same facial hair,
+      same skin tone, same eyes. Only his clothing and surroundings are new.
+
+      detailed_description: [Shot 1] Live-action, cinematic, the shot opens tight
+      on the performer's face, jaw set, eyes tracking something above the frame,
+      sweat at the temple under a hard follow spot, skin showing visible pores and
+      the light stubble of a long day. The camera pulls out with large amplitude at
+      slow speed across the whole take. Three running chainsaws drop into frame
+      above his hands as the framing widens, then his fitted performer's jacket,
+      then the sawdust of the centre ring, red and white striped canvas rising
+      behind him and tiered seating in shadow beyond. He steps a half pace to his
+      left to stay under the pattern as the shot settles wide.
+
+      overall_soundscape: Three small two-stroke engines out of phase, close and
+      loud at the opening and receding into the tent as the camera pulls back, the
+      slap of a hand catching a housing, a crowd murmur growing under the canvas.
+
+      non_diegetic_music: None.
