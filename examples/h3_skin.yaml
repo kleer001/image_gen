@@ -1,0 +1,115 @@
+# Skin and facial realism, stacked one LoRA at a time.
+#
+# fal's Realism-People is the only content LoRA in the H3 ecosystem with real
+# traction (372 likes, 62k downloads); prithivMLmods' Facial-Realism-CloseUp is
+# a 70 MB specialist aimed at exactly this shot. Both ride on the distill that
+# scored best in the bake-off. The last rung repeats the winner at native 768p,
+# because skin detail is the thing resolution changes most.
+#
+# Realism-People wants its `r34l1sm` trigger; the close-up LoRA's card documents
+# no trigger.
+#
+#   scripts/h3_batch.py examples/h3_skin.yaml
+title: MiniMax H3 — skin and facial realism
+seconds: 5
+seed: 7
+steps: 8
+width: 864
+height: 480
+base_loras:
+  - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+
+prompt: |-
+  integrated_multimodal_description: [Shot 1] Live-action, cinematic, a tight
+  close-up frames the face of a weathered woman in her fifties inside the cockpit
+  of a working cargo hauler. Practical instrument light from below picks out
+  visible pores, fine lines at the eye, a healed scar through one eyebrow and the
+  dry texture of skin after a long shift. Her breath fogs faintly in the cold.
+  Behind her the canopy shows a slow-turning gas giant, its banded cloud tops
+  throwing pale reflected light across the left side of her face while the right
+  falls into deep shadow. She blinks, glances off to a readout, then back toward
+  the camera. The camera pushes in with small amplitude at slow speed.
+
+  overall_soundscape: The steady low thrum of a cargo hauler under way, air
+  circulating through a vent close by, the soft click of instrument switches, her
+  slow breathing.
+
+  non_diegetic_music: None.
+
+variants:
+  - label: distill only
+
+  - label: fal Realism-People
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] r34l1sm, Live-action, cinematic,
+      a tight close-up frames the face of a weathered woman in her fifties inside
+      the cockpit of a working cargo hauler. Practical instrument light from below
+      picks out visible pores, fine lines at the eye, a healed scar through one
+      eyebrow and the dry texture of skin after a long shift. Her breath fogs
+      faintly in the cold. Behind her the canopy shows a slow-turning gas giant,
+      its banded cloud tops throwing pale reflected light across the left side of
+      her face while the right falls into deep shadow. She blinks, glances off to a
+      readout, then back toward the camera. The camera pushes in with small
+      amplitude at slow speed.
+
+      overall_soundscape: The steady low thrum of a cargo hauler under way, air
+      circulating through a vent close by, the soft click of instrument switches,
+      her slow breathing.
+
+      non_diegetic_music: None.
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+      - [h3_realism_people_fal.safetensors, 1.0]
+
+  - label: prithiv Facial-Realism-CloseUp
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+      - [h3_facial_realism_closeup.safetensors, 1.0]
+
+  - label: both stacked
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] r34l1sm, Live-action, cinematic,
+      a tight close-up frames the face of a weathered woman in her fifties inside
+      the cockpit of a working cargo hauler. Practical instrument light from below
+      picks out visible pores, fine lines at the eye, a healed scar through one
+      eyebrow and the dry texture of skin after a long shift. Her breath fogs
+      faintly in the cold. Behind her the canopy shows a slow-turning gas giant,
+      its banded cloud tops throwing pale reflected light across the left side of
+      her face while the right falls into deep shadow. She blinks, glances off to a
+      readout, then back toward the camera. The camera pushes in with small
+      amplitude at slow speed.
+
+      overall_soundscape: The steady low thrum of a cargo hauler under way, air
+      circulating through a vent close by, the soft click of instrument switches,
+      her slow breathing.
+
+      non_diegetic_music: None.
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+      - [h3_realism_people_fal.safetensors, 1.0]
+      - [h3_facial_realism_closeup.safetensors, 0.8]
+
+  - label: both stacked, 1344x768 native
+    width: 1344
+    height: 768
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] r34l1sm, Live-action, cinematic,
+      a tight close-up frames the face of a weathered woman in her fifties inside
+      the cockpit of a working cargo hauler. Practical instrument light from below
+      picks out visible pores, fine lines at the eye, a healed scar through one
+      eyebrow and the dry texture of skin after a long shift. Her breath fogs
+      faintly in the cold. Behind her the canopy shows a slow-turning gas giant,
+      its banded cloud tops throwing pale reflected light across the left side of
+      her face while the right falls into deep shadow. She blinks, glances off to a
+      readout, then back toward the camera. The camera pushes in with small
+      amplitude at slow speed.
+
+      overall_soundscape: The steady low thrum of a cargo hauler under way, air
+      circulating through a vent close by, the soft click of instrument switches,
+      her slow breathing.
+
+      non_diegetic_music: None.
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+      - [h3_realism_people_fal.safetensors, 1.0]
+      - [h3_facial_realism_closeup.safetensors, 0.8]

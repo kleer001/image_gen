@@ -1,0 +1,57 @@
+# Reference-tag harness for MiniMax H3's ref2va path.
+#
+# Three references of different kinds — a person, an object, a place — carried
+# into shots none of them came from. That is the actual test: not "can it copy a
+# photo" but "does <Picture 1> stay the same person across three different
+# framings while <Picture 2> stays the same object and <Picture 3> stays the
+# same building".
+#
+# Descending from the "Will Smith eating spaghetti" convention that video models
+# have been benchmarked against since 2023 — a recognisable face doing a fiddly
+# physical action is a hard case for identity, hands and occlusion at once.
+# Synthetic output for local capability testing; not for publication.
+#
+# Reference images are CC-licensed Wikimedia Commons files (see refs/h3/).
+# Each prompt cites its references positionally AND restates the identity in
+# words, because references alone drift.
+#
+#   scripts/h3_ref2v.py examples/h3_ref2v_benchmark.yaml
+title: MiniMax H3 — reference-tag harness (person / object / place)
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+ref_image_size: match
+
+references:
+  - refs/h3/will_smith.jpg
+  - refs/h3/dragon_fruit.jpg
+  - refs/h3/palace_of_fine_arts.jpg
+
+shots:
+  - label: all three
+    prompt: >-
+      The man from <Picture 1>, keeping his exact face, close-cropped hair and
+      trimmed beard, stands holding the pink dragon fruit from <Picture 2> in
+      one hand, in front of the domed rotunda and colonnade from <Picture 3>.
+      Late afternoon sun, the lagoon behind him. He turns the fruit over,
+      looking at it, then glances up toward the camera. Slow push in.
+      Ambient park sound, water, distant traffic.
+
+  - label: close-up identity
+    prompt: >-
+      Tight close-up on the face of the man from <Picture 1>, keeping his exact
+      face, close-cropped hair and trimmed beard. He raises the pink dragon
+      fruit from <Picture 2> into frame, turns it, and takes a bite; the white
+      speckled flesh shows where it is broken. Warm late-afternoon light,
+      shallow depth of field, the ochre columns of <Picture 3> soft behind him.
+      The sound of the bite, faint park ambience.
+
+  - label: tracking wide
+    prompt: >-
+      Wide tracking shot beside the man from <Picture 1>, keeping his exact
+      face, close-cropped hair and trimmed beard, walking along the colonnade of
+      <Picture 3> with the pink dragon fruit from <Picture 2> held at his side.
+      Golden hour, long shadows between the columns, camera moving with him at
+      walking pace. Footsteps on stone, birds, distant city.

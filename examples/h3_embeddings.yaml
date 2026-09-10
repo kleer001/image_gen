@@ -1,0 +1,79 @@
+# The ten effect embeddings shipped with the Comfy-Org MiniMax H3 repack.
+# Each is a pre-encoded prompt vector dropped into the text prompt as
+# `embedding:<filename stem>` — no LoRA load, no extra VRAM.
+# Baseline first so every effect is judged against the same shot.
+#
+#   scripts/h3_batch.py examples/h3_embeddings.yaml
+title: MiniMax H3 — the ten shipped effect embeddings
+prompt: >-
+  A lone figure in a long coat stands in an open field of tall grass at golden
+  hour, wind moving through the grass, distant hills behind, camera slowly
+  pushing in
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+
+variants:
+  - label: baseline (no embedding)
+
+  - label: art_is_explosion
+    prompt: >-
+      embedding:minimaxh3_art_is_explosion A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: blooming_flowers
+    prompt: >-
+      embedding:minimaxh3_blooming_flowers A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: bullet_time
+    prompt: >-
+      embedding:minimaxh3_bullet_time A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: dark_magic
+    prompt: >-
+      embedding:minimaxh3_dark_magic A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: fire_breath
+    prompt: >-
+      embedding:minimaxh3_fire_breath A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: four_seasons
+    prompt: >-
+      embedding:minimaxh3_four_seasons A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: kiss_camera
+    prompt: >-
+      embedding:minimaxh3_kiss_camera A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: spiral_ascent
+    prompt: >-
+      embedding:minimaxh3_spiral_ascent A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: storm_magic
+    prompt: >-
+      embedding:minimaxh3_storm_magic A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in
+
+  - label: truman_show
+    prompt: >-
+      embedding:minimaxh3_truman_show A lone figure in a long coat stands in an
+      open field of tall grass at golden hour, wind moving through the grass,
+      distant hills behind, camera slowly pushing in

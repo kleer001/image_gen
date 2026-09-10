@@ -1,0 +1,106 @@
+# Reference-driven identity in a scene the reference has nothing to do with.
+#
+# Uses the documented Ref2VA six-section prompt structure — subject_definitions,
+# summary, retention_analysis, detailed_description, overall_soundscape,
+# non_diegetic_music — rather than the three-field base-mode format, because
+# retention_analysis is where the identity constraints belong.
+#
+# ref_image_size is `max` here: the reference pipeline's 2048px short edge costs
+# render time but is the setting documented for best identity fidelity, and a
+# face carried into a wide shot is exactly the case that needs it.
+#
+#   scripts/h3_ref2v.py examples/h3_circus.yaml
+title: MiniMax H3 — reference identity under the big top
+seconds: 5
+width: 864
+height: 480
+seed: 7
+steps: 8
+ref_image_size: max
+loras:
+  - [minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors, 1.0]
+
+references:
+  - refs/h3/menser.jpg
+
+shots:
+  - label: wide juggling
+    prompt: |-
+      subject_definitions: <Picture 1> is the performer: an adult man, and his
+      face, hairline, beard and build must be reproduced exactly as shown.
+
+      summary: A five-second wide shot of the performer juggling three running
+      chainsaws in the centre ring of a three-ring circus.
+
+      retention_analysis: The performer's exact face from <Picture 1> must hold
+      for the whole take: same bone structure, same hairline, same facial hair,
+      same skin tone. Only his clothing and surroundings are new.
+
+      detailed_description: [Shot 1] Live-action, cinematic, a wide shot frames
+      the performer from the knees up in the centre ring of a three-ring circus,
+      sawdust underfoot, red and white striped canvas rising behind him and tiered
+      seating in shadow beyond. He wears a fitted performer's jacket. Three
+      chainsaws turn over in a cascade above his hands, engines running, exhaust
+      haze catching a hard follow spot from above. He steps a half pace to his
+      left to stay under the pattern and his eyes track the top chainsaw. The
+      camera holds a static shot.
+
+      overall_soundscape: Three small two-stroke engines rising and falling out of
+      phase as each saw rotates, the slap of a hand catching a housing, a distant
+      crowd murmur under the canvas, sawdust underfoot.
+
+      non_diegetic_music: None.
+
+  - label: push in to concentration
+    prompt: |-
+      subject_definitions: <Picture 1> is the performer: an adult man, and his
+      face, hairline, beard and build must be reproduced exactly as shown.
+
+      summary: A five-second push from a medium shot into a close-up of the
+      performer's face as he concentrates on juggling running chainsaws.
+
+      retention_analysis: The performer's exact face from <Picture 1> must hold
+      through the push in and be unmistakable at close range: same bone structure,
+      same hairline, same facial hair, same skin tone, same eyes.
+
+      detailed_description: [Shot 1] Live-action, cinematic, a medium shot frames
+      the performer in the centre ring of a three-ring circus, chainsaw housings
+      passing through the top of frame and throwing moving shadow across him. The
+      camera pushes in with large amplitude at slow speed until his face fills the
+      frame. His jaw is set, his eyes track the pattern above without blinking, a
+      line of sweat runs at the temple under the follow spot, and his skin shows
+      visible pores and the light stubble of a long day. He exhales once through
+      the nose.
+
+      overall_soundscape: Three small two-stroke engines out of phase and close to
+      the microphone, his breathing through the nose, a distant crowd murmur.
+
+      non_diegetic_music: None.
+
+  - label: one continuous, wide to face
+    prompt: |-
+      subject_definitions: <Picture 1> is the performer: an adult man, and his
+      face, hairline, beard and build must be reproduced exactly as shown.
+
+      summary: A five-second continuous shot that begins wide on the performer
+      juggling running chainsaws in a three-ring circus and ends tight on his
+      concentrating face.
+
+      retention_analysis: The performer's exact face from <Picture 1> must hold
+      from the wide framing through to the close, and be unmistakable once the
+      camera arrives on it.
+
+      detailed_description: [Shot 1] Live-action, cinematic, a wide shot frames
+      the performer in the centre ring of a three-ring circus, three chainsaws
+      running in a cascade above his hands, red and white canvas behind, a hard
+      follow spot cutting through engine haze. The camera pushes in with large
+      amplitude at slow speed across the whole take, the chainsaws leaving the top
+      of frame as it arrives, until his face fills the frame with his jaw set and
+      his eyes tracking the pattern overhead. Skin shows visible pores and sweat
+      at the temple under the spot.
+
+      overall_soundscape: Three small two-stroke engines out of phase, growing
+      closer and louder as the camera moves in, the slap of a hand catching a
+      housing, a crowd murmur receding under the canvas.
+
+      non_diegetic_music: None.

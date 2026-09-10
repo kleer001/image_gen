@@ -1,0 +1,55 @@
+# MiniMax H3 LoRA bake-off. Same prompt, same seed, same canvas — the only
+# variable is the LoRA stack and the step count it wants.
+#
+# Two questions this answers: which turbo distill is better at a given step
+# count, and what the style/realism LoRAs do on top of one.
+#
+#   scripts/h3_batch.py examples/h3_loras.yaml
+title: MiniMax H3 — LoRA bake-off
+prompt: >-
+  A woman in a red raincoat walks along a wet city street at night, neon signs
+  reflecting in the puddles, she turns to look back over her shoulder, camera
+  tracking beside her at her pace
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+
+variants:
+  - label: official turbo 4-step
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+
+  - label: official turbo 8-step
+    steps: 8
+    loras:
+      - [minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors, 1.0]
+
+  - label: larryvrh v4 @ 4 steps
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+
+  - label: larryvrh v4 @ 8 steps
+    steps: 8
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+
+  - label: realism-people (fal)
+    prompt: >-
+      r34l1sm, A woman in a red raincoat walks along a wet city street at night,
+      neon signs reflecting in the puddles, she turns to look back over her
+      shoulder, camera tracking beside her at her pace
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_realism_people_fal.safetensors, 1.0]
+
+  - label: studio-1939 animation
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_studio1939_strong.safetensors, 1.0]
+
+  - label: motion adapter
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_motion_adapter_pilot_r16.safetensors, 1.0]

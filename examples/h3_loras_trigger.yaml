@@ -1,0 +1,42 @@
+# Does the trigger word matter? studio-1939 with and without it.
+#
+# The model card specifies the trigger `gulliv3r,` — with the trailing comma.
+# Style LoRAs often still bend the output without their trigger, which makes it
+# easy to conclude a LoRA "works" while only seeing a fraction of it. Same
+# prompt, same seed, one variable.
+#
+#   scripts/h3_batch.py examples/h3_loras_trigger.yaml
+title: MiniMax H3 — studio-1939 with and without its trigger word
+prompt: >-
+  A woman in a red raincoat walks along a wet city street at night, neon signs
+  reflecting in the puddles, she turns to look back over her shoulder, camera
+  tracking beside her at her pace
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+
+variants:
+  - label: no trigger
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_studio1939_strong.safetensors, 1.0]
+
+  - label: with trigger gulliv3r
+    prompt: >-
+      gulliv3r, A woman in a red raincoat walks along a wet city street at night,
+      neon signs reflecting in the puddles, she turns to look back over her
+      shoulder, camera tracking beside her at her pace
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_studio1939_strong.safetensors, 1.0]
+
+  - label: with trigger, strength 0.6
+    prompt: >-
+      gulliv3r, A woman in a red raincoat walks along a wet city street at night,
+      neon signs reflecting in the puddles, she turns to look back over her
+      shoulder, camera tracking beside her at her pace
+    loras:
+      - [minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors, 1.0]
+      - [h3_studio1939_strong.safetensors, 0.6]

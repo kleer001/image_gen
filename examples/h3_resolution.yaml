@@ -1,0 +1,51 @@
+# How far up the resolution ladder does a 24 GB card get?
+#
+# H3's native canvas is a 768px short edge with a 768x1344 pixel-area cap. The
+# ladder below is the 16:9 rung table from the official ComfyUI template, from
+# 0.2 MP to the full 0.98 MP native. Same prompt, same seed, same distill —
+# resolution is the only variable, so this also shows how much detail the low
+# rungs were throwing away.
+#
+#   scripts/h3_batch.py examples/h3_resolution.yaml
+title: MiniMax H3 — resolution ladder to native 768p
+seconds: 5
+seed: 7
+steps: 8
+width: 608
+height: 352
+base_loras:
+  - [minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors, 1.0]
+
+prompt: |-
+  integrated_multimodal_description: [Shot 1] Live-action, cinematic, a close-up
+  frames the face of a tall non-human figure in the amber work light of a
+  derelict orbital station. The skin is grey-green and finely textured, visible
+  pores and a faint iridescent sheen across the cheekbone, narrow horizontal gill
+  slits along the jaw that flex as it breathes. Four dark eyes, two large and two
+  vestigial, blink out of sync. Dust drifts through a hard shaft of light behind
+  it and the far side of the face falls into deep shadow. The figure turns its
+  head slowly toward the camera and its pupils contract in the light. The camera
+  pushes in with small amplitude at slow speed.
+
+  overall_soundscape: The low hum of failing station machinery, an intermittent
+  electrical tick from somewhere off frame, slow wet breathing through the gill
+  slits, distant metal settling under thermal stress.
+
+  non_diegetic_music: None.
+
+variants:
+  - label: 0.2 MP  608x352
+    width: 608
+    height: 352
+
+  - label: 0.4 MP  864x480
+    width: 864
+    height: 480
+
+  - label: 0.7 MP  1152x640
+    width: 1152
+    height: 640
+
+  - label: 0.98 MP  1344x768 native
+    width: 1344
+    height: 768

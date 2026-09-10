@@ -1,0 +1,52 @@
+# The step-distills people actually run, at a resolution that can show the
+# difference. Selection is by HuggingFace likes and downloads rather than by
+# what a search turned up: larryvrh 943 likes, lightx2v 880, FastVideo 294,
+# alibaba-pai 220. The undistilled 20-step run is the quality ceiling the
+# distills are trying to reach, and the reason to care how close they get.
+#
+#   scripts/h3_batch.py examples/h3_distills.yaml
+title: MiniMax H3 — the distills people actually use
+seconds: 5
+seed: 7
+steps: 8
+width: 864
+height: 480
+
+prompt: |-
+  integrated_multimodal_description: [Shot 1] Live-action, cinematic, a close-up
+  frames the face of a tall non-human figure in the amber work light of a
+  derelict orbital station. The skin is grey-green and finely textured, visible
+  pores and a faint iridescent sheen across the cheekbone, narrow horizontal gill
+  slits along the jaw that flex as it breathes. Four dark eyes, two large and two
+  vestigial, blink out of sync. Dust drifts through a hard shaft of light behind
+  it and the far side of the face falls into deep shadow. The figure turns its
+  head slowly toward the camera and its pupils contract in the light. The camera
+  pushes in with small amplitude at slow speed.
+
+  overall_soundscape: The low hum of failing station machinery, an intermittent
+  electrical tick from somewhere off frame, slow wet breathing through the gill
+  slits, distant metal settling under thermal stress.
+
+  non_diegetic_music: None.
+
+variants:
+  - label: larryvrh v4 8-step
+    loras:
+      - [h3_turbo_larryvrh_v4_step600_ema.safetensors, 1.0]
+
+  - label: lightx2v official 8-step
+    loras:
+      - [minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors, 1.0]
+
+  - label: alibaba-pai Acc 8-step
+    loras:
+      - [h3_acc_8step_alibaba.safetensors, 1.0]
+
+  - label: FastVideo dense-datafree 4-step
+    steps: 4
+    loras:
+      - [h3_fastvideo_dense_datafree.safetensors, 1.0]
+
+  - label: no distill, 20 steps
+    steps: 20
+    loras: []

@@ -40,3 +40,10 @@ ideogram4_env/
 
 # Scratch (session staging: logs, probes, extracted frames)
 /tmp/
+
+# Playwright MCP scratch (snapshots, console logs, screenshots)
+/.playwright-mcp/
+
+# Personal reference photo — kept out of git history on purpose.
+# The CC-licensed Wikimedia references in refs/h3/ are tracked.
+/refs/h3/menser.jpg

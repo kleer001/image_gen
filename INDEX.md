@@ -355,6 +355,7 @@ Last updated: 2026-09-09
 | `flux1-fill-dev.safetensors` | 22.2G | — | — | — | TODO |
 | `krea2_turbo_fp8_scaled.safetensors` | 12.2G | krea2 | — | [source](https://huggingface.co/Comfy-Org/Krea-2) | fp8_scaled is the working path on the pinned v0.26.2 + 3090 (VALIDATED): comfy auto-dequantizes fp8->bf16 since supports_fp8_compute is False on sm_86, so it runs (no fp8 speedup). Load via UNETLoader (weight_dtype default), CLIPLoader type krea2, KSampler 8 steps / cfg 1 / euler / simple. NOT int8_convrot — that needs a newer core (int8_tensorwise absent from QUANT_ALGOS in v0.26.2); NOT the krea2-arch GGUF — ComfyUI-GGUF doesn't know that arch yet. AVOID mxfp8/nvfp4 (Blackwell) and bf16 (26 GB). Reuses vae/qwen_image_vae.safetensors (already on disk, 253806246 bytes). Pull with HF_HUB_DISABLE_XET=1. |
 | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` | 19.5G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | int8_convrot needs PyTorch on cu130 (comfyui_h3 instance). fp8_scaled is the fallback only without cu130 and does not fit 24 GB here, since sm_86 dequantizes fp8 to bf16. Runs on comfyui_h3 (port 8191), not production. |
+| `minimax_h3_ref2va_pruned_int8_convrot.safetensors` | 19.5G | — | — | — | TODO |
 
 ### Embeddings (`embeddings/`)
 
@@ -384,7 +385,16 @@ Last updated: 2026-09-09
 |---|---|---|---|---|---|
 | `Qwen-Edit-2509-Multiple-angles.safetensors` | 225M | — | — | — | TODO |
 | `Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors` | 302M | wan | — | [source](https://huggingface.co/Kijai/WanVideo_comfy) | TODO |
+| `h3_acc_8step_alibaba.safetensors` | 1.5G | — | — | — | TODO |
+| `h3_facial_realism_closeup.safetensors` | 71M | — | — | — | TODO |
+| `h3_fastvideo_dense_datafree.safetensors` | 1.4G | — | — | — | TODO |
+| `h3_motion_adapter_pilot_r16.safetensors` | 60M | — | — | — | TODO |
+| `h3_realism_people_fal.safetensors` | 125M | — | — | — | TODO |
+| `h3_studio1939_strong.safetensors` | 250M | — | — | — | TODO |
+| `h3_turbo_larryvrh_v4_step600_ema.safetensors` | 743M | — | — | — | TODO |
 | `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` | 1.8G | minimax_h3 | — | [source](https://huggingface.co/Comfy-Org/MiniMax-H3) | Pair with BasicScheduler steps=4. An 8-step variant exists for more quality. |
+| `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors` | 1.8G | — | — | — | TODO |
+| `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` | 1.8G | — | — | — | TODO |
 | `pixel_4walk_small_flux2_klein_base_4b_v1.safetensors` | 88M | — | — | — | TODO |
 | `pixel_art_style_v1.0.safetensors` | 164M | — | — | — | TODO |
 | `seamless_texture.safetensors` | 85M | — | — | — | TODO |

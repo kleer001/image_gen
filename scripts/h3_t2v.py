@@ -41,12 +41,22 @@ def align_length(seconds):
     return n
 
 
-def build_graph(prompt, seed, steps, width, height, length):
-    return {
+def lora_chain(graph, loras):
+    """Chain LoraLoaderModelOnly nodes off the UNETLoader; return the last model ref."""
+    src = ["1", 0]
+    for i, (name, strength) in enumerate(loras):
+        nid = f"2_{i}"
+        graph[nid] = {"class_type": "LoraLoaderModelOnly",
+                      "inputs": {"model": src, "lora_name": name, "strength_model": strength}}
+        src = [nid, 0]
+    return src
+
+
+def build_graph(prompt, seed, steps, width, height, length, loras=((TURBO_LORA, 1.0),),
+                sampler="res_multistep", scheduler="simple", latent_scale=None):
+    graph = {
         "1": {"class_type": "UNETLoader",
               "inputs": {"unet_name": DIFFUSION, "weight_dtype": "default"}},
-        "2": {"class_type": "LoraLoaderModelOnly",
-              "inputs": {"model": ["1", 0], "lora_name": TURBO_LORA, "strength_model": 1.0}},
         "3": {"class_type": "CLIPLoader",
               "inputs": {"clip_name": ENCODER, "type": "minimax", "device": "default"}},
         "4": {"class_type": "VAELoader", "inputs": {"vae_name": VIDEO_VAE}},
@@ -55,10 +65,10 @@ def build_graph(prompt, seed, steps, width, height, length):
               "inputs": {"clip": ["3", 0], "vae": ["4", 0], "prompt": prompt,
                          "width": width, "height": height, "length": length}},
         "7": {"class_type": "BasicGuider",
-              "inputs": {"model": ["2", 0], "conditioning": ["6", 0]}},
-        "8": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": "res_multistep"}},
+              "inputs": {"model": None, "conditioning": ["6", 0]}},
+        "8": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": sampler}},
         "9": {"class_type": "BasicScheduler",
-              "inputs": {"model": ["2", 0], "scheduler": "simple", "steps": steps, "denoise": 1.0}},
+              "inputs": {"model": None, "scheduler": scheduler, "steps": steps, "denoise": 1.0}},
         "10": {"class_type": "RandomNoise", "inputs": {"noise_seed": seed}},
         "11": {"class_type": "SamplerCustomAdvanced",
                "inputs": {"noise": ["10", 0], "guider": ["7", 0], "sampler": ["8", 0],
@@ -73,6 +83,18 @@ def build_graph(prompt, seed, steps, width, height, length):
                "inputs": {"video": ["14", 0], "filename_prefix": "video/h3_t2v",
                           "format": "mp4"}},
     }
+    # Scaling the latent before decode is the community's "make it less contrasty"
+    # trick, applied between the sampler and the VAE decode.
+    if latent_scale is not None:
+        graph["11b"] = {"class_type": "LatentMultiply",
+                        "inputs": {"samples": ["11", 0], "multiplier": float(latent_scale)}}
+        graph["12"]["inputs"]["samples"] = ["11b", 0]
+        graph["13"]["inputs"]["samples"] = ["11b", 0]
+
+    model = lora_chain(graph, loras)
+    graph["7"]["inputs"]["model"] = model
+    graph["9"]["inputs"]["model"] = model
+    return graph
 
 
 def submit(graph):

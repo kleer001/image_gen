@@ -1,0 +1,86 @@
+# Freeform vs. MiniMax's own prompt structure, on one subject.
+#
+# H3's T2VA prompts are specified as three ordered fields —
+# integrated_multimodal_description, overall_soundscape, non_diegetic_music —
+# with shots marked `[Shot N]`, cuts timestamped, and camera motion written as
+# motion type + amplitude + speed in natural English rather than tag soup. The
+# structure exists because H3 generates picture and sound together: the
+# soundscape fields are what the audio branch is conditioned on, and a freeform
+# prompt leaves them empty.
+#
+# Structure reference: MiniMax-AI/MiniMax-H3, skills/h3-prompt-writing.
+#
+#   scripts/h3_batch.py examples/h3_lighthouse_prompt.yaml
+title: MiniMax H3 — freeform vs. structured prompt
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+
+variants:
+  - label: freeform
+    prompt: >-
+      A lighthouse on a rocky headland at dusk, waves breaking against the rocks
+      below, beam sweeping through low sea mist, gulls calling over the surf
+
+  - label: structured
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] Live-action, cinematic, a wide
+      shot frames a white-painted stone lighthouse on a black basalt headland at
+      dusk. The sky is banded pink and slate blue above a low bar of cloud on the
+      horizon. Swell breaks against the columnar rock at the base of the headland,
+      throwing white spray that drifts left on the wind. The lamp room is dark for
+      the first moment, then the lamp ignites and the beam swings out through a
+      thin layer of sea mist, sweeping from the left of frame toward the camera
+      and passing across it. The camera pushes in with small amplitude at slow
+      speed toward the lamp room as the beam completes its pass. Grass on the
+      headland moves continuously in the onshore wind.
+
+      overall_soundscape: Heavy surf breaking on rock in irregular sets, the hiss
+      of spray drawing back over shingle between breaks, steady onshore wind
+      across an exposed headland, herring gulls calling intermittently overhead
+      and further off across the water.
+
+      non_diegetic_music: None.
+
+  - label: structured @ 8 steps
+    steps: 8
+    loras:
+      - [minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors, 1.0]
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] Live-action, cinematic, a wide
+      shot frames a white-painted stone lighthouse on a black basalt headland at
+      dusk. The sky is banded pink and slate blue above a low bar of cloud on the
+      horizon. Swell breaks against the columnar rock at the base of the headland,
+      throwing white spray that drifts left on the wind. The lamp room is dark for
+      the first moment, then the lamp ignites and the beam swings out through a
+      thin layer of sea mist, sweeping from the left of frame toward the camera
+      and passing across it. The camera pushes in with small amplitude at slow
+      speed toward the lamp room as the beam completes its pass. Grass on the
+      headland moves continuously in the onshore wind.
+
+      overall_soundscape: Heavy surf breaking on rock in irregular sets, the hiss
+      of spray drawing back over shingle between breaks, steady onshore wind
+      across an exposed headland, herring gulls calling intermittently overhead
+      and further off across the water.
+
+      non_diegetic_music: None.
+
+  - label: structured, two shots
+    prompt: |-
+      integrated_multimodal_description: [Shot 1] Live-action, cinematic, a wide
+      shot frames a white-painted stone lighthouse on a black basalt headland at
+      dusk, the sky banded pink and slate blue. Swell breaks against the rock
+      below, throwing spray that drifts left on the wind. The lamp ignites and the
+      beam swings out through thin sea mist. The camera holds a static shot.
+      [Shot 2] At 00:02.500, the shot cuts to a low angle close on the base of the
+      headland, water surging up between columnar basalt and draining back through
+      the gaps, the lighthouse beam passing overhead through the mist above frame.
+      The camera tilts up with small amplitude at slow speed toward the lamp room.
+
+      overall_soundscape: Heavy surf breaking on rock in irregular sets, louder and
+      closer after the cut, the hiss of spray drawing back over shingle between
+      breaks, steady onshore wind, herring gulls calling intermittently overhead.
+
+      non_diegetic_music: None.
