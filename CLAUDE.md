@@ -179,6 +179,37 @@ See `INDEX.md` for installed models, trigger words, and LoRA weights.
 
 **Installed model inventory:** [`INDEX.md`](INDEX.md) — authoritative for on-disk state (sizes, trigger words, LoRA weights).
 
+## Reference images
+
+`refs/` and `plates/` are kept in the tree but their contents are not tracked —
+reference photos, start frames and plates are the operator's own, and third
+party imagery carries licence and likeness terms a public repo cannot pass on.
+A fresh clone has empty directories.
+
+Every tracked example therefore names a file that has to be supplied before it
+will run:
+
+| Example | Expects |
+|---|---|
+| `examples/h3_ref2v_benchmark.yaml` | `refs/h3/person.jpg`, `object.jpg`, `place.jpg` |
+| `examples/h3_circus.yaml`, `examples/h3_circus_pullout.yaml` | `refs/h3/person.jpg` |
+| `examples/storyboard.example.yaml` | `refs/wanderer.png` (optional; without it panel 1 is seeded from the prompt) |
+| `examples/vace_shots.example.yaml` | `refs/zara_sheet.png` |
+| `examples/pose_walk.example.yaml` | `refs/zara.png`, `refs/grandpa.png` |
+| `examples/video_shots.example.yaml` | `plates/car_interior.png`, `plates/neon_street.png` |
+
+Drop in any image at those paths, or edit the path in the copy of the example
+you are running. Where a prompt also describes its reference in words — the
+h3 examples restate identity because reference tags alone drift — edit the
+description to match what was actually supplied, or the words fight the image.
+
+Character references want the sheet craft in `## Storyboards` below: solid
+neutral-gray background, soft directional key light.
+
+`workflows/qwen_image_edit_multiangle.json` carries a `LoadImage` filename as
+its baked default, the way every exported ComfyUI graph does. Drivers patch it
+per run, so the name in the JSON is inert.
+
 ## Storyboards
 
 Multi-panel storyboards with character/style consistency across panels.

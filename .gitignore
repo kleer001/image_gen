@@ -44,6 +44,19 @@ ideogram4_env/
 # Playwright MCP scratch (snapshots, console logs, screenshots)
 /.playwright-mcp/
 
-# Personal reference photo — kept out of git history on purpose.
-# The CC-licensed Wikimedia references in refs/h3/ are tracked.
-/refs/h3/menser.jpg
+# Reference images, plates and personal shot lists. The stack is the tracked
+# part; the imagery fed into it is the operator's own and stays local — third
+# party photos carry licence and likeness terms that a public repo cannot
+# propagate. Directories are kept so example paths still resolve.
+/refs/*
+!refs/.gitkeep
+/refs/h3/*
+!refs/h3/.gitkeep
+/plates/*
+!plates/.gitkeep
+
+# Working shot lists at repo root. The reader-facing copies live in examples/.
+/shots.yaml
+/vace_shots.yaml
+/char_sheet_fresh.yaml
+/char_sheet_kontext.yaml

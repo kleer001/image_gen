@@ -21,7 +21,7 @@ loras:
   - [minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors, 1.0]
 
 references:
-  - refs/h3/menser.jpg
+  - refs/h3/person.jpg
 
 shots:
   - label: wide juggling

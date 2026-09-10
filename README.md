@@ -117,3 +117,11 @@ cd automatic1111 && ./webui.sh
 
 Only configs, scripts, workflows, and this README are pushed.
 Models and outputs stay local only.
+
+## License
+
+The code, workflows, and documentation here are [MIT](LICENSE) — use them however you like.
+
+The models this stack downloads are **not** covered by that. They carry their own terms, and some are restrictive: Flux.1-dev is non-commercial, and MiniMax H3 is unavailable in several territories. Check the license on any weights you pull before building something commercial on them.
+
+Reference images, plates, and shot lists are not distributed with the repo. Supply your own — the examples name the files they expect.
