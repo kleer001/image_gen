@@ -1,6 +1,6 @@
 # Model Catalog
 
-All models go in their respective subdirectory under `/media/menser/fauna/image_gen/models/`.
+All models go in their respective subdirectory under the repo's `models/` directory.
 Both ComfyUI and A1111 read from here via config.
 
 ---

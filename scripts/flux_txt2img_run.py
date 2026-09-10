@@ -10,7 +10,7 @@ import json, sys, time, urllib.request, uuid, shutil
 from pathlib import Path
 
 SERVER = "http://127.0.0.1:8188"
-REPO = Path("/media/menser/fauna/image_gen")
+REPO = Path(__file__).resolve().parents[1]
 WF = REPO / "workflows" / "flux_txt2img.json"
 OUT = REPO / "comfyui" / "output"
 

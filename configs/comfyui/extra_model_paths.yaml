@@ -1,5 +1,6 @@
+# Template — installers substitute __REPO_ROOT__ with the repo path on copy.
 comfyui:
-    base_path: /media/menser/fauna/image_gen/models
+    base_path: __REPO_ROOT__/models
     checkpoints: checkpoints/
     clip: clip/
     clip_vision: clip_vision/

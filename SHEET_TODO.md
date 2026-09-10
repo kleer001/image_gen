@@ -396,9 +396,6 @@ need no action.
    `ComfyUI/models/...`. Symlink if needed.
 6. **`timm`** is in VNCCS `pyproject.toml` but not `requirements.txt` — install
    it explicitly (§2.1).
-7. **Hardcoded repo root.** `scripts/install_comfyui.sh:4` pins
-   `REPO_ROOT=/media/menser/fauna/image_gen`. Edits there are fine, but the
-   path is environment-specific — don't "fix" it as part of this work.
 
 ---
 

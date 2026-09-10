@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/automatic1111"
 
 if [ -d "$INSTALL_DIR" ]; then
@@ -11,7 +11,7 @@ else
 fi
 
 # Link our launch config
-cp "${REPO_ROOT}/configs/a1111/webui-user.sh" "${INSTALL_DIR}/webui-user.sh"
+sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/a1111/webui-user.sh" > "${INSTALL_DIR}/webui-user.sh"
 chmod +x "${INSTALL_DIR}/webui-user.sh"
 
 echo ""

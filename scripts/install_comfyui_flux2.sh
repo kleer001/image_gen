@@ -5,7 +5,7 @@
 # FLUX.2 is core-native, so this stays lean.
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/comfyui_flux2"
 
 if [ -d "$INSTALL_DIR/.git" ]; then
@@ -25,7 +25,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install -r requirements.txt
 
 # Reuse the shared models/ dir (Klein files land there).
-cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
+sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" > "${INSTALL_DIR}/extra_model_paths.yaml"
 
 echo ""
 echo "Isolated FLUX.2 ComfyUI installed at ${INSTALL_DIR}"

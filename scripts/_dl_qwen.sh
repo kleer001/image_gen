@@ -8,7 +8,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export HF_HUB_DISABLE_XET=1
 export HF_HUB_ENABLE_HF_TRANSFER=0
 export HF_HUB_DOWNLOAD_TIMEOUT=30
-REPO=/media/menser/fauna/image_gen
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STAGE=/tmp/qwendl
 MAXTRY=200
 

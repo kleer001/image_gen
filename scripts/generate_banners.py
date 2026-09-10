@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Generate 5 banner images via ComfyUI API using Flux.1-dev + LoRAs."""
 import json, time, uuid, urllib.request, urllib.parse, random, sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
 
 SERVER = "http://127.0.0.1:8188"
-OUT_DIR = "/media/menser/fauna/image_gen/outputs/comfyui"
+OUT_DIR = str(REPO / "outputs/comfyui")
 WIDTH, HEIGHT = 1216, 512
 
 BANNERS = [
@@ -131,7 +134,7 @@ def get_output_images(result):
     images = []
     for node_output in result.get("outputs", {}).values():
         for img in node_output.get("images", []):
-            images.append(f"/media/menser/fauna/image_gen/comfyui/output/{img['filename']}")
+            images.append(str(REPO / "comfyui/output" / img["filename"]))
     return images
 
 

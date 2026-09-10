@@ -7,7 +7,7 @@
 # (see models.yaml / radar/scope-isolated-v26-instance.md). See ENVIRONMENTS.md.
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/comfyui_v26"
 PORT=8190
 # Pinned ComfyUI tag. v0.26.0 is the floor that covers all four families (Krea 2
@@ -42,7 +42,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install -r requirements.txt
 
 # Reuse the shared models/ dir (Krea/Bernini/DA3 files land there).
-cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
+sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" > "${INSTALL_DIR}/extra_model_paths.yaml"
 
 # Custom nodes into comfyui_v26/custom_nodes/, installing each one's requirements.
 mkdir -p "${INSTALL_DIR}/custom_nodes"

@@ -13,7 +13,7 @@ import http.server, socketserver, threading, webbrowser
 from pathlib import Path
 
 HOST = "http://127.0.0.1:8189"
-INPUT_DIR = Path("/media/menser/fauna/image_gen/comfyui_flux2/input")
+INPUT_DIR = Path(__file__).resolve().parents[1] / "comfyui_flux2/input"
 DIFFUSION = "flux-2-klein-9b-fp8.safetensors"
 ENCODER = "qwen_3_8b_fp8mixed.safetensors"
 VAE = "flux2-vae.safetensors"

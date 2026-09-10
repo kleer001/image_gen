@@ -12,7 +12,7 @@ import json, sys, time, urllib.request, uuid, shutil
 from pathlib import Path
 
 SERVER = "http://127.0.0.1:8188"
-REPO = Path("/media/menser/fauna/image_gen")
+REPO = Path(__file__).resolve().parents[1]
 WF = REPO / "workflows" / "wan22_i2v_a14b.json"
 OUT = REPO / "comfyui" / "output"
 NEG = ("bright tones, overexposed, static, blurred details, subtitles, worst quality, "

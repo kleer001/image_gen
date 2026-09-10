@@ -25,7 +25,7 @@ from pathlib import Path
 import torch
 from diffusers import Ideogram4Pipeline
 
-REPO = Path("/media/menser/fauna/image_gen")
+REPO = Path(__file__).resolve().parents[1]
 # The diffusers-loadable build (separate to_q/k/v). The plain ideogram-4-nf4 repo
 # uses fused qkv for the ideogram-oss CLI and will NOT load via Ideogram4Pipeline.
 MODEL = REPO / "models" / "ideogram-4-nf4-diffusers"

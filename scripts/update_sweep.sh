@@ -6,7 +6,7 @@
 # write a dated digest under radar/). Report-only: the sweep never installs.
 #
 # Install as a weekly cron on the rig, e.g.:
-#   0 9 * * 1  /media/menser/fauna/image_gen/scripts/update_sweep.sh
+#   0 9 * * 1  /path/to/image_gen/scripts/update_sweep.sh
 # (Mondays at 09:00). Logs to /tmp/update_sweep.log.
 #
 # Requires the `claude` CLI on PATH and a logged-in session on the box.

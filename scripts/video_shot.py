@@ -52,7 +52,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gallery  # noqa: E402
 
-REPO = Path("/media/menser/fauna/image_gen")
+REPO = Path(__file__).resolve().parents[1]
 WORKFLOWS = REPO / "workflows"
 COMFY_OUTPUT = REPO / "comfyui" / "output"
 SERVER = "http://127.0.0.1:8188"

@@ -7,7 +7,7 @@
 # See ENVIRONMENTS.md.
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/comfyui_h3"
 PORT=8191
 # Pinned ComfyUI tag. v0.30.0 is the documented floor for MiniMax H3; v0.35.0 is
@@ -53,7 +53,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install -r requirements.txt
 
 # Reuse the shared models/ dir.
-cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
+sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" > "${INSTALL_DIR}/extra_model_paths.yaml"
 
 mkdir -p "${INSTALL_DIR}/custom_nodes"
 cd "${INSTALL_DIR}/custom_nodes"

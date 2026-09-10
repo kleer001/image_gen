@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/comfyui-mcp-server"
 
 if [ -d "$INSTALL_DIR" ]; then

@@ -2,7 +2,7 @@
 # Starts the ComfyUI MCP server.
 # ComfyUI must already be running on port 8188.
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MCP_DIR="${REPO_ROOT}/comfyui-mcp-server"
 
 export COMFYUI_URL="http://localhost:8188"

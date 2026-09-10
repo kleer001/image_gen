@@ -81,7 +81,7 @@ import json, time, requests, re
 from pathlib import Path
 
 BASE = "http://127.0.0.1:8188"
-WORKFLOWS = Path("/media/menser/fauna/image_gen/workflows")
+WORKFLOWS = Path(__file__).resolve().parents[1] / "workflows"
 
 def _coerce(token: str, value):
     t = token.upper()

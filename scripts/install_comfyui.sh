@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REPO_ROOT="/media/menser/fauna/image_gen"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_DIR="${REPO_ROOT}/comfyui"
 
 if [ -d "$INSTALL_DIR" ]; then
@@ -25,7 +25,7 @@ fi
 pip install -r requirements.txt
 
 # Link shared model config
-cp "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" "${INSTALL_DIR}/extra_model_paths.yaml"
+sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" > "${INSTALL_DIR}/extra_model_paths.yaml"
 
 # Custom nodes
 NODES_DIR="${INSTALL_DIR}/custom_nodes"
