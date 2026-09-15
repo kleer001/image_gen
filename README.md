@@ -46,6 +46,10 @@ builds an HTML contact sheet, and opens it in your browser. The same pattern cov
 (`video_shot.py`), reference-to-video (`h3_ref2v.py`), and character sheets
 (`flux2_character_sheet.py`).
 
+To make a whole short film — one character carried through scenes, given a voice, cut together —
+[`PRODUCTION_WORKFLOW.md`](PRODUCTION_WORKFLOW.md) chains those drivers into a single path, and
+the `shot-enhancer` skill turns a rough idea into the shot lists they run.
+
 `./scripts/imggen.sh stop` and `status` do what they say. For a bare `imggen` command, alias it:
 
 ```bash
@@ -76,10 +80,11 @@ a bump for one model family can't break the others. See [`ENVIRONMENTS.md`](ENVI
 
 ## Status
 
-Released as **v0.1.0** — it runs daily on the machine it was built for, and this is the first
-time anyone else can clone it. Expect the rough edges of a first release. Reference images and
-plates are not distributed; supply your own at the paths the examples name, per the
-reference-image section of [`CLAUDE.md`](CLAUDE.md).
+Released as **v0.2.0** — it runs daily on the machine it was built for. This release adds an
+end-to-end short-film workflow: build a character, carry it across scenes, give it a voice, and
+cut it together. Expect the rough edges of a young project. Reference images and plates are not
+distributed; supply your own at the paths the examples name, per the reference-image section of
+[`CLAUDE.md`](CLAUDE.md).
 
 ## Why
 
@@ -111,6 +116,7 @@ skin in every scene you composite it into. That's all written down here.
 | | |
 |---|---|
 | [`CLAUDE.md`](CLAUDE.md) | Agent operating instructions — the full map of the stack |
+| [`PRODUCTION_WORKFLOW.md`](PRODUCTION_WORKFLOW.md) | Making a short film — character, voice, scenes, end to end |
 | [`INDEX.md`](INDEX.md) | Installed models, trigger words, LoRA weights (auto-synced) |
 | [`ENVIRONMENTS.md`](ENVIRONMENTS.md) | The five generator environments and how to add one |
 | [`API_USAGE.md`](API_USAGE.md) | Driving ComfyUI over plain HTTP, no MCP |
