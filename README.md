@@ -80,11 +80,13 @@ a bump for one model family can't break the others. See [`ENVIRONMENTS.md`](ENVI
 
 ## Status
 
-Released as **v0.2.0** — it runs daily on the machine it was built for. This release adds an
-end-to-end short-film workflow: build a character, carry it across scenes, give it a voice, and
-cut it together. Expect the rough edges of a young project. Reference images and plates are not
-distributed; supply your own at the paths the examples name, per the reference-image section of
-[`CLAUDE.md`](CLAUDE.md).
+Released as **v0.3.0** — it runs daily on the machine it was built for. This release builds out
+the short-film workflow: anti-slop craft rules and a project bible, a performance-direction
+skill that turns an emotion into observable behavior, and LivePortrait expression control —
+dial an exact expression onto a face, or transfer a real performance from a driving clip
+([showcase](https://claude.ai/artifact/P9Hq12UyhBJGKN6FuzDVxF)). Expect the rough edges of a
+young project. Reference images and plates are not distributed; supply your own at the paths the
+examples name, per the reference-image section of [`CLAUDE.md`](CLAUDE.md).
 
 ## Why
 
