@@ -1,0 +1,30 @@
+# Example sheet for scripts/liveportrait.py (LivePortrait Expression Editor).
+#
+# SCAFFOLD — the node is not installed and its schema is unverified. See the
+# LivePortrait section in /TODO.md before running.
+#
+# One rendered face in, a sheet of dialed expressions out — the LoRA-free way to
+# put an exact emotion on a still, ready to use as a WAN start frame. Run:
+#   python3 scripts/liveportrait.py examples/liveportrait_expression.example.yaml
+#
+# `params` keys are ExpressionEditor inputs, passed through verbatim. The presets
+# below are validated on a real face and read as restrained micro-expression. Node
+# input ranges (for tuning): eyebrow -10..15, blink -20..5 (negative widens the
+# eyes), smile -0.3..1.3, aaa -30..120 (mouth open), eee/woo -20..15, pupil_x/y
+# +-15, rotate_pitch/yaw/roll +-20. Small values barely register — scale to the
+# range. Read the beat you want off the direct-performance skill, then dial it here.
+
+image: ./refs/face.png        # a neutral rendered face reads best as the base
+
+shots:
+  - label: neutral
+    params: {}
+
+  - label: suppressed anger (controlled peak)
+    params: {eyebrow: -6, smile: -0.15, aaa: -8, pupil_y: -2}
+
+  - label: holding back tears (leakage)
+    params: {eyebrow: 8, blink: -3, woo: 4}
+
+  - label: a small, tired half-smile
+    params: {smile: 0.5, eee: 3, blink: 1.5}

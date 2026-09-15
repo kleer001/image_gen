@@ -165,3 +165,74 @@ there), so every node schema below is UNVERIFIED. The workflow lives in
 - [ ] Repoint `WORKFLOW_FILE` in `scripts/pose_walk.py` to the `workflows/` path.
 - [ ] Add a `## Pose-driven animation` capability note + INDEX.md rows for the new
       models, and consider a gait/motion LoRA pass via `/model-radar`.
+
+## LivePortrait expression control — scaffold (`scaffolds/liveportrait_expression.json` + `scripts/liveportrait.py`)
+
+The LoRA-free way to put an **exact** facial expression on a rendered still — the
+local analogue of Runway Act-One's expression control, and the precise route the
+`direct-performance` STILL mode points at. Runs as a custom node on the production
+ComfyUI (:8188): no new environment, and the model is light (~fits well under 24 GB,
+no WAN-style hazard). Authored without a GPU/ComfyUI to hand, so every node schema
+below is UNVERIFIED. The workflow lives in `scaffolds/` so the MCP does not
+auto-register it until validated.
+
+### 1. Install the custom node (into `comfyui/custom_nodes/`) — DONE
+
+- [x] **ComfyUI-AdvancedLivePortrait** cloned from
+      `https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait`; `requirements.txt`
+      installed into `comfyui/.venv` (only `tyro==0.8.5`, `lmdb`, `shtab`,
+      `docstring-parser` were missing — no conflicts).
+- [x] **Insightface** already present in the venv (0.7.3), with `onnxruntime` 1.25.1
+      exposing the CUDA provider. No build needed.
+
+### 2. Install weights (node auto-downloads) — DONE
+
+- [x] First `ExpressionEditor` run fetched the LivePortrait weights into
+      `comfyui/models/liveportrait/` on its own. No `models.yaml` entry — the node
+      manages this, not `install_models.py`.
+
+### 3. Verify node schemas — DONE (two scaffold fixes applied)
+
+- [x] **`ExpressionEditor` required inputs** confirmed against the live
+      `/object_info`: the FLOAT dials plus **`sample_ratio` and `sample_parts`**, which
+      the first scaffold omitted — both are REQUIRED, so ComfyUI rejected the graph
+      until they were added (`sample_parts: "All"`). `src_image` is an optional input.
+- [x] **Output sockets** are `(image, motion_link, save_exp)` — socket 0 is the image,
+      as wired. But the `ExpressionEditor` node also emits a **preview** image with
+      `type: "temp"`; the driver's `first_output_path` now filters to `type == "output"`
+      so it returns the persisted `SaveImage` file, not the temp preview.
+- [x] **Cropping** is internal via `crop_factor`; no separate cropper node needed.
+
+### 4. Smoke test — PASS
+
+- [x] Ran three variants over `refs/her_studio.png` on the rig: each rendered in ~2s
+      and saved a distinct `LivePortraitExpr_*.png`. Visually confirmed the dials move
+      the face (a legible, restrained suppressed-anger read vs. neutral). Note: small
+      values barely register given the ranges (eyebrow -10..15, aaa -30..120, etc.) —
+      the example presets were re-scaled to values that actually read.
+
+### 5. Retargeting (Act-One analogue) — SCAFFOLDED, render untested
+
+The same node retargets a **driving performance video** onto the portrait — transfer
+a real actor's facial performance, the highest-fidelity local route.
+
+- [x] Scaffolded: `scaffolds/liveportrait_retarget.json` + `scripts/liveportrait_retarget.py`.
+      The `AdvancedLivePortrait` node (`src_images` + `driving_images` →
+      `retargeting_eyes`/`retargeting_mouth`, `turn_on`) and `VHS_LoadVideo` /
+      `VHS_VideoCombine` are confirmed present in `/object_info`.
+- [ ] **Render smoke test** — needs a real driving performance clip (an actor's face
+      on a webcam); none was to hand. Then:
+      `python3 scripts/liveportrait_retarget.py driving.mp4 refs/portrait.png`, tuning
+      `--eyes` / `--mouth` (0..1).
+- [ ] Confirm `VHS_LoadVideo` output 0 is the IMAGE batch and the driven output length
+      tracks the driving clip; then promote to `workflows/`.
+
+### 6. Promotion of the Expression Editor — DONE
+
+- [x] `workflows/liveportrait_expression.json` (promoted, `_scaffold` stripped);
+      `scripts/liveportrait.py` `WORKFLOW` repointed; re-validated the render from the
+      `workflows/` path. The MCP sees it — it has no `PARAM_` placeholders, so it runs
+      via the driver / `run_workflow`, with no dedicated auto-tool, exactly like
+      `wan22_i2v_a14b.json`.
+- [ ] Add an expression-control capability note in CLAUDE.md and wire the dialed still
+      into the short-film workflow as a WAN start-frame source (stills-first).

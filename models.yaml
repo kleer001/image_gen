@@ -1196,3 +1196,31 @@
   source: https://huggingface.co/Comfy-Org/MiniMax-H3
   date: '2026-09-09'
   notes: Pair with BasicScheduler steps=4. An 8-step variant exists for more quality.
+- section: loras
+  name: EmotionsFLUX
+  dest: loras/EmotionsFLUX09.safetensors
+  url: https://huggingface.co/Jonjew/EmotionsFLUX/resolve/main/EmotionsFLUX09.safetensors
+  size: 612751432
+  auth: hf
+  base: flux
+  purpose: Broadens facial-expression range on Flux.1-dev (angry, sad, crying,
+    surprised, and similar). Dial toward the restrained end — expression LoRAs push
+    toward exaggerated, acted faces, which the shot-enhancer slop gate (S3) fights.
+  source: https://huggingface.co/Jonjew/EmotionsFLUX
+  date: '2026-09-15'
+  trigger: facial expression
+  weight: '0.8'
+- section: loras
+  name: SDXL Emotional slider
+  dest: loras/emotional.safetensors
+  url: https://huggingface.co/ntc-ai/SDXL-LoRA-slider.emotional/resolve/main/emotional.safetensors
+  size: 8789076
+  auth: hf
+  base: sdxl
+  purpose: Continuous emotional-intensity slider for SDXL / Illustrious — no trigger;
+    scale the LoRA weight up or down to set intensity. Keep it low for the restrained
+    micro-expression the slop gate wants.
+  source: https://huggingface.co/ntc-ai/SDXL-LoRA-slider.emotional
+  date: '2026-09-15'
+  trigger: none (slider — modulate via LoRA weight)
+  weight: start low, raise to taste
