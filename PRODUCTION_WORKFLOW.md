@@ -5,7 +5,16 @@ where it comes from). It chains the drivers this repo already has into one path:
 build a character, lock it across shots, give it a voice, and cut the result.
 
 Each step names the local tool and its real limit. The `shot-enhancer` skill writes
-the shot-list YAML that the video steps consume.
+the shot-list YAML that the video steps consume, the `direct-performance` skill
+writes the acting and action beats, and both obey the project bible.
+
+## 0 — The bible
+
+Before the shots, build the film's reference — its world, locations, characters, and
+look — from real places, objects, and clothing. `examples/bible.example.md` is the
+template. This is the single source of truth for consistency: the `shot-enhancer`
+craft layer locks everything the bible establishes and lets each prompt describe
+only the deltas. Keep it under `refs/` with the operator's own material.
 
 ## 1 — Story
 
@@ -80,12 +89,27 @@ Use a scene frame as a reference, prompt the character to say a plain sentence, 
 name no music, so the output carries the voice alone. Keep or swap the voice by
 re-rolling the seed or the reference.
 
-## 6 — The shot prompt
+## 6 — The performance and the shot prompt
 
-Turn the beat into a shot list with the `shot-enhancer` skill (the local analogue of
-Runway's Seedance enhancer). It writes YAML for whichever driver fits — storyboard
-panels, WAN motion, or H3 with voice — to each model's real limits. Run two
-variations per beat, so the edit has coverage to choose from.
+Direct the acting before you render it. For any beat a character feels or does, the
+`direct-performance` skill breaks the state into observable behavior, timing, sound,
+and body — the fix for the exaggerated, generic performance that reads as AI. It
+also choreographs action beats into contact → force → reaction with a time window.
+
+Then turn the beat into a shot list with the `shot-enhancer` skill. It loads its
+craft layer first, obeys the bible, writes YAML for whichever driver fits, and runs
+an anti-slop gate before emitting. Run two variations per beat, so the edit has
+coverage to choose from.
+
+The agent drafts the prompts; you review the YAML before rendering, and correct it.
+The prompt is a draft to direct, not a result to accept.
+
+**Camera you cannot get by prompting.** When a shot needs an exact move the prompt
+will not deliver, the prompt alone is the wrong tool. The local escalation is a
+driving plate: an AnimateDiff camera-motion LoRA (zoom / pan / tilt, in
+`models/animatediff_motion_lora/`), or a hand-rendered move, used as a motion
+reference. There is no local 3D-stage equivalent to Flick's; this is the gap. See
+gate row S8.
 
 ## 7 — Edit
 
@@ -95,9 +119,10 @@ that break, and build toward the story from step 1. This step is outside the rep
 ## The chain, at a glance
 
 ```
-story  →  character (Flux)  →  sheet (flux2_character_sheet)
+bible  →  story  →  character (Flux)  →  sheet (flux2_character_sheet)
        →  wardrobe (kontext_edit)  →  location (Flux) + Burst (video_shot / h3_t2v → frames)
-       →  voice (h3_ref2v)  →  shot list (shot-enhancer skill)  →  render (video_shot / h3)  →  edit
+       →  voice (h3_ref2v)  →  performance (direct-performance)  →  shot list (shot-enhancer)
+       →  render (video_shot / h3)  →  edit
 ```
 
 ## What does not carry over from Runway

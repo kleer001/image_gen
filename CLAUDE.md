@@ -221,8 +221,18 @@ pulls the good frames into `plates/`) → voice (`h3_ref2v.py`, the only local a
 path) → render → edit.
 
 The **`shot-enhancer` skill** turns a raw idea into a shot-list YAML for whichever
-driver fits (storyboard panels, WAN motion, or H3 with voice), written to each
-model's real limits. Worked examples: `examples/enhancer_*.example.yaml`.
+driver fits (storyboard panels, WAN motion, or H3 with voice). It loads a
+model-agnostic craft layer first, obeys the project bible, and runs an anti-slop
+gate before emitting. Worked examples: `examples/enhancer_*.example.yaml`.
+
+The **`direct-performance` skill** writes the acting and action beats — it breaks an
+emotion into observable behavior, timing, sound, and body, and an action into
+contact / force / reaction with a time window. This is the fix for the exaggerated,
+generic performance that reads as AI; hand its output to `shot-enhancer`.
+
+The **project bible** (`examples/bible.example.md`) is the per-film reference — world,
+locations, characters, look — that the craft layer locks so every shot stays
+consistent. It is operator data; keep it under `refs/`.
 
 `RUNWAY_LOCAL.md` records where this workflow comes from (Runway's own pipeline) and
 what does not carry over to the local models.
