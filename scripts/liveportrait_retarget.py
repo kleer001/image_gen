@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 """LivePortrait retargeting driver: driving performance video -> character portrait.
 
-SCAFFOLD — schema-verified, render UNTESTED. The workflow
-`scaffolds/liveportrait_retarget.json` uses nodes confirmed present on the
-production ComfyUI (AdvancedLivePortrait, VHS_LoadVideo, VHS_VideoCombine), but no
-end-to-end render has been run — that needs a real driving performance clip on the
-rig. See /TODO.md before relying on this. Once a render is confirmed, promote the
-workflow into workflows/ and repoint WORKFLOW.
+Validated on the production ComfyUI (:8188) with ComfyUI-AdvancedLivePortrait
+installed. The workflow is `workflows/liveportrait_retarget.json`.
 
 What it does: transfers the facial performance from a driving video (an actor on a
 webcam) onto one character portrait — the open analogue of Runway Act-One/Act-Two.
@@ -39,12 +35,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gallery  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-SCAFFOLDS = REPO / "scaffolds"
+WORKFLOWS = REPO / "workflows"
 COMFY_OUTPUT = REPO / "comfyui" / "output"
 COMFY_INPUT = REPO / "comfyui" / "input"
 SERVER = "http://127.0.0.1:8188"
 
-WORKFLOW = SCAFFOLDS / "liveportrait_retarget.json"
+WORKFLOW = WORKFLOWS / "liveportrait_retarget.json"
 
 
 def load_workflow():

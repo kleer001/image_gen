@@ -1,5 +1,4 @@
 {
-  "_scaffold": "UNVALIDATED RENDER — LivePortrait retargeting: transfer a real actor's facial performance from a driving video onto a character portrait (the open analogue of Runway Act-One/Act-Two). Node schemas ARE verified against the installed ComfyUI-AdvancedLivePortrait (the AdvancedLivePortrait node: required retargeting_eyes/mouth, crop_factor, turn_on, tracking_src_vid, animate_without_vid, command; optional src_images, driving_images, motion_link; returns images at socket 0) and VideoHelperSuite (VHS_LoadVideo / VHS_VideoCombine). What is NOT yet tested is an end-to-end render — that needs a real driving performance clip on the rig. See /TODO.md. Lives in scaffolds/ so the MCP does not auto-register it until a render is confirmed. Driver: scripts/liveportrait_retarget.py.",
   "1": {
     "class_type": "LoadImage",
     "inputs": {

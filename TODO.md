@@ -211,21 +211,19 @@ auto-register it until validated.
       values barely register given the ranges (eyebrow -10..15, aaa -30..120, etc.) —
       the example presets were re-scaled to values that actually read.
 
-### 5. Retargeting (Act-One analogue) — SCAFFOLDED, render untested
+### 5. Retargeting (Act-One analogue) — VALIDATED, promoted
 
 The same node retargets a **driving performance video** onto the portrait — transfer
 a real actor's facial performance, the highest-fidelity local route.
 
-- [x] Scaffolded: `scaffolds/liveportrait_retarget.json` + `scripts/liveportrait_retarget.py`.
+- [x] `workflows/liveportrait_retarget.json` + `scripts/liveportrait_retarget.py`.
       The `AdvancedLivePortrait` node (`src_images` + `driving_images` →
-      `retargeting_eyes`/`retargeting_mouth`, `turn_on`) and `VHS_LoadVideo` /
-      `VHS_VideoCombine` are confirmed present in `/object_info`.
-- [ ] **Render smoke test** — needs a real driving performance clip (an actor's face
-      on a webcam); none was to hand. Then:
-      `python3 scripts/liveportrait_retarget.py driving.mp4 refs/portrait.png`, tuning
-      `--eyes` / `--mouth` (0..1).
-- [ ] Confirm `VHS_LoadVideo` output 0 is the IMAGE batch and the driven output length
-      tracks the driving clip; then promote to `workflows/`.
+      `retargeting_eyes`/`retargeting_mouth`, `turn_on`) with `VHS_LoadVideo` /
+      `VHS_VideoCombine`.
+- [x] **Render smoke test — PASS.** Ran the node's bundled `sample/driving_video.mp4`
+      onto `her_studio.png`: 178 frames @ 30fps (5.9s) in 30s on the 3090; identity
+      held, head motion and expression driven. `VHS_LoadVideo` output 0 is the IMAGE
+      batch and the output length tracked the driving clip. Promoted to `workflows/`.
 
 ### 6. Promotion of the Expression Editor — DONE
 
