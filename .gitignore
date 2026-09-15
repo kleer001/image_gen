@@ -55,6 +55,12 @@ ideogram4_env/
 /plates/*
 !plates/.gitkeep
 
+# Third-party reference material fetched from the web (Runway's own skill file,
+# video transcripts). Kept locally as a working reference; not redistributed —
+# it carries its authors' terms, which a public repo cannot propagate. The URLs
+# it came from are cited in RUNWAY_LOCAL.md.
+/runway_ref/
+
 # Working shot lists at repo root. The reader-facing copies live in examples/.
 /shots.yaml
 /vace_shots.yaml

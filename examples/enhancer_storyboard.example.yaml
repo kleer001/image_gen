@@ -1,0 +1,33 @@
+# Worked shot-enhancer output — STORYBOARD target (storyboard.py, Flux + Kontext).
+#
+# One scene, run across three example files so the whole workflow reads together:
+#   1. enhancer_storyboard.example.yaml  <- this file: coverage panels
+#   2. enhancer_wan_i2v.example.yaml         animate chosen frames
+#   3. enhancer_h3_voice.example.yaml        the spoken line + sound
+#
+# Scene: a rooftop at dusk. A woman snaps her fingers and a paper lantern lifts
+# off the ledge on its own — a call-and-response beat (cause -> effect).
+#
+# Run:
+#   python3 scripts/storyboard.py examples/enhancer_storyboard.example.yaml
+#
+# Identity holds because panels 2..N are Kontext edits of panel 1, so this sheet
+# follows ONE anchor character (the woman). The driver appends its cinematic style
+# suffix at render time — the prompts below do not repeat it. Shot sizes vary panel
+# to panel; that variety is what reads as coverage.
+
+lora: film-storyboard.safetensors   # colored cinematic In-Context LoRA, no trigger
+lora_weight: 0.85
+guidance: 2.5
+steps: 24
+seed: 1204
+width: 1024                         # 16:9; panels 2..N follow this aspect
+height: 576
+
+shots:
+  - "wide establishing shot, a woman in a denim jacket alone on a city rooftop at dusk, a paper lantern resting on the ledge"
+  - "medium shot, the woman turns toward the ledge, one hand rising to shoulder height"
+  - "close-up on her hand, fingers poised to snap"
+  - prompt: "medium shot, the lantern lifts off the ledge on its own, the woman watching it rise"
+    seed: 1250
+  - "low angle, the woman looking up, the lantern glowing above the skyline"

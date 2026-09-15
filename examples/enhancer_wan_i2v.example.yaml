@@ -1,0 +1,32 @@
+# Worked shot-enhancer output — WAN-I2V target (video_shot.py, WAN 2.2 I2V).
+#
+# Second file of the rooftop scene (see enhancer_storyboard.example.yaml). Each
+# shot animates a start frame that came from the storyboard sheet, or from the
+# Burst method: render one clip, then pull picks with
+#   scripts/extract_frames.py clip.mp4 --browse           # find the frame
+#   scripts/extract_frames.py clip.mp4 --at 2.5 --prefix lantern   # save to plates/
+#
+# Run (WAN is the hardware red flag — the driver's preflight gate handles safety):
+#   python3 scripts/video_shot.py examples/enhancer_wan_i2v.example.yaml
+#
+# WAN carries identity and scene from the START FRAME ONLY. Each prompt describes
+# ONE continuous motion, about 5 seconds — one action and one camera move. No
+# dialogue, no timeline, no timestamps; a second beat drifts. The driver appends
+# its cinematic/handheld suffix, so the prompts below do not repeat it.
+
+num_frames: 81          # ~5s at 16fps
+fps: 16
+width: 832              # divisible by 32
+height: 480
+seed: 1204
+
+shots:
+  - image: ./plates/rooftop_wide.png
+    prompt: "slow push-in, the woman still, wind moving her hair and the lantern paper"
+
+  - image: ./plates/hand_snap.png
+    prompt: "her fingers snap once, a small settle of the hand afterward"
+
+  - image: ./plates/lantern_rise.png
+    prompt: "the lantern lifts straight up off the ledge, the camera tilting up to follow it"
+    num_frames: 121     # a longer beat for the rise

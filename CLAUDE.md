@@ -210,6 +210,23 @@ neutral-gray background, soft directional key light.
 its baked default, the way every exported ComfyUI graph does. Drivers patch it
 per run, so the name in the JSON is inert.
 
+## Short films (multi-shot production)
+
+To make a short film here — a consistent character carried through scenes, given a
+voice, cut together — follow [`PRODUCTION_WORKFLOW.md`](PRODUCTION_WORKFLOW.md). It
+chains the drivers below into one path: story → character sheet
+(`flux2_character_sheet.py`) → wardrobe (`kontext_edit.py`) → location + the Burst
+method (`video_shot.py` / `h3_t2v.py` render a clip, `scripts/extract_frames.py`
+pulls the good frames into `plates/`) → voice (`h3_ref2v.py`, the only local audio
+path) → render → edit.
+
+The **`shot-enhancer` skill** turns a raw idea into a shot-list YAML for whichever
+driver fits (storyboard panels, WAN motion, or H3 with voice), written to each
+model's real limits. Worked examples: `examples/enhancer_*.example.yaml`.
+
+`RUNWAY_LOCAL.md` records where this workflow comes from (Runway's own pipeline) and
+what does not carry over to the local models.
+
 ## Storyboards
 
 Multi-panel storyboards with character/style consistency across panels.

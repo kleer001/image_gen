@@ -1,0 +1,33 @@
+# Worked shot-enhancer output — H3 target (h3_ref2v.py, MiniMax H3 video + audio).
+#
+# Third file of the rooftop scene (see enhancer_storyboard.example.yaml). H3 is the
+# only local path that makes sound, so the spoken line comes from a video
+# generation, not a separate text-to-speech step. Clips are short (~5s).
+#
+# Reference images are not tracked — supply your own under refs/ at the filenames
+# below (a frame of the character from the burst, or a character-sheet crop). The
+# prompt cites each reference positionally as <Picture i> AND restates identity in
+# words, because references alone drift.
+#
+# Run:
+#   python3 scripts/h3_ref2v.py examples/enhancer_h3_voice.example.yaml
+
+title: Rooftop — the line
+seconds: 5
+width: 608
+height: 352
+seed: 1204
+steps: 4
+ref_image_size: match
+
+references:
+  - refs/woman_denim.png        # -> <Picture 1>
+
+shots:
+  - label: the call
+    prompt: >-
+      The woman from <Picture 1>, keeping her exact face, hair and denim jacket,
+      stands on the rooftop at dusk. She looks just off camera, half a smile, and
+      says "your turn." Then she snaps her fingers once. Close-up, shallow depth of
+      field, city glow behind her. Only her voice, the snap, and faint wind — no
+      music.

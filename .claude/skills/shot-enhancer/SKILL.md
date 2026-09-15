@@ -1,0 +1,159 @@
+---
+name: shot-enhancer
+description: Turn a raw video idea, scene description, or shot note into a finished shot-list YAML for this repo's local drivers — storyboard.py (Flux + Kontext panels), video_shot.py (WAN 2.2 image-to-video), or h3_ref2v.py / h3_t2v.py (MiniMax H3 video + native audio). The local analogue of Runway's Seedance prompt enhancer, retargeted to the models this stack actually runs. Output is a valid shot list only. Use when the user wants to make a short film, movie, or multi-shot video and needs the shots written; asks to enhance, expand, or "make a real prompt / shot list" from an idea; asks for a storyboard, a WAN clip, an H3 clip with voice, or coverage for a scene; or names a driver (storyboard, video_shot, wan, h3).
+---
+
+# shot-enhancer — local shot-list writer
+
+Input: a user idea at any level of detail, plus an optional target driver, optional
+reference images, and an optional duration.
+Output: a shot-list YAML for one driver, and nothing else.
+
+This skill writes shot lists. It does not render and it does not talk about its work.
+
+The local models are not Seedance 2.5. Do not carry Seedance's contract across —
+WAN takes one start frame and one continuous motion, not a 30-second timestamped
+timeline; only H3 makes audio. Write to each driver's real limits, below.
+
+## Output contract — non-negotiable
+
+- The response is the YAML shot list and nothing else. No preamble, no fences, no
+  explanation, no sign-off.
+- The YAML must parse and must match the target driver's format (below), so the
+  driver runs it unedited.
+- **Never write the cinematic style suffix into a prompt.** Every driver appends
+  its own `DEFAULT_STYLE_SUFFIX` at render time. Writing it again double-applies it.
+  Set `style_suffix:` only to override or to disable with `""`.
+- No duration or resolution text inside prompts — those live in the top-level YAML
+  keys (`num_frames`, `fps`, `width`, `height`, `seconds`).
+- Never ask a clarifying question. Commit to one direction and write.
+
+# PART 1 — ROUTING
+
+Pick the driver from the request. When the user names one, use it. Otherwise:
+
+| The idea is… | Driver | Target file format |
+|---|---|---|
+| Still panels / coverage / a storyboard / a character sheet in scene | `storyboard.py` | STORYBOARD |
+| Motion from a start frame, no dialogue needed | `video_shot.py` | WAN-I2V |
+| A talking shot, a voice line, or sound matters | `h3_ref2v.py` (refs) or `h3_t2v.py` (no refs) | H3 |
+
+The Runway "Burst method" maps to STORYBOARD (generate coverage) plus a video
+driver (animate a chosen frame). When the user wants both, emit the STORYBOARD list;
+name in no prose which frames feed the video step — the operator picks frames.
+
+# PART 2 — PER-DRIVER AUTHORING
+
+## STORYBOARD (storyboard.py — Flux + Flux Kontext)
+
+Identity holds across panels because panels 2..N are in-context edits of the
+reference (or of panel 1). Panel 1 sets the aspect; later panels snap to Kontext
+buckets off the reference aspect, so set `width`/`height` to the target aspect and
+the whole sheet follows (1024×576 ≈ 16:9).
+
+```yaml
+reference: ./refs/<name>.png   # optional; omit to seed panel 1 from the first prompt
+lora: film-storyboard.safetensors
+lora_weight: 0.85
+guidance: 2.5
+steps: 24
+seed: 42
+width: 1024
+height: 576
+shots:
+  - "wide establishing shot, <subject> in <place>, <action>"
+  - "medium shot, <subject> <beat>"
+  - prompt: "close-up, <detail>"
+    seed: 9999
+```
+
+- One panel = one prompt = one moment. Write plain scene description: shot size,
+  subject, place, action. No timeline, no audio.
+- LoRA triggers depend on the LoRA: `film-storyboard.safetensors` has none;
+  `Storyboarding-v2-Flux` wants `storyboarding`; `StoryboardSketch-Flux` wants
+  `Storyboard sketch`. Add the trigger word into each prompt only for a LoRA that
+  needs one.
+- Vary the shot size and angle panel to panel; that is what reads as coverage.
+
+## WAN-I2V (video_shot.py — WAN 2.2 image-to-video)
+
+> WAN 14B is the hardware red flag in CLAUDE.md — the driver's own preflight gate
+> handles safety. Write the shot list; do not run it.
+
+WAN carries identity and scene from the **start frame only**. Each shot needs an
+`image:` (a rendered frame — a storyboard panel or a character-sheet crop) and a
+`prompt:` that describes **one continuous motion**, about 5 seconds. No dialogue,
+no audio, no multi-beat timeline — WAN does not read timestamps.
+
+```yaml
+num_frames: 81          # ~5s at 16fps
+fps: 16
+width: 832              # divisible by 32
+height: 480
+seed: 42
+shots:
+  - image: ./plates/<frame>.png
+    prompt: "<one motion: a gesture, a look, a slow camera move>"
+  - image: ./plates/<frame>.png
+    prompt: "<one motion>"
+    seed: 9001
+    num_frames: 121     # a longer beat
+```
+
+- Prompt one action and one camera move per shot. A second beat drifts.
+- For a longer story, write several shots, each off its own start frame, in order.
+- Do not set `negative_prompt` unless the user asks — the driver's default is tuned.
+
+## H3 (h3_ref2v.py with refs, or h3_t2v.py for text only)
+
+MiniMax H3 makes the clip and its soundtrack in one pass — the only local path to
+voice and sound. Clips are short (~3–5s, the frame count snaps to a 17k+5 grid).
+Reference images are addressed positionally as `<Picture 1>`, `<Picture 2>` … in
+supply order (up to 9). References drift, so restate identity in words too.
+
+Reference-driven (`h3_ref2v.py`):
+
+```yaml
+title: <name>
+seconds: 5
+width: 608
+height: 352
+seed: 7
+steps: 4
+references:                 # order sets <Picture 1>, <Picture 2>, ...
+  - refs/<subject>.jpg
+shots:
+  - label: <beat>
+    prompt: "<Picture 1>, <who they are in words>, says \"<dialogue verbatim>\", <sound>"
+```
+
+- Quote dialogue verbatim; place the speaker with it.
+- Cite each `<Picture i>` and describe what must stay fixed (face, wardrobe, build).
+- For a plain text-to-clip with sound and no reference, target `h3_t2v.py` instead:
+  a single prompt string carries subject, action, and any spoken line.
+
+# PART 3 — INTAKE AND SELF-CHECK
+
+Intake tiers: **BARE** — invent subject, action, coverage. **SPARSE** — honor the
+anchors, invent the rest. **DETAILED** — serve the vision, quote dialogue verbatim,
+fill only technical gaps. Commit; never hedge.
+
+Before sending:
+
+1. One driver chosen; the YAML matches that driver's format exactly and parses.
+2. No style suffix written into any prompt (unless overriding `style_suffix:`).
+3. STORYBOARD: each panel is one moment; shot sizes vary; LoRA trigger present only
+   if that LoRA needs one.
+4. WAN-I2V: every shot has an `image:` and one continuous-motion `prompt:`; no
+   dialogue, no timeline.
+5. H3: references cited as `<Picture i>` and restated in words; dialogue verbatim.
+6. Output is the shot list alone — no commentary, no fences.
+
+# Worked examples
+
+One rooftop scene written for all three targets, as reference for the shape and
+craft of a good shot list:
+
+- `examples/enhancer_storyboard.example.yaml` — coverage panels
+- `examples/enhancer_wan_i2v.example.yaml` — one-motion clips off chosen frames
+- `examples/enhancer_h3_voice.example.yaml` — a spoken line with sound
