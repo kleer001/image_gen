@@ -497,6 +497,21 @@
   trigger: image+text conditioning
   weight: —
 - section: loras
+  name: Qwen-Image-Edit-2509 Light Restoration V2
+  dest: loras/qwen_edit_2509_light_restoration_v2.safetensors
+  url: https://huggingface.co/dx8152/Qwen-Image-Edit-2509-Light_restoration/resolve/main/%E7%A7%BB%E9%99%A4%E5%85%89%E5%BD%B1V2.safetensors
+  size: 236117040
+  auth: hf
+  base: qwen_image_edit_2509
+  purpose: Removes glare, hard light and shadows (relights with soft light). Driven by
+    scripts/qwen_light_restoration.py; see GLARE_REMOVAL.md.
+  source: https://huggingface.co/dx8152/Qwen-Image-Edit-2509-Light_restoration
+  date: '2026-10-05'
+  trigger: 移除光影,使用柔和光线（无明显光斑和阴影）对图片进行重新照明
+  weight: 1.0
+  notes: Apache-2.0. Upstream file name is 移除光影V2.safetensors; renamed to ASCII on
+    install. The trigger prompt is fixed by the author.
+- section: loras
   name: XLabs IP-Adapter v2
   dest: loras/flux-ip-adapter-v2-xlabs.safetensors
   url: https://huggingface.co/XLabs-AI/flux-ip-adapter-v2/resolve/main/ip_adapter.safetensors

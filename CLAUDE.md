@@ -176,6 +176,7 @@ See `INDEX.md` for installed models, trigger words, and LoRA weights.
 
 **Post-processing**
 - Upscaling — 4x-UltraSharp (general), RealESRGAN x4plus (realistic), 4x-AnimeSharp (anime)
+- Glare removal (approved method) — remove glare, sheen and scratches from photos of printed artwork: `scripts/qwen_light_restoration.py` then `scripts/match_curves.py`. Steps in [`GLARE_REMOVAL.md`](GLARE_REMOVAL.md); the comparison with `scripts/flat_palette.py` and Flux Kontext is in [`FLAT_ART_CLEANUP.md`](FLAT_ART_CLEANUP.md)
 
 **Installed model inventory:** [`INDEX.md`](INDEX.md) — authoritative for on-disk state (sizes, trigger words, LoRA weights).
 

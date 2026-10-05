@@ -160,6 +160,11 @@ Last updated: 2026-09-09
 | `darkcore_pny.safetensors` | 94M | `s_darkcore style` | 0.8–1.0 | [civitai/605731](https://civitai.com/models/605731/darkcore-style-sdxl-and-pony) — comic-book style: bold lines, washed colors, grim mood; Pony version trained on AutismMix. Used by `antro_workflow_02`. |
 | `eyes_enhancer_pony_v3.safetensors` | 218M | none (eye enhancer, positive) | 0.4–0.8 | [civitai/365708](https://civitai.com/models/365708/lora-eyes-enhancer-free-use-or-merge) — beautifies eyes; supports varied pupil types |
 
+### Qwen-Image-Edit-2509
+| File | Size | Trigger | Weight | Source |
+|---|---|---|---|---|
+| `qwen_edit_2509_light_restoration_v2.safetensors` | 225M | `移除光影,使用柔和光线（无明显光斑和阴影）对图片进行重新照明` (fixed) | 1.0 | [dx8152/Qwen-Image-Edit-2509-Light_restoration](https://huggingface.co/dx8152/Qwen-Image-Edit-2509-Light_restoration) — removes glare and hard light. Driven by `scripts/qwen_light_restoration.py`; see [`GLARE_REMOVAL.md`](GLARE_REMOVAL.md) (approved glare-removal method). |
+
 ### WAN 2.2 I2V — Lightning distill (video)
 | File | Size | Base | Weight | Source |
 |---|---|---|---|---|
