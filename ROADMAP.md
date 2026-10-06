@@ -52,6 +52,17 @@ Seedance-parity feature set · **P3** polish / hygiene.
 - [ ] **P2 — Multi-plate scene composition (needs VACE).** Once VACE is live, a
       driver that takes character + outfit + location plates and composes a scene —
       the open analog to Seedance's `@image1..@imageN` conditioning.
+- [ ] **P2 — `.char` character files (OmniChar).** One portable file per character:
+      face, body and outfit references in fixed order, a locked description, a voice
+      clip, an optional LoRA. A packaging format, not a new identity model — likeness
+      still comes from FLUX.2 multi-ref and H3 reference-to-video. The
+      [ComfyUI-Omnichar](https://github.com/omnichar/ComfyUI-Omnichar) node and
+      `omnichar-sdk` are installed in `comfyui_flux2/` and `comfyui_h3/`; files live in
+      `models/characters/` (`sia.char` is the upstream sample). Validated on CPU only
+      (Load → Decode → Split over the API). To adopt: give `h3_ref2v.py` and
+      `flux2_klein_edit.py` a `--char` flag that reads refs, description and voice via
+      `omnichar-sdk`, then run one GPU render per driver. Optional: Omnichar Studio's
+      continuity score (SFace + YuNet + DINOv2-base, ~385 MB) as a drift metric.
 
 ## Prompt / skill layer (the actual "skills" from the video)
 

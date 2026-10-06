@@ -235,6 +235,13 @@ The **project bible** (`examples/bible.example.md`) is the per-film reference �
 locations, characters, look — that the craft layer locks so every shot stays
 consistent. It is operator data; keep it under `refs/`.
 
+**Character files (`.char`)** — the [ComfyUI-Omnichar](https://github.com/omnichar/ComfyUI-Omnichar)
+node and `omnichar-sdk` are installed in `comfyui_flux2/` and `comfyui_h3/`. A `.char` is one
+portable file per character: face, body and outfit references, a locked description, a voice
+clip and an optional LoRA. Files live in `models/characters/`. It is a packaging format, not an
+identity model — likeness still comes from FLUX.2 multi-ref and H3 reference-to-video. No driver
+reads `.char` yet; the adoption steps are in `ROADMAP.md` (Character / identity tooling).
+
 `RUNWAY_LOCAL.md` records where this workflow comes from (Runway's own pipeline) and
 what does not carry over to the local models.
 

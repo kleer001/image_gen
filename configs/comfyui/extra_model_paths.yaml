@@ -13,6 +13,7 @@ comfyui:
     text_encoders: text_encoders/
     upscale_models: upscale_models/
     vae: vae/
+    characters: characters/   # .char files (ComfyUI-Omnichar)
     # Video generation
     animatediff_models: animatediff_models/
     animatediff_motion_lora: animatediff_motion_lora/

@@ -2,7 +2,8 @@
 # Isolated ComfyUI for FLUX.2 Klein experiments — separate from the production
 # comfyui/ (v0.17.0) so a core-version bump can't break the WAN/Hunyuan/Ovi nodes.
 # Reuses the shared models/ dir via extra_model_paths.yaml. No video custom nodes:
-# FLUX.2 is core-native, so this stays lean.
+# FLUX.2 is core-native, so this stays lean. The one custom pack is Omnichar,
+# which reads .char character files from models/characters/ and needs no weights.
 set -e
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -26,6 +27,14 @@ pip install -r requirements.txt
 
 # Reuse the shared models/ dir (Klein files land there).
 sed "s|__REPO_ROOT__|${REPO_ROOT}|" "${REPO_ROOT}/configs/comfyui/extra_model_paths.yaml" > "${INSTALL_DIR}/extra_model_paths.yaml"
+
+OMNICHAR_DIR="${INSTALL_DIR}/custom_nodes/ComfyUI-Omnichar"
+if [ -d "$OMNICHAR_DIR/.git" ]; then
+    git -C "$OMNICHAR_DIR" pull --ff-only
+else
+    git clone --depth 1 https://github.com/omnichar/ComfyUI-Omnichar "$OMNICHAR_DIR"
+fi
+pip install -r "$OMNICHAR_DIR/requirements.txt"
 
 echo ""
 echo "Isolated FLUX.2 ComfyUI installed at ${INSTALL_DIR}"

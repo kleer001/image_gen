@@ -14,12 +14,15 @@ PORT=8191
 # the newest stable and carries the later H3 fixes.
 COMFYUI_TAG="v0.35.0"
 
-# H3 itself is core-native. The one custom pack is FaceRefine, which fixes the
-# model's documented weakness on small faces: H3 renders a face badly once the
-# head is a small fraction of the frame, and that is a property of head size in
-# pixels rather than of output resolution, so raising the canvas does not cure it.
+# H3 itself is core-native. FaceRefine fixes the model's documented weakness on
+# small faces: H3 renders a face badly once the head is a small fraction of the
+# frame, and that is a property of head size in pixels rather than of output
+# resolution, so raising the canvas does not cure it. Omnichar reads .char
+# character files (face, body and outfit references, description, voice) from
+# models/characters/ and feeds them to the reference-to-video node.
 CUSTOM_NODES=(
     "https://github.com/Carasibana/ComfyUI-H3-FaceRefine"   # per-frame face crop, refine, stitch
+    "https://github.com/omnichar/ComfyUI-Omnichar"          # .char characters; no model weights
 )
 
 # Shallow clone straight at the pinned tag. The instance never tracks master, so

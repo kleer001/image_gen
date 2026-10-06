@@ -48,8 +48,8 @@ the ComfyUI stack.
 
 ### FLUX.2 instance — `comfyui_flux2/` · port 8189 · ComfyUI v0.24.0 (pinned)
 Isolated ComfyUI for FLUX.2 Klein 9B — the production v0.17 cannot run FLUX.2.
-FLUX.2 is core-native, so no custom nodes. Reuses `models/` via
-`extra_model_paths.yaml`.
+FLUX.2 is core-native. Reuses `models/` via `extra_model_paths.yaml`.
+- Custom nodes: ComfyUI-Omnichar (`.char` characters from `models/characters/`)
 - Install: `scripts/install_comfyui_flux2.sh`
 - Run: `cd comfyui_flux2 && .venv/bin/python main.py --listen --port 8189`
 - Drivers: `scripts/flux2_klein.py`, `flux2_klein_edit.py`, `flux2_character_sheet.py`, `flux2_klein_compare.py`
@@ -75,7 +75,8 @@ custom nodes, VRAM rules) in `radar/scope-isolated-v26-instance.md`.
 ### MiniMax H3 instance — `comfyui_h3/` · port 8191 · ComfyUI v0.35.0 (pinned)
 Isolated ComfyUI for MiniMax H3, the 33B omni-modal model that generates video
 and its stereo audio in one pass. H3 needs core >= v0.30.0, past what the v0.26
-instance carries. H3 is core-native, so no custom nodes.
+instance carries. H3 is core-native.
+- Custom nodes: ComfyUI-H3-FaceRefine, ComfyUI-Omnichar (`.char` characters from `models/characters/`)
 - Install: `scripts/install_comfyui_h3.sh`
 - Run: `cd comfyui_h3 && .venv/bin/python main.py --listen --port 8191 --disable-pinned-memory`
 - **`--disable-pinned-memory` is required** — without it ComfyUI page-locks most of
