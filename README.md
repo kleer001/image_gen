@@ -43,8 +43,8 @@ python3 scripts/storyboard.py examples/storyboard.example.yaml
 
 Renders each panel through the ComfyUI HTTP API, locks identity across panels with Flux Kontext,
 builds an HTML contact sheet, and opens it in your browser. The same pattern covers video
-(`video_shot.py`), reference-to-video (`h3_ref2v.py`), and character sheets
-(`flux2_character_sheet.py`).
+(`video_shot.py`), reference-to-video (`h3_ref2v.py`), first/last-frame clips and seamless
+loops (`h3_fl2v.py`), and character sheets (`flux2_character_sheet.py`).
 
 To make a whole short film — one character carried through scenes, given a voice, cut together —
 [`PRODUCTION_WORKFLOW.md`](PRODUCTION_WORKFLOW.md) chains those drivers into a single path, and
