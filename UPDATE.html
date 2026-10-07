@@ -207,10 +207,11 @@ Window: since &lt;prev-date | "repo start (~14 days)"&gt;. GPU ceiling: &lt;N&gt
 </ul>
 
 <h2>Cadence</h2>
-<p>Run roughly <strong>weekly</strong>. Two mechanisms keep this on schedule:</p>
+<p><strong>Mothballed.</strong> Run a sweep only when the user asks. Neither mechanism below is
+   wired up: no hook runs the session reminder and no cron runs the unattended script.</p>
 <ul>
-  <li><strong>Session reminder (primary).</strong> A <code>SessionStart</code> hook runs
-      <code>scripts/check_sweep_due.py</code>, which prints a "sweep due" nudge whenever the newest
+  <li><strong>Session reminder.</strong> <code>scripts/check_sweep_due.py</code>, run as a
+      <code>SessionStart</code> hook, prints a "sweep due" nudge whenever the newest
       <code>radar/</code> digest is &gt; 7 days old. Works locally and in remote/web sessions.</li>
   <li><strong>Unattended cron (optional).</strong> <code>scripts/update_sweep.sh</code> drives a
       headless <code>claude -p</code> run of this very page. Install on the rig as, e.g.:
